@@ -27,6 +27,10 @@ Every out-of-scope idea gets parked here instead of built. See
 - **Git identity.** Auto-commits use the machine's git identity. If a fresh
   machine has none configured, commits fail softly (the pass still counts,
   the UI keeps working). The migration runbook should include `git config`.
+- **Auto-push on pass (or on a debounce).** The on-pass sequence commits
+  locally but does not push, and the GitHub contribution graph — a core
+  §9 goal — only fills on push. Until this is decided (v0.3 scheduler could
+  own it), push manually every day or two: `git push`.
 - **Re-practice UX.** Re-running a mastered kata awards 0 XP but still
   updates the streak. The v0.3 review track will replace this with real
   spaced-repetition scheduling.
