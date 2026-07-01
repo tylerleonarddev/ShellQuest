@@ -5,6 +5,12 @@
       "ease": 2.3,
       "next_review": "2026-07-02",
       "last_result": "pass"
+    },
+    "py-say-hello": {
+      "interval_days": 1,
+      "ease": 2.3,
+      "next_review": "2026-07-02",
+      "last_result": "pass"
     }
   }
 }

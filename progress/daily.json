@@ -9,8 +9,9 @@
     "py-say-hello": "new"
   },
   "completed": [
-    "sq-01-explore"
+    "sq-01-explore",
+    "py-say-hello"
   ],
-  "bonus_awarded": false,
+  "bonus_awarded": true,
   "bonus_xp": 15
 }
