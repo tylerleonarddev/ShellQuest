@@ -100,6 +100,27 @@ function createWindow() {
   });
   win.setMenuBarVisibility(false);
   win.loadFile(path.join(__dirname, '..', 'renderer', 'index.html'));
+
+  // Debug affordance: SQ_SCREENSHOT=/path.png captures the window after
+  // load, relays renderer console errors to stdout, then quits.
+  if (process.env.SQ_SCREENSHOT) {
+    win.webContents.on('console-message', (_ev, level, message) => {
+      if (level >= 2) console.log(`[renderer:${level}] ${message}`);
+    });
+    win.webContents.once('did-finish-load', () => {
+      setTimeout(async () => {
+        if (process.env.SQ_SCREENSHOT_CLICK) {
+          await win.webContents.executeJavaScript(
+            `document.querySelector(${JSON.stringify(process.env.SQ_SCREENSHOT_CLICK)})?.click()`
+          );
+          await new Promise((r) => setTimeout(r, 600));
+        }
+        const image = await win.webContents.capturePage();
+        require('fs').writeFileSync(process.env.SQ_SCREENSHOT, image.toPNG());
+        app.quit();
+      }, 1500);
+    });
+  }
 }
 
 app.whenReady().then(() => {
