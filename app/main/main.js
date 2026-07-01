@@ -260,9 +260,12 @@ function createWindow() {
       setTimeout(async () => {
         if (process.env.SQ_SCREENSHOT_CLICK) {
           await win.webContents.executeJavaScript(
-            `document.querySelector(${JSON.stringify(process.env.SQ_SCREENSHOT_CLICK)})?.click()`
+            `{ const el = document.querySelector(${JSON.stringify(process.env.SQ_SCREENSHOT_CLICK)});
+               if (el) { el.click(); setTimeout(() => (document.querySelector(${JSON.stringify(
+                 process.env.SQ_SCREENSHOT_SCROLL || 'body'
+               )}) || el).scrollIntoView({ block: 'center' }), 300); } }`
           );
-          await new Promise((r) => setTimeout(r, 600));
+          await new Promise((r) => setTimeout(r, 800));
         }
         const image = await win.webContents.capturePage();
         require('fs').writeFileSync(process.env.SQ_SCREENSHOT, image.toPNG());

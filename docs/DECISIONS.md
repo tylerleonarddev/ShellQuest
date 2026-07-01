@@ -1,5 +1,23 @@
 # Design decisions (deviations & clarifications)
 
+## v0.6
+
+**FSRS runs with `enable_short_term: false`.** The library's default
+learning steps would make a freshly passed exercise due 10 minutes later —
+same-day resurfacing in a daily-granularity queue. Long-term-only
+scheduling starts at ~3 days, which matches how ShellQuest reviews work.
+
+**Failure guard carried over:** `Rating.Again` applies only to a due
+review, at most once per local day (`sq_last_failed_on` rides on the card;
+ts-fsrs ignores extra fields). Repeated same-day attempts while relearning
+don't compound lapses.
+
+**Migration preserved due dates** (the spec offered due=today or
+preserved): existing SM-2 schedules became fresh FSRS cards keeping their
+next_review as `due`, so the upgrade changed nothing about the next day's
+queue. The memory model self-corrects within a couple of reviews.
+
+
 ## v0.5
 
 **Onboarding is content + a first-launch gate,** not a prerequisite of
