@@ -4,6 +4,11 @@
       "exercise_id": "onboarding",
       "passed_at": "2026-07-01T22:17:14.833Z",
       "xp_awarded": 10
+    },
+    {
+      "exercise_id": "lesson-functions",
+      "passed_at": "2026-07-01T22:17:46.681Z",
+      "xp_awarded": 5
     }
   ]
 }

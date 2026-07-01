@@ -8,7 +8,9 @@
     "lesson-functions": "new",
     "py-count-vowels": "new"
   },
-  "completed": [],
+  "completed": [
+    "lesson-functions"
+  ],
   "bonus_awarded": false,
   "bonus_xp": 15
 }
