@@ -1,0 +1,14 @@
+{
+  "date": "2026-07-01",
+  "queue": [
+    "lesson-functions",
+    "py-count-vowels"
+  ],
+  "kinds": {
+    "lesson-functions": "new",
+    "py-count-vowels": "new"
+  },
+  "completed": [],
+  "bonus_awarded": false,
+  "bonus_xp": 15
+}
