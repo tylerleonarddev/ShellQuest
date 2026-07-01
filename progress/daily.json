@@ -1,16 +1,14 @@
 {
   "date": "2026-07-01",
   "queue": [
-    "lesson-functions",
-    "py-count-vowels"
+    "sq-01-explore",
+    "py-say-hello"
   ],
   "kinds": {
-    "lesson-functions": "new",
-    "py-count-vowels": "new"
+    "sq-01-explore": "new",
+    "py-say-hello": "new"
   },
-  "completed": [
-    "lesson-functions"
-  ],
+  "completed": [],
   "bonus_awarded": false,
   "bonus_xp": 15
 }

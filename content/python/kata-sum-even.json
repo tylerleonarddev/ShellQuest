@@ -4,17 +4,31 @@
   "track": "progression",
   "title": "Sum of even numbers",
   "xp": 20,
-  "prerequisites": [],
+  "prerequisites": [
+    "py-max-of-list"
+  ],
   "review_interval_days": null,
   "prompt": "Write sum_even(numbers) that returns the sum of the even integers in a list.",
   "starter_code": "def sum_even(numbers):\n    pass\n",
   "verification": {
     "runner": "python-test",
     "tests": [
-      { "call": "sum_even([1,2,3,4])", "expect": 6 },
-      { "call": "sum_even([])", "expect": 0 },
-      { "call": "sum_even([2,4,6])", "expect": 12 },
-      { "call": "sum_even([1,3,5])", "expect": 0 }
+      {
+        "call": "sum_even([1,2,3,4])",
+        "expect": 6
+      },
+      {
+        "call": "sum_even([])",
+        "expect": 0
+      },
+      {
+        "call": "sum_even([2,4,6])",
+        "expect": 12
+      },
+      {
+        "call": "sum_even([1,3,5])",
+        "expect": 0
+      }
     ]
   }
 }

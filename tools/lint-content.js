@@ -115,6 +115,25 @@ for (const [rel, id, p] of allPrereqs) {
   if (!ids.has(p)) errors.push(`${rel}: ${id} requires unknown exercise "${p}"`);
 }
 
+// 6. Exactly one ladder entry point per content directory — a second
+// empty-prerequisite item is a "floating" exercise that can be served to
+// a beginner out of order. (Onboarding is the app's own gate; exempt.)
+const rootsByDir = {};
+for (const file of files) {
+  let ex;
+  try { ex = JSON.parse(fs.readFileSync(file, 'utf8')); } catch { continue; }
+  if (ex.track === 'onboarding') continue;
+  if ((ex.prerequisites || []).length === 0) {
+    const dir = path.relative(CONTENT, path.dirname(file)) || '.';
+    (rootsByDir[dir] = rootsByDir[dir] || []).push(ex.id);
+  }
+}
+for (const [dir, roots] of Object.entries(rootsByDir)) {
+  if (roots.length > 1) {
+    errors.push(`content/${dir}: ${roots.length} items have no prerequisites (${roots.join(', ')}) — only one entry point allowed; the rest are floating`);
+  }
+}
+
 for (const w of warnings) console.log(`⚠ ${w}`);
 if (errors.length) {
   for (const e of errors) console.error(`✗ ${e}`);

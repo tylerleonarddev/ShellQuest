@@ -4,17 +4,31 @@
   "track": "progression",
   "title": "Count the vowels",
   "xp": 20,
-  "prerequisites": [],
+  "prerequisites": [
+    "py-is-palindrome"
+  ],
   "review_interval_days": null,
   "prompt": "Write count_vowels(s) that returns how many vowels (a, e, i, o, u, case-insensitive) are in the string s.",
   "starter_code": "def count_vowels(s):\n    pass\n",
   "verification": {
     "runner": "python-test",
     "tests": [
-      { "call": "count_vowels('hello')", "expect": 2 },
-      { "call": "count_vowels('SIGINT')", "expect": 1 },
-      { "call": "count_vowels('')", "expect": 0 },
-      { "call": "count_vowels('AEIOU')", "expect": 5 }
+      {
+        "call": "count_vowels('hello')",
+        "expect": 2
+      },
+      {
+        "call": "count_vowels('SIGINT')",
+        "expect": 1
+      },
+      {
+        "call": "count_vowels('')",
+        "expect": 0
+      },
+      {
+        "call": "count_vowels('AEIOU')",
+        "expect": 5
+      }
     ]
   }
 }
