@@ -20,5 +20,5 @@ def say_hello():
 
 ## Reflection
 
-This is the beginning! I've spent about a week in boot.dev playing around. But, I wanted to launch a way for me to learn in public. So this lesson is just me making sure my idea's have come into fruition. Thanks for reading! :D
+This is the beginning! I've spent about a week in boot.dev playing around. But, I wanted to launch a way for me to learn in public. So this lesson is just me making sure my ideas have come into fruition. Thanks for reading! :D
 
