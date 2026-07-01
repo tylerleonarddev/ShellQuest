@@ -32,7 +32,7 @@ ${userCode.trimEnd()}
 
   const body = `# ${exercise.title}
 
-*${date} · +${xpAwarded} XP · \`${exercise.id}\`*
+*${date} · ${exercise.type} · ${exercise.track || 'progression'} track · +${xpAwarded} XP · \`${exercise.id}\`*
 
 ## The problem
 

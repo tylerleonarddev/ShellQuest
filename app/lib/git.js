@@ -11,20 +11,24 @@ function git(args) {
   });
 }
 
-// Stage ONLY progress/ — never `git add -A`. Drafts are gitignored and
-// nothing else in the repo should ride along on an auto-commit.
-async function commitProgress(message) {
+// Stage ONLY the given paths — never `git add -A`. Nothing else in the
+// repo should ride along on an auto-commit.
+async function commitPaths(paths, message) {
   try {
-    await git(['add', 'progress']);
-    const status = await git(['status', '--porcelain', 'progress']);
+    await git(['add', '--', ...paths]);
+    const status = await git(['status', '--porcelain', '--', ...paths]);
     if (!status) return { committed: false };
     await git(['commit', '-m', message]);
     return { committed: true };
   } catch (err) {
     // A failed auto-commit (e.g. missing git identity) must never block
-    // the pass itself — surface it, don't throw.
+    // the action itself — surface it, don't throw.
     return { committed: false, error: err.message };
   }
 }
 
-module.exports = { commitProgress };
+function commitProgress(message) {
+  return commitPaths(['progress'], message);
+}
+
+module.exports = { commitProgress, commitPaths };

@@ -184,11 +184,33 @@ function ensureWeekly(today) {
   const weekStart = mondayOf(today);
   let weekly = readJson(WEEKLY_FILE, null);
   if (!weekly || weekly.week_start !== weekStart) {
+    // Rolling over: the ending week's stats live only in this file, so
+    // auto-draft its digest before they're replaced. Lazy require avoids
+    // a schedule <-> digest cycle.
+    if (weekly && weekly.week_start < weekStart) {
+      const hadActivity =
+        (weekly.stats && weekly.stats.xp_gained > 0) ||
+        (weekly.goals || []).some((g) => g.progress > 0);
+      if (hadActivity) {
+        try {
+          const digest = require('./digest');
+          if (!digest.digestExists(weekly.week_start)) {
+            digest.generateDigest(weekly.week_start, weekly);
+          }
+        } catch {
+          // digest drafting must never block the scheduler
+        }
+      }
+    }
     const defs = weekly ? weekly.goals : DEFAULT_GOALS;
     weekly = {
       week_start: weekStart,
       goals: defs.map((g) => ({ kind: g.kind, target: g.target, bonus_xp: g.bonus_xp, progress: 0 })),
       bonus_awarded: false,
+      // Running counters for the weekly digest — daily.json is overwritten
+      // each day and reviews.json holds only current state, so the week's
+      // activity is tallied here as it happens.
+      stats: { reviews_cleared: 0, xp_gained: 0 },
     };
     writeJson(WEEKLY_FILE, weekly);
   }
@@ -205,7 +227,7 @@ function bumpWeekly(weekly, kind, by = 1) {
 
 // After a pass. Returns the events the renderer's reward beat needs plus
 // bonus XP to award. `firstCompletion` comes from progress.recordPass.
-function applyPass(exercise, firstCompletion, exercises, completions, profile, today = localDateString()) {
+function applyPass(exercise, firstCompletion, exercises, completions, profile, today = localDateString(), awardedXp = 0) {
   const reviews = getReviews();
   const daily = ensureDaily(exercises, completions, today);
   const weekly = ensureWeekly(today);
@@ -241,6 +263,10 @@ function applyPass(exercise, firstCompletion, exercises, completions, profile, t
     events.weeklyCompleted = true;
     events.bonusXp += weekly.goals.reduce((sum, g) => sum + (g.bonus_xp || 0), 0);
   }
+
+  if (!weekly.stats) weekly.stats = { reviews_cleared: 0, xp_gained: 0 };
+  if (events.review) weekly.stats.reviews_cleared += 1;
+  weekly.stats.xp_gained += awardedXp + events.bonusXp;
   writeJson(WEEKLY_FILE, weekly);
 
   return events;

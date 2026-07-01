@@ -11,6 +11,8 @@ const { ensureLab, resetLab } = require('../lib/lab');
 const schedule = require('../lib/schedule');
 const { scaffoldDraft } = require('../lib/devlog');
 const { commitProgress } = require('../lib/git');
+const publishLib = require('../lib/publish');
+const digestLib = require('../lib/digest');
 
 function buildState() {
   const { exercises, errors } = content.loadExercises();
@@ -130,7 +132,9 @@ async function onPass(exercise, run, userCode) {
     record.firstCompletion,
     exercises,
     progress.getCompletions(),
-    profile
+    profile,
+    progress.localDateString(),
+    record.awardedXp
   );
   if (events.bonusXp) profile.xp += events.bonusXp;
   if (events.bonusXp || events.dailyCleared) progress.saveProfile(profile);
@@ -182,6 +186,21 @@ ipcMain.handle('lab:reset', (_ev, id) => {
   const { exercise, error } = getUnlockedExercise(id);
   if (error) return { error };
   return { labPath: resetLab(exercise) };
+});
+
+ipcMain.handle('devlogs:list', () => ({
+  drafts: publishLib.listDrafts(),
+  published: publishLib.listPublished(),
+}));
+
+ipcMain.handle('devlogs:publish', (_ev, file) => publishLib.publishDraft(file));
+
+ipcMain.handle('devlogs:digest', () => {
+  const today = progress.localDateString();
+  const weekStart = schedule.mondayOf(today);
+  const weekly = schedule.ensureWeekly(today);
+  const file = digestLib.generateDigest(weekStart, weekly);
+  return { file: require('path').basename(file) };
 });
 
 function createWindow() {

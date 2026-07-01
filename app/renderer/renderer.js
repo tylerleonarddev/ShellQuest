@@ -63,10 +63,49 @@ function renderToday(state) {
   }
 }
 
+async function renderDevlogs() {
+  const { drafts, published } = await window.shellquest.listDevlogs();
+
+  const list = $('devlog-drafts');
+  list.innerHTML = '';
+  for (const d of drafts) {
+    const li = document.createElement('li');
+    li.className = 'devlog-item';
+    const title = document.createElement('span');
+    title.className = 'devlog-title';
+    title.textContent = d.title;
+    const file = document.createElement('span');
+    file.className = 'devlog-file';
+    file.textContent = `drafts/${d.file}`;
+    const btn = document.createElement('button');
+    btn.className = 'btn-ghost btn-small';
+    btn.textContent = '↗ publish';
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      const res = await window.shellquest.publishDevlog(d.file);
+      if (!res.published) btn.textContent = res.error || 'failed';
+      else renderDevlogs();
+    });
+    li.append(title, file, btn);
+    list.appendChild(li);
+  }
+  if (!drafts.length) {
+    const li = document.createElement('li');
+    li.className = 'devlog-empty';
+    li.textContent = 'no drafts waiting — pass something new';
+    list.appendChild(li);
+  }
+
+  $('devlog-published').textContent = published.length
+    ? `${published.length} published · latest: ${published[0].title}`
+    : 'nothing published yet — publishing is always your deliberate act';
+}
+
 async function showDashboard() {
   const state = await window.shellquest.getState();
   renderStats(state);
   renderToday(state);
+  renderDevlogs();
 
   const list = $('kata-list');
   list.innerHTML = '';
@@ -294,6 +333,10 @@ function rewardBeat(res) {
 
 /* ── Wiring ── */
 
+$('btn-digest').addEventListener('click', async () => {
+  await window.shellquest.draftDigest();
+  renderDevlogs();
+});
 $('btn-back').addEventListener('click', showDashboard);
 $('btn-run').addEventListener('click', runCurrent);
 $('btn-verify').addEventListener('click', runCurrent);
