@@ -1,16 +1,28 @@
 {
-  "schedules": {
+  "cards": {
     "sq-01-explore": {
-      "interval_days": 1,
-      "ease": 2.3,
-      "next_review": "2026-07-02",
-      "last_result": "pass"
+      "due": "2026-07-02T19:00:00.000Z",
+      "stability": 0,
+      "difficulty": 0,
+      "elapsed_days": 0,
+      "scheduled_days": 0,
+      "reps": 0,
+      "lapses": 0,
+      "learning_steps": 0,
+      "state": 0,
+      "last_review": null
     },
     "py-say-hello": {
-      "interval_days": 1,
-      "ease": 2.3,
-      "next_review": "2026-07-02",
-      "last_result": "pass"
+      "due": "2026-07-02T19:00:00.000Z",
+      "stability": 0,
+      "difficulty": 0,
+      "elapsed_days": 0,
+      "scheduled_days": 0,
+      "reps": 0,
+      "lapses": 0,
+      "learning_steps": 0,
+      "state": 0,
+      "last_review": null
     }
   }
 }
