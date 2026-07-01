@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
+  <title>ShellQuest</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">shellquest<span class="brand-cursor">▌</span></div>
+    <div class="topbar-stats" id="topbar-stats" hidden>
+      <span class="stat-chip" id="chip-level"></span>
+      <span class="stat-chip" id="chip-xp"></span>
+      <span class="stat-chip" id="chip-streak"></span>
+    </div>
+  </header>
+
+  <!-- Dashboard -->
+  <main id="view-dashboard" class="view">
+    <section class="hud">
+      <div class="hud-tile">
+        <div class="hud-label">Level</div>
+        <div class="hud-value" id="hud-level">–</div>
+        <div class="xp-bar"><div class="xp-bar-fill" id="xp-bar-fill"></div></div>
+        <div class="hud-sub" id="hud-xp-detail">–</div>
+      </div>
+      <div class="hud-tile">
+        <div class="hud-label">Total XP</div>
+        <div class="hud-value" id="hud-xp">–</div>
+        <div class="hud-sub">earned all-time</div>
+      </div>
+      <div class="hud-tile">
+        <div class="hud-label">Streak</div>
+        <div class="hud-value"><span id="hud-streak">–</span><span class="hud-unit"> days</span></div>
+        <div class="hud-sub" id="hud-streak-sub">–</div>
+      </div>
+    </section>
+
+    <section class="kata-section">
+      <h2 class="section-title">// today's katas</h2>
+      <ul class="kata-list" id="kata-list"></ul>
+      <div class="content-errors" id="content-errors" hidden></div>
+    </section>
+  </main>
+
+  <!-- Exercise view -->
+  <main id="view-exercise" class="view" hidden>
+    <div class="exercise-header">
+      <button class="btn-ghost" id="btn-back">← dashboard</button>
+      <div class="exercise-meta">
+        <span class="exercise-xp" id="exercise-xp"></span>
+        <span class="exercise-done-badge" id="exercise-done-badge" hidden>✓ mastered</span>
+      </div>
+    </div>
+    <h1 class="exercise-title" id="exercise-title"></h1>
+    <p class="exercise-prompt" id="exercise-prompt"></p>
+
+    <div class="editor-frame">
+      <div class="editor-frame-bar">
+        <span>solution.py</span>
+        <span id="test-count"></span>
+      </div>
+      <div id="editor-host"></div>
+    </div>
+
+    <div class="run-row">
+      <button class="btn-accent" id="btn-run">▶ Run tests</button>
+      <span class="run-hint">Ctrl+Enter</span>
+    </div>
+
+    <div class="results" id="results" hidden></div>
+  </main>
+
+  <!-- Reward overlay: the one orchestrated beat on pass -->
+  <div class="reward-overlay" id="reward-overlay" hidden>
+    <div class="reward-card">
+      <div class="reward-pass">PASS</div>
+      <div class="reward-xp"><span id="reward-xp-count">+0</span> XP</div>
+      <div class="reward-streak" id="reward-streak"></div>
+      <div class="reward-hint">click to continue</div>
+    </div>
+  </div>
+
+  <script src="editor.bundle.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

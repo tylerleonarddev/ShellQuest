@@ -1,0 +1,19 @@
+{
+  "id": "py-fizzbuzz",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "FizzBuzz list",
+  "xp": 30,
+  "prerequisites": ["py-sum-even"],
+  "review_interval_days": null,
+  "prompt": "Write fizzbuzz(n) that returns a list for 1..n where multiples of 3 are 'Fizz', of 5 are 'Buzz', of both are 'FizzBuzz', otherwise the number itself.",
+  "starter_code": "def fizzbuzz(n):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      { "call": "fizzbuzz(5)", "expect": [1, 2, "Fizz", 4, "Buzz"] },
+      { "call": "fizzbuzz(3)", "expect": [1, 2, "Fizz"] },
+      { "call": "fizzbuzz(15)[-1]", "expect": "FizzBuzz" }
+    ]
+  }
+}

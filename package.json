@@ -1,0 +1,25 @@
+{
+  "name": "shellquest",
+  "version": "0.1.0",
+  "description": "A git-backed learning platform: katas, XP, streaks, and learning in public.",
+  "main": "app/main/main.js",
+  "scripts": {
+    "build:editor": "esbuild app/renderer/editor-entry.js --bundle --format=iife --global-name=SQEditor --outfile=app/renderer/editor.bundle.js",
+    "prestart": "npm run build:editor",
+    "start": "electron ."
+  },
+  "author": "Ty Leonard",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "esbuild": "^0.21.0"
+  },
+  "dependencies": {
+    "@codemirror/commands": "^6.6.0",
+    "@codemirror/lang-python": "^6.1.6",
+    "@codemirror/language": "^6.10.2",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/view": "^6.28.0",
+    "@lezer/highlight": "^1.2.3"
+  }
+}

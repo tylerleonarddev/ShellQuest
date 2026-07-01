@@ -1,0 +1,10 @@
+# Dependencies & build artifacts
+node_modules/
+app/renderer/editor.bundle.js
+
+# Devlog drafts stay private until edited and moved to devlogs/published/
+devlogs/drafts/*
+!devlogs/drafts/.gitkeep
+
+# Machine-local facts are never synced as truth (see ARCHITECTURE.md §5)
+machine-state/
