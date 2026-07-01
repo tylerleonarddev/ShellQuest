@@ -1,0 +1,34 @@
+{
+  "id": "py-binary-search",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Binary search",
+  "xp": 35,
+  "prerequisites": [
+    "py-sum-digits"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write binary_search(sorted_list, target) returning the index of target, or -1 if absent. The list is sorted ascending. This is your first O(log n) algorithm.",
+  "starter_code": "def binary_search(sorted_list, target):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "binary_search([1,3,5,7,9],7)",
+        "expect": 3
+      },
+      {
+        "call": "binary_search([1,3,5,7,9],4)",
+        "expect": -1
+      },
+      {
+        "call": "binary_search([],1)",
+        "expect": -1
+      },
+      {
+        "call": "binary_search([2,4,6,8,10,12],2)",
+        "expect": 0
+      }
+    ]
+  }
+}

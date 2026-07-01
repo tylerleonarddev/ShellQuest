@@ -10,7 +10,16 @@ Every out-of-scope idea gets parked here instead of built. See
 - **v0.2 content trickle** — 5 of 14 classic missions ported
   (explore/make/tree/copy/find). Remaining: move, remove, find+size,
   grep, pipes, redirect, perms, glob, boss. Just data — port anytime.
-- **v0.3** — Scheduler: dailies, weeklies, spaced-repetition pool.
+- ~~**v0.3** — Scheduler: dailies, weeklies, spaced-repetition pool~~
+  *shipped; see `DECISIONS.md` for the failure rule, bonuses, and
+  depth-ordering.*
+- **Streak freeze / skip token** — one earned "shield" day so a single
+  miss doesn't erase a long streak (spec suggested backlogging this).
+- **OS notifications / background reminder** — explicitly deferred by the
+  v0.3 spec; scheduling stays in-app for now.
+- **Tier 5: data structures (Stack/Queue/linked list)** — blocked on
+  extending the python-test runner to accept a multi-step test *script*
+  instead of single-expression calls (per CURRICULUM-python.md).
 - **v0.4** — Weekly digest, snippet queue.
 - **v0.5** — Stats page, packaged binary, migration runbook.
 - **v2** — System-state verification with proper sandboxing.

@@ -1,0 +1,14 @@
+{
+  "date": "2026-07-01",
+  "queue": [
+    "py-count-vowels",
+    "py-reverse-string"
+  ],
+  "kinds": {
+    "py-count-vowels": "new",
+    "py-reverse-string": "new"
+  },
+  "completed": [],
+  "bonus_awarded": false,
+  "bonus_xp": 15
+}

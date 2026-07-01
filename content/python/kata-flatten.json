@@ -1,0 +1,41 @@
+{
+  "id": "py-flatten",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Flatten a nested list",
+  "xp": 25,
+  "prerequisites": [
+    "py-two-sum"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write flatten(nested), a list of lists, returning a single flat list preserving order.",
+  "starter_code": "def flatten(nested):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "flatten([[1,2],[3],[],[4,5,6]])",
+        "expect": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "call": "flatten([])",
+        "expect": []
+      },
+      {
+        "call": "flatten([[1],[2],[3]])",
+        "expect": [
+          1,
+          2,
+          3
+        ]
+      }
+    ]
+  }
+}

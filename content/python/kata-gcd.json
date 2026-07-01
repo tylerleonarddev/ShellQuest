@@ -1,0 +1,34 @@
+{
+  "id": "py-gcd",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Greatest common divisor (Euclid)",
+  "xp": 35,
+  "prerequisites": [
+    "py-binary-search"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write gcd(a, b) returning the greatest common divisor using Euclid's algorithm (recursive or iterative). A 2000-year-old algorithm you'll see again in CS.",
+  "starter_code": "def gcd(a, b):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "gcd(48,18)",
+        "expect": 6
+      },
+      {
+        "call": "gcd(17,5)",
+        "expect": 1
+      },
+      {
+        "call": "gcd(100,10)",
+        "expect": 10
+      },
+      {
+        "call": "gcd(0,7)",
+        "expect": 7
+      }
+    ]
+  }
+}

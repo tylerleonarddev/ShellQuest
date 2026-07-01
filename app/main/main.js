@@ -8,6 +8,7 @@ const { runTests } = require('../lib/verify-python');
 const { runChecks } = require('../lib/verify-artifact');
 const { isUnlocked } = require('../lib/unlock');
 const { ensureLab, resetLab } = require('../lib/lab');
+const schedule = require('../lib/schedule');
 const { scaffoldDraft } = require('../lib/devlog');
 const { commitProgress } = require('../lib/git');
 
@@ -44,6 +45,34 @@ function stateForRenderer() {
     currentLevelStart: progress.xpForLevelStart(level),
     nextLevelAt: progress.xpForNextLevel(level),
   };
+
+  // The scheduler's view of today: the daily queue, weekly goals, and the
+  // streak as it stands (a missed day shows 0 without waiting for a write).
+  const { exercises } = content.loadExercises();
+  const completions = progress.getCompletions();
+  const completedIds = new Set(completions.completions.map((c) => c.exercise_id));
+  const byId = new Map(exercises.map((e) => [e.id, e]));
+  const today = progress.localDateString();
+  const daily = schedule.ensureDaily(exercises, completions, today);
+  const weekly = schedule.ensureWeekly(today);
+
+  state.daily = {
+    date: daily.date,
+    cleared: daily.bonus_awarded,
+    bonusXp: daily.bonus_xp,
+    items: daily.queue
+      .filter((id) => byId.has(id))
+      .map((id) => ({
+        id,
+        title: byId.get(id).title,
+        xp: byId.get(id).xp,
+        type: byId.get(id).type,
+        kind: (daily.kinds && daily.kinds[id]) || (completedIds.has(id) ? 'review' : 'new'),
+        done: daily.completed.includes(id),
+      })),
+  };
+  state.weekly = weekly;
+  state.profile.streak_days = schedule.effectiveStreak(state.profile, today);
   return state;
 }
 
@@ -87,24 +116,44 @@ ipcMain.handle('exercise:get', (_ev, id) => {
   };
 });
 
-// The on-pass sequence: progress -> devlog draft -> scoped git commit.
-// Shared by every verification runner.
+// The on-pass sequence: progress -> scheduler -> devlog draft -> scoped
+// git commit. Shared by every verification runner.
 async function onPass(exercise, run, userCode) {
   const record = progress.recordPass(exercise);
+
+  // Scheduler hooks: schedule the review, tick the daily/weekly, and
+  // collect any bonus XP + streak movement.
+  const { exercises } = content.loadExercises();
+  const profile = progress.getProfile();
+  const events = schedule.applyPass(
+    exercise,
+    record.firstCompletion,
+    exercises,
+    progress.getCompletions(),
+    profile
+  );
+  if (events.bonusXp) profile.xp += events.bonusXp;
+  if (events.bonusXp || events.dailyCleared) progress.saveProfile(profile);
+
   let devlogFile = null;
   let commit = { committed: false };
+  let message = record.firstCompletion
+    ? `Complete ${exercise.title} (+${record.awardedXp} XP)`
+    : `Practice ${exercise.title}`;
+  if (events.dailyCleared) message += ' · daily cleared';
+  if (events.weeklyCompleted) message += ' · weekly goal met';
+  if (events.bonusXp) message += ` (+${events.bonusXp} bonus XP)`;
 
   if (record.firstCompletion) {
     devlogFile = scaffoldDraft(exercise, userCode, run.results, record.awardedXp);
-    commit = await commitProgress(`Complete ${exercise.title} (+${record.awardedXp} XP)`);
-  } else if (record.changed) {
-    commit = await commitProgress(`Practice ${exercise.title}`);
   }
+  commit = await commitProgress(message);
 
   return {
     ...run,
     awardedXp: record.awardedXp,
     firstCompletion: record.firstCompletion,
+    events,
     devlogFile,
     commit,
     state: stateForRenderer(),
@@ -116,7 +165,7 @@ ipcMain.handle('kata:run', async (_ev, { id, code }) => {
   if (error) return { passed: false, error };
 
   const run = await runTests(exercise, code);
-  if (!run.passed) return run;
+  if (!run.passed) return { ...run, ...schedule.applyFailure(exercise) };
   return onPass(exercise, run, code);
 });
 
@@ -125,7 +174,7 @@ ipcMain.handle('challenge:run', async (_ev, { id, flag }) => {
   if (error) return { passed: false, error };
 
   const run = await runChecks(exercise, { flag });
-  if (!run.passed) return run;
+  if (!run.passed) return { ...run, ...schedule.applyFailure(exercise) };
   return onPass(exercise, run, null);
 });
 

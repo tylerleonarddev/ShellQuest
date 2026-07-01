@@ -1,0 +1,34 @@
+{
+  "id": "py-fibonacci",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Fibonacci (iterative)",
+  "xp": 25,
+  "prerequisites": [
+    "py-word-count"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write fibonacci(n) returning the nth Fibonacci number, 0-indexed: fibonacci(0)=0, fibonacci(1)=1.",
+  "starter_code": "def fibonacci(n):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "fibonacci(0)",
+        "expect": 0
+      },
+      {
+        "call": "fibonacci(1)",
+        "expect": 1
+      },
+      {
+        "call": "fibonacci(10)",
+        "expect": 55
+      },
+      {
+        "call": "fibonacci(15)",
+        "expect": 610
+      }
+    ]
+  }
+}

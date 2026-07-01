@@ -1,0 +1,31 @@
+{
+  "id": "py-factorial-rec",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Factorial (recursive)",
+  "xp": 30,
+  "prerequisites": [
+    "py-factorial-iter",
+    "py-fibonacci"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write factorial_rec(n) returning n! using recursion (the function calls itself). Base case: factorial_rec(0) is 1.",
+  "starter_code": "def factorial_rec(n):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "factorial_rec(5)",
+        "expect": 120
+      },
+      {
+        "call": "factorial_rec(0)",
+        "expect": 1
+      },
+      {
+        "call": "factorial_rec(6)",
+        "expect": 720
+      }
+    ]
+  }
+}

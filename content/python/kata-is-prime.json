@@ -1,0 +1,38 @@
+{
+  "id": "py-is-prime",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Prime check",
+  "xp": 30,
+  "prerequisites": [
+    "py-binary-search"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write is_prime(n) returning True if n is prime. 0 and 1 are not prime. Bonus: only test divisors up to sqrt(n).",
+  "starter_code": "def is_prime(n):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "is_prime(7)",
+        "expect": true
+      },
+      {
+        "call": "is_prime(1)",
+        "expect": false
+      },
+      {
+        "call": "is_prime(2)",
+        "expect": true
+      },
+      {
+        "call": "is_prime(9)",
+        "expect": false
+      },
+      {
+        "call": "is_prime(97)",
+        "expect": true
+      }
+    ]
+  }
+}

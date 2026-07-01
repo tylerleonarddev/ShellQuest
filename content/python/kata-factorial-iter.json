@@ -1,0 +1,34 @@
+{
+  "id": "py-factorial-iter",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Factorial (iterative)",
+  "xp": 20,
+  "prerequisites": [
+    "py-is-palindrome"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write factorial_iter(n) returning n! using a loop. factorial_iter(0) is 1.",
+  "starter_code": "def factorial_iter(n):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "factorial_iter(5)",
+        "expect": 120
+      },
+      {
+        "call": "factorial_iter(0)",
+        "expect": 1
+      },
+      {
+        "call": "factorial_iter(1)",
+        "expect": 1
+      },
+      {
+        "call": "factorial_iter(6)",
+        "expect": 720
+      }
+    ]
+  }
+}

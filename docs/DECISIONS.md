@@ -27,6 +27,33 @@ flags).
 `expect_sha256` for command-output; both are `expected_sha256` in the
 implementation.
 
+## v0.3
+
+**"Failing a review" defined.** A failed run of a *due* exercise hits its
+schedule immediately (interval → 1, ease −0.2); passing later the same day
+counts as a review pass from the reduced interval. Failures on unscheduled
+or not-yet-due exercises never touch schedules — practice is free.
+
+**Bonus amounts (unspecified in the spec, all data-tunable):** +15 XP for
+clearing the daily (`daily.json: bonus_xp`); weekly goals carry their own
+`bonus_xp` (60 for 5/7 days, 40 for 3 new exercises), awarded as a lump
+when every goal hits its target.
+
+**"Next" new content = prerequisite-depth order,** then id. Alphabetical
+would serve Binary search before Reverse a string.
+
+**Streak with no daemon.** Missed days are detected lazily: the dashboard
+shows `effectiveStreak()` (0 if the last clear is older than yesterday),
+and the write happens on the next clear. Queue item kinds (review/new) are
+frozen into `daily.json` at generation so a new item passed today doesn't
+relabel itself.
+
+**Migration backfill.** Completions that predate the scheduler get a
+schedule due immediately — existing wins enter the review pool instead of
+vanishing.
+
+## v0.2 (cont.)
+
 **Gating enforced in the main process,** not just hidden in the UI — a
 locked exercise cannot be opened or run via IPC regardless of renderer
 state.

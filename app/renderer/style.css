@@ -98,6 +98,66 @@ body {
   transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* ── Today panel: the centerpiece ── */
+.today-section {
+  background: var(--surface);
+  border: 1px solid var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 20px 22px;
+  margin-bottom: 40px;
+}
+.today-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.today-progress { font-size: 14px; color: var(--accent); font-weight: 700; }
+.today-list { list-style: none; margin: 10px 0 12px; }
+.today-item {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.today-item:hover { background: var(--accent-dim); }
+.today-item.done { cursor: default; opacity: 0.55; }
+.today-item.done:hover { background: none; }
+.today-item.done .today-title { text-decoration: line-through; }
+.today-mark { color: var(--accent); font-weight: 700; width: 14px; }
+.today-title { flex: 1; font-weight: 600; }
+.today-kind {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 2px 8px;
+  color: var(--muted);
+}
+.today-kind.review { color: var(--accent); border-color: var(--accent-dim); }
+.today-status { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+
+.goal-row { display: flex; align-items: center; gap: 14px; margin-top: 7px; }
+.goal-label { font-size: 12px; color: var(--muted); min-width: 150px; }
+.goal-bar {
+  flex: 1;
+  height: 5px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.goal-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* ── Kata list ── */
 .section-title {
   font-size: 12px;
@@ -303,6 +363,14 @@ body {
   animation: reward-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .reward-xp span { color: var(--accent); }
+.reward-daily {
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+  animation: reward-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
 .reward-streak { margin-top: 12px; color: var(--muted); font-size: 14px; }
 .reward-hint { margin-top: 36px; color: var(--faint); font-size: 11px; letter-spacing: 0.1em; }
 @keyframes reward-rise {

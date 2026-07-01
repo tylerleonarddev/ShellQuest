@@ -1,0 +1,32 @@
+{
+  "id": "py-reverse-string",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Reverse a string",
+  "xp": 20,
+  "prerequisites": [],
+  "review_interval_days": null,
+  "prompt": "Write reverse_string(s) that returns s reversed. Do it without slicing tricks if you can, but any correct approach passes.",
+  "starter_code": "def reverse_string(s):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "reverse_string('hello')",
+        "expect": "olleh"
+      },
+      {
+        "call": "reverse_string('')",
+        "expect": ""
+      },
+      {
+        "call": "reverse_string('a')",
+        "expect": "a"
+      },
+      {
+        "call": "reverse_string('SIGINT')",
+        "expect": "TNIGIS"
+      }
+    ]
+  }
+}

@@ -2,7 +2,13 @@
 const fs = require('fs');
 const { PROFILE_FILE, COMPLETIONS_FILE } = require('./paths');
 
-const DEFAULT_PROFILE = { xp: 0, level: 1, streak_days: 0, last_active_date: null };
+const DEFAULT_PROFILE = {
+  xp: 0,
+  level: 1,
+  streak_days: 0,
+  last_active_date: null,
+  last_cleared_date: null,
+};
 
 function readJson(file, fallback) {
   try {
@@ -51,14 +57,9 @@ function localDateString(d = new Date()) {
   return `${y}-${m}-${day}`;
 }
 
-function isYesterday(dateStr, todayStr) {
-  const today = new Date(`${todayStr}T12:00:00`);
-  today.setDate(today.getDate() - 1);
-  return localDateString(today) === dateStr;
-}
-
 // Record a passing run. First pass awards XP and appends a completion;
-// re-practice awards 0 but still counts as activity for the streak.
+// re-practice awards 0. Since v0.3 the streak belongs to the scheduler
+// (consecutive days the daily was cleared), not to individual passes.
 function recordPass(exercise) {
   const profile = getProfile();
   const completions = getCompletions();
@@ -70,13 +71,7 @@ function recordPass(exercise) {
 
   profile.xp += awardedXp;
   profile.level = levelForXp(profile.xp);
-  if (profile.last_active_date !== today) {
-    profile.streak_days =
-      profile.last_active_date && isYesterday(profile.last_active_date, today)
-        ? profile.streak_days + 1
-        : 1;
-    profile.last_active_date = today;
-  }
+  profile.last_active_date = today;
 
   const profileChanged = JSON.stringify(profile) !== before;
   if (profileChanged) writeJson(PROFILE_FILE, profile);
@@ -93,6 +88,14 @@ function recordPass(exercise) {
   return { profile, awardedXp, firstCompletion: !already, changed: profileChanged || !already };
 }
 
+// Scheduler bonuses (daily clear, weekly goal) and streak updates arrive
+// as an already-mutated profile copy — persist it and re-derive level.
+function saveProfile(profile) {
+  profile.level = levelForXp(profile.xp);
+  writeJson(PROFILE_FILE, profile);
+  return profile;
+}
+
 function ensureFiles() {
   if (!fs.existsSync(PROFILE_FILE)) writeJson(PROFILE_FILE, DEFAULT_PROFILE);
   if (!fs.existsSync(COMPLETIONS_FILE)) writeJson(COMPLETIONS_FILE, { completions: [] });
@@ -103,6 +106,7 @@ module.exports = {
   getCompletions,
   isCompleted,
   recordPass,
+  saveProfile,
   ensureFiles,
   levelForXp,
   xpForNextLevel,

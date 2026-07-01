@@ -1,0 +1,39 @@
+{
+  "id": "py-two-sum",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Two Sum",
+  "xp": 30,
+  "prerequisites": [
+    "py-word-count"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write two_sum(nums, target) returning the two indices [i, j] with i<j whose values add to target. Assume exactly one solution exists.",
+  "starter_code": "def two_sum(nums, target):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "two_sum([2,7,11,15],9)",
+        "expect": [
+          0,
+          1
+        ]
+      },
+      {
+        "call": "two_sum([3,2,4],6)",
+        "expect": [
+          1,
+          2
+        ]
+      },
+      {
+        "call": "two_sum([3,3],6)",
+        "expect": [
+          0,
+          1
+        ]
+      }
+    ]
+  }
+}

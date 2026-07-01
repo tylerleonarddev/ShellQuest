@@ -9,9 +9,64 @@ let currentExercise = null;
 
 /* ── Dashboard ── */
 
+const GOAL_LABELS = {
+  clear_daily_days: 'days cleared',
+  new_exercises: 'new exercises',
+};
+
+function renderToday(state) {
+  const daily = state.daily;
+  const doneCount = daily.items.filter((i) => i.done).length;
+  $('today-progress').textContent = `${doneCount} / ${daily.items.length}`;
+
+  const list = $('today-list');
+  list.innerHTML = '';
+  for (const item of daily.items) {
+    const li = document.createElement('li');
+    li.className = 'today-item' + (item.done ? ' done' : '');
+    const mark = document.createElement('span');
+    mark.className = 'today-mark';
+    mark.textContent = item.done ? '✓' : '○';
+    const title = document.createElement('span');
+    title.className = 'today-title';
+    title.textContent = item.title;
+    const kind = document.createElement('span');
+    kind.className = `today-kind ${item.kind}`;
+    kind.textContent = item.kind;
+    li.append(mark, title, kind);
+    if (!item.done) li.addEventListener('click', () => openExercise(item.id));
+    list.appendChild(li);
+  }
+
+  $('today-status').textContent = daily.cleared
+    ? `daily cleared ✓ streak safe at ${state.profile.streak_days}`
+    : daily.items.length
+      ? `clear all ${daily.items.length} to keep the streak (+${daily.bonusXp} XP)`
+      : 'nothing due — the ladder awaits';
+
+  const goals = $('weekly-goals');
+  goals.innerHTML = '';
+  for (const g of state.weekly.goals) {
+    const row = document.createElement('div');
+    row.className = 'goal-row';
+    const label = document.createElement('span');
+    label.className = 'goal-label';
+    label.textContent = `${GOAL_LABELS[g.kind] || g.kind} ${Math.min(g.progress, g.target)}/${g.target}`;
+    const bar = document.createElement('div');
+    bar.className = 'goal-bar';
+    const fill = document.createElement('div');
+    fill.className = 'goal-bar-fill';
+    fill.style.width = `${Math.min(100, Math.round((g.progress / g.target) * 100))}%`;
+    bar.appendChild(fill);
+    row.append(label, bar);
+    goals.appendChild(row);
+  }
+}
+
 async function showDashboard() {
   const state = await window.shellquest.getState();
   renderStats(state);
+  renderToday(state);
 
   const list = $('kata-list');
   list.innerHTML = '';
@@ -63,9 +118,9 @@ function renderStats(state) {
   $('hud-level').textContent = p.level;
   $('hud-xp').textContent = p.xp;
   $('hud-streak').textContent = p.streak_days;
-  $('hud-streak-sub').textContent = p.last_active_date
-    ? `last active ${p.last_active_date}`
-    : 'pass a kata to start one';
+  $('hud-streak-sub').textContent = p.last_cleared_date
+    ? `last cleared ${p.last_cleared_date}`
+    : 'clear the daily to start one';
 
   const { currentLevelStart, nextLevelAt } = state.levelCurve;
   const span = nextLevelAt - currentLevelStart;
@@ -158,6 +213,13 @@ function renderResults(res) {
     return;
   }
 
+  if (res.reviewFailed) {
+    const note = document.createElement('div');
+    note.className = 'result-line fail';
+    note.textContent = '↩ review missed — this one comes back tomorrow';
+    box.appendChild(note);
+  }
+
   for (const r of res.results) {
     const line = document.createElement('div');
     line.className = 'result-line ' + (r.passed ? 'pass' : 'fail');
@@ -187,12 +249,25 @@ function rewardBeat(res) {
   const overlay = $('reward-overlay');
   const counter = $('reward-xp-count');
   const streakLine = $('reward-streak');
+  const dailyLine = $('reward-daily');
 
-  const xp = res.awardedXp || 0;
+  const events = res.events || {};
+  const xp = (res.awardedXp || 0) + (events.bonusXp || 0);
   const streak = res.state.profile.streak_days;
-  streakLine.textContent = res.firstCompletion
-    ? `streak: ${streak} day${streak === 1 ? '' : 's'}`
-    : 'already mastered — practice reps still count';
+
+  dailyLine.hidden = !(events.dailyCleared || events.weeklyCompleted);
+  dailyLine.textContent = [
+    events.dailyCleared ? 'DAILY CLEARED' : '',
+    events.weeklyCompleted ? 'WEEKLY GOAL MET' : '',
+  ].filter(Boolean).join(' · ');
+
+  streakLine.textContent = events.dailyCleared
+    ? `streak: ${streak} day${streak === 1 ? '' : 's'} 🔥`
+    : res.firstCompletion
+      ? `streak: ${streak} day${streak === 1 ? '' : 's'}`
+      : events.review
+        ? 'review passed — interval extended'
+        : 'already mastered — practice reps still count';
 
   overlay.hidden = false;
   const t0 = performance.now();

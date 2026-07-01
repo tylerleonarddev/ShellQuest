@@ -1,0 +1,36 @@
+{
+  "id": "py-word-count",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Word frequency",
+  "xp": 25,
+  "prerequisites": [
+    "py-factorial-iter"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write word_count(sentence) returning a dict mapping each space-separated word to how many times it appears.",
+  "starter_code": "def word_count(sentence):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "word_count('the cat the dog')",
+        "expect": {
+          "the": 2,
+          "cat": 1,
+          "dog": 1
+        }
+      },
+      {
+        "call": "word_count('')",
+        "expect": {}
+      },
+      {
+        "call": "word_count('a a a')",
+        "expect": {
+          "a": 3
+        }
+      }
+    ]
+  }
+}

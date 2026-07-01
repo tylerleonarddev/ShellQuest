@@ -1,0 +1,46 @@
+{
+  "id": "py-bubble-sort",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Bubble sort",
+  "xp": 40,
+  "prerequisites": [
+    "py-is-prime"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write bubble_sort(nums) returning a new sorted list WITHOUT using sorted() or .sort(). This is your first O(n^2) sort \u2014 feel why it's slow.",
+  "starter_code": "def bubble_sort(nums):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "bubble_sort([5,2,8,1,9])",
+        "expect": [
+          1,
+          2,
+          5,
+          8,
+          9
+        ]
+      },
+      {
+        "call": "bubble_sort([])",
+        "expect": []
+      },
+      {
+        "call": "bubble_sort([3,3,1])",
+        "expect": [
+          1,
+          3,
+          3
+        ]
+      },
+      {
+        "call": "bubble_sort([1])",
+        "expect": [
+          1
+        ]
+      }
+    ]
+  }
+}

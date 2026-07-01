@@ -1,0 +1,30 @@
+{
+  "id": "py-is-anagram",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Anagram check",
+  "xp": 25,
+  "prerequisites": [
+    "py-two-sum"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write is_anagram(a, b) returning True if a and b are anagrams, ignoring case and spaces.",
+  "starter_code": "def is_anagram(a, b):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "is_anagram('listen','silent')",
+        "expect": true
+      },
+      {
+        "call": "is_anagram('hello','world')",
+        "expect": false
+      },
+      {
+        "call": "is_anagram('Dormitory','Dirty Room')",
+        "expect": true
+      }
+    ]
+  }
+}

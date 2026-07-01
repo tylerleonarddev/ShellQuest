@@ -1,0 +1,18 @@
+{
+  "week_start": "2026-06-29",
+  "goals": [
+    {
+      "kind": "clear_daily_days",
+      "target": 5,
+      "bonus_xp": 60,
+      "progress": 0
+    },
+    {
+      "kind": "new_exercises",
+      "target": 3,
+      "bonus_xp": 40,
+      "progress": 0
+    }
+  ],
+  "bonus_awarded": false
+}

@@ -1,0 +1,34 @@
+{
+  "id": "py-is-palindrome",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Palindrome check",
+  "xp": 20,
+  "prerequisites": [
+    "py-max-of-list"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write is_palindrome(s) returning True if s reads the same forwards and backwards, ignoring case and spaces.",
+  "starter_code": "def is_palindrome(s):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "is_palindrome('racecar')",
+        "expect": true
+      },
+      {
+        "call": "is_palindrome('Race Car')",
+        "expect": true
+      },
+      {
+        "call": "is_palindrome('hello')",
+        "expect": false
+      },
+      {
+        "call": "is_palindrome('Was it a car or a cat I saw')",
+        "expect": true
+      }
+    ]
+  }
+}
