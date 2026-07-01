@@ -24,5 +24,8 @@ publishDraft(matches[0].file).then((res) => {
     console.error(res.error);
     process.exit(1);
   }
-  console.log(`published: ${res.file}${res.commit.committed ? ' (committed)' : ` (commit failed: ${res.commit.error})`}`);
+  const pushMsg = res.push.pushed
+    ? 'pushed ✓ it is public'
+    : `push failed — ${res.push.reason} (committed locally; retry with git push)`;
+  console.log(`published: ${res.file} · ${res.commit.committed ? 'committed' : `commit failed: ${res.commit.error}`} · ${pushMsg}`);
 });

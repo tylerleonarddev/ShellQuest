@@ -217,6 +217,14 @@ ipcMain.handle('devlogs:list', () => ({
 
 ipcMain.handle('devlogs:publish', (_ev, file) => publishLib.publishDraft(file));
 
+ipcMain.handle('devlogs:read', (_ev, file) => publishLib.readDraft(file));
+
+ipcMain.handle('devlogs:save-reflection', (_ev, { file, text }) =>
+  publishLib.saveReflection(file, text)
+);
+
+ipcMain.handle('git:push', () => require('../lib/git').push());
+
 ipcMain.handle('devlogs:digest', () => {
   const today = progress.localDateString();
   const weekStart = schedule.mondayOf(today);

@@ -11,5 +11,8 @@ contextBridge.exposeInMainWorld('shellquest', {
   getGlossary: () => ipcRenderer.invoke('glossary:get'),
   listDevlogs: () => ipcRenderer.invoke('devlogs:list'),
   publishDevlog: (file) => ipcRenderer.invoke('devlogs:publish', file),
+  readDevlog: (file) => ipcRenderer.invoke('devlogs:read', file),
+  saveReflection: (file, text) => ipcRenderer.invoke('devlogs:save-reflection', { file, text }),
+  gitPush: () => ipcRenderer.invoke('git:push'),
   draftDigest: () => ipcRenderer.invoke('devlogs:digest'),
 });

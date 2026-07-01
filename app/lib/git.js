@@ -31,4 +31,26 @@ function commitProgress(message) {
   return commitPaths(['progress'], message);
 }
 
-module.exports = { commitProgress, commitPaths };
+// Push with an honest, human-readable outcome — the UI repeats this
+// verbatim, so "why" matters more than the raw git error.
+async function push() {
+  try {
+    await git(['push']);
+    return { pushed: true };
+  } catch (err) {
+    const msg = err.message || '';
+    let reason = msg.split('\n')[0] || 'unknown error';
+    if (/no configured push destination|does not appear to be a git repository/i.test(msg)) {
+      reason = 'no remote configured';
+    } else if (/could not resolve host|unable to access|network is unreachable|connection (refused|timed out)/i.test(msg)) {
+      reason = 'no internet connection';
+    } else if (/permission denied|publickey|authentication failed/i.test(msg)) {
+      reason = 'authentication failed — check the SSH key';
+    } else if (/rejected|non-fast-forward|fetch first/i.test(msg)) {
+      reason = 'remote has newer commits — pull first';
+    }
+    return { pushed: false, reason };
+  }
+}
+
+module.exports = { commitProgress, commitPaths, push };

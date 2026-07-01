@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const { DRAFTS_DIR } = require('./paths');
-const { commitPaths } = require('./git');
+const { commitPaths, push } = require('./git');
 
 const PUBLISHED_DIR = path.join(DRAFTS_DIR, '..', 'published');
 
@@ -36,7 +36,8 @@ function listPublished() {
 }
 
 // The deliberate act: drafts are private (gitignored); moving one to
-// published/ is what puts it into git history — one step, one commit.
+// published/ puts it into git history AND pushes it (v0.6) — one action,
+// with the real outcome reported, never a silent failure.
 async function publishDraft(filename) {
   const base = path.basename(filename); // no traversal
   const from = path.join(DRAFTS_DIR, base);
@@ -53,7 +54,55 @@ async function publishDraft(filename) {
     ['devlogs/published/' + base],
     `Publish devlog: ${titleOf(to)}`
   );
-  return { published: true, file: base, commit };
+  const pushResult = commit.committed
+    ? await push()
+    : { pushed: false, reason: commit.error || 'commit failed' };
+  return { published: true, file: base, commit, push: pushResult };
 }
 
-module.exports = { listDrafts, listPublished, publishDraft, titleOf, PUBLISHED_DIR };
+/* ── In-app reflection editing (v0.6) ── */
+
+const REFLECTION_HEADING = /^## Reflection\s*$/m;
+
+function draftPath(filename) {
+  const base = path.basename(filename);
+  const full = path.join(DRAFTS_DIR, base);
+  return base.endsWith('.md') && fs.existsSync(full) ? full : null;
+}
+
+// Split a draft into everything-above-the-reflection and the reflection
+// text itself (with the scaffold's placeholder comment stripped).
+function readDraft(filename) {
+  const full = draftPath(filename);
+  if (!full) return { error: `No such draft: ${path.basename(filename)}` };
+  const content = fs.readFileSync(full, 'utf8');
+  const m = content.match(REFLECTION_HEADING);
+  if (!m) return { file: path.basename(full), head: content, reflection: '' };
+  const head = content.slice(0, m.index);
+  const reflection = content
+    .slice(m.index + m[0].length)
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .trim();
+  return { file: path.basename(full), head: head.trimEnd(), reflection };
+}
+
+function saveReflection(filename, text) {
+  const full = draftPath(filename);
+  if (!full) return { saved: false, error: `No such draft: ${path.basename(filename)}` };
+  const draft = readDraft(filename);
+  const reflection = text.trim()
+    ? text.trim()
+    : '<!-- One honest paragraph: what tripped you up, or what clicked? -->';
+  fs.writeFileSync(full, `${draft.head}\n\n## Reflection\n\n${reflection}\n`);
+  return { saved: true };
+}
+
+module.exports = {
+  listDrafts,
+  listPublished,
+  publishDraft,
+  readDraft,
+  saveReflection,
+  titleOf,
+  PUBLISHED_DIR,
+};

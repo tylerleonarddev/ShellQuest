@@ -63,6 +63,77 @@ function renderToday(state) {
   }
 }
 
+let expandedDraft = null;
+
+// Build the expandable editor under a draft row: preview, reflection
+// textarea, Save, and one Publish button that also pushes and reports
+// the real outcome.
+async function buildDraftEditor(file) {
+  const draft = await window.shellquest.readDevlog(file);
+  const box = document.createElement('div');
+  box.className = 'devlog-editor';
+  if (draft.error) {
+    box.textContent = draft.error;
+    return box;
+  }
+
+  const preview = document.createElement('pre');
+  preview.className = 'devlog-preview';
+  preview.textContent = draft.head;
+
+  const label = document.createElement('div');
+  label.className = 'devlog-editor-label';
+  label.textContent = '## Reflection — yours to write:';
+
+  const ta = document.createElement('textarea');
+  ta.className = 'devlog-reflection';
+  ta.rows = 3;
+  ta.placeholder = 'One honest sentence: what tripped you up, or what clicked?';
+  ta.value = draft.reflection;
+
+  const row = document.createElement('div');
+  row.className = 'run-row';
+  const save = document.createElement('button');
+  save.className = 'btn-ghost btn-small';
+  save.textContent = '💾 save draft';
+  const pub = document.createElement('button');
+  pub.className = 'btn-accent btn-small-accent';
+  pub.textContent = '↗ publish & push';
+  const status = document.createElement('span');
+  status.className = 'devlog-status';
+
+  save.addEventListener('click', async () => {
+    const res = await window.shellquest.saveReflection(file, ta.value);
+    status.textContent = res.saved ? 'saved ✓' : res.error;
+  });
+
+  pub.addEventListener('click', async () => {
+    pub.disabled = true;
+    status.textContent = '… publishing';
+    const saved = await window.shellquest.saveReflection(file, ta.value);
+    if (!saved.saved) {
+      status.textContent = saved.error;
+      pub.disabled = false;
+      return;
+    }
+    const res = await window.shellquest.publishDevlog(file);
+    if (!res.published) {
+      status.textContent = res.error || 'publish failed';
+      pub.disabled = false;
+    } else if (res.push.pushed) {
+      status.textContent = 'published & pushed ✓ it’s public';
+      setTimeout(renderDevlogs, 1200);
+    } else {
+      status.textContent = `committed locally, but push failed — ${res.push.reason}. Retry below.`;
+      setTimeout(renderDevlogs, 2500);
+    }
+  });
+
+  row.append(save, pub, status);
+  box.append(preview, label, ta, row);
+  return box;
+}
+
 async function renderDevlogs() {
   const { drafts, published } = await window.shellquest.listDevlogs();
 
@@ -71,6 +142,8 @@ async function renderDevlogs() {
   for (const d of drafts) {
     const li = document.createElement('li');
     li.className = 'devlog-item';
+    const head = document.createElement('div');
+    head.className = 'devlog-item-head';
     const title = document.createElement('span');
     title.className = 'devlog-title';
     title.textContent = d.title;
@@ -79,14 +152,16 @@ async function renderDevlogs() {
     file.textContent = `drafts/${d.file}`;
     const btn = document.createElement('button');
     btn.className = 'btn-ghost btn-small';
-    btn.textContent = '↗ publish';
-    btn.addEventListener('click', async () => {
-      btn.disabled = true;
-      const res = await window.shellquest.publishDevlog(d.file);
-      if (!res.published) btn.textContent = res.error || 'failed';
-      else renderDevlogs();
+    btn.textContent = expandedDraft === d.file ? '▾ close' : '✎ edit & publish';
+    btn.addEventListener('click', () => {
+      expandedDraft = expandedDraft === d.file ? null : d.file;
+      renderDevlogs();
     });
-    li.append(title, file, btn);
+    head.append(title, file, btn);
+    li.appendChild(head);
+    if (expandedDraft === d.file) {
+      li.appendChild(await buildDraftEditor(d.file));
+    }
     list.appendChild(li);
   }
   if (!drafts.length) {
@@ -96,9 +171,29 @@ async function renderDevlogs() {
     list.appendChild(li);
   }
 
-  $('devlog-published').textContent = published.length
+  const pubBox = $('devlog-published');
+  pubBox.innerHTML = '';
+  const pubText = document.createElement('span');
+  pubText.textContent = published.length
     ? `${published.length} published · latest: ${published[0].title}`
     : 'nothing published yet — publishing is always your deliberate act';
+  pubBox.appendChild(pubText);
+
+  // Unpushed commits (e.g. a publish that failed offline) get a retry.
+  const retry = document.createElement('button');
+  retry.className = 'btn-ghost btn-small';
+  retry.textContent = '⇡ push now';
+  retry.title = 'push any local commits to GitHub';
+  retry.addEventListener('click', async () => {
+    retry.disabled = true;
+    const res = await window.shellquest.gitPush();
+    retry.textContent = res.pushed ? 'pushed ✓' : `push failed — ${res.reason}`;
+    setTimeout(() => {
+      retry.textContent = '⇡ push now';
+      retry.disabled = false;
+    }, 3000);
+  });
+  pubBox.appendChild(retry);
 }
 
 async function showDashboard() {

@@ -1,11 +1,16 @@
 'use strict';
-// The game brain (v0.3): SM-2-lite spaced repetition, the daily queue,
-// clear-the-daily streaks, and weekly goals. Interval/queue/streak math
-// lives in pure functions up top; file orchestration below.
+// The game brain: FSRS spaced repetition (v0.6, via ts-fsrs), the daily
+// queue, clear-the-daily streaks, and weekly goals. Queue/streak math
+// lives in pure functions; file orchestration below.
 const fs = require('fs');
 const path = require('path');
+const { createEmptyCard, fsrs, Rating } = require('ts-fsrs');
 const { PROGRESS_DIR } = require('./paths');
 const { isUnlocked } = require('./unlock');
+
+// Long-term (daily-granularity) scheduling only: with short-term steps on,
+// a freshly passed exercise comes "due" 10 minutes later, same day.
+const SCHEDULER = fsrs({ request_retention: 0.9, enable_short_term: false });
 
 const REVIEWS_FILE = path.join(PROGRESS_DIR, 'reviews.json');
 const DAILY_FILE = path.join(PROGRESS_DIR, 'daily.json');
@@ -40,34 +45,43 @@ function mondayOf(dateStr) {
   return localDateString(d);
 }
 
-/* ── Pure scheduling math (SM-2-lite) ── */
+/* ── FSRS card handling ── */
 
-// prev=null means first completion. Returns the new schedule record.
-function nextSchedule(prev, result, today, reviewIntervalDays) {
-  if (!prev) {
-    const interval = reviewIntervalDays || 1;
-    return {
-      interval_days: interval,
-      ease: 2.3,
-      next_review: addDays(today, interval),
-      last_result: 'pass',
-    };
-  }
-  if (result === 'pass') {
-    const interval = Math.max(1, Math.round(prev.interval_days * prev.ease));
-    return {
-      interval_days: interval,
-      ease: Math.min(3.0, prev.ease + 0.1),
-      next_review: addDays(today, interval),
-      last_result: 'pass',
-    };
-  }
+// Cards persist as JSON (ISO date strings); ts-fsrs wants Date objects.
+function rehydrateCard(stored) {
   return {
-    interval_days: 1,
-    ease: Math.max(1.3, prev.ease - 0.2),
-    next_review: addDays(today, 1),
-    last_result: 'fail',
+    ...stored,
+    due: new Date(stored.due),
+    last_review: stored.last_review ? new Date(stored.last_review) : undefined,
   };
+}
+
+function serializeCard(card, extra = {}) {
+  return {
+    ...card,
+    due: card.due.toISOString(),
+    last_review: card.last_review ? card.last_review.toISOString() : null,
+    ...extra,
+  };
+}
+
+// The local calendar day this card becomes due — daily-queue granularity.
+function cardDueDay(stored) {
+  return localDateString(new Date(stored.due));
+}
+
+// Rate a card: pass -> Good, fail -> Again (binary tests; see v0.6 spec).
+function rateCard(stored, rating, when = new Date()) {
+  const card = stored ? rehydrateCard(stored) : createEmptyCard(when);
+  return SCHEDULER.next(card, when, rating).card;
+}
+
+// A card whose due date is preserved from pre-FSRS data: fresh memory
+// state, inherited schedule. Self-corrects within a couple of reviews.
+function freshCardDue(dueDay, when = new Date()) {
+  const card = createEmptyCard(when);
+  card.due = new Date(`${dueDay}T12:00:00`);
+  return card;
 }
 
 // Curriculum order = prerequisite depth, then id. Alphabetical order would
@@ -81,13 +95,13 @@ function ladderDepth(exercise, byId, seen = new Set()) {
 }
 
 // Due reviews first (most overdue first), then the next new rungs.
-function generateDailyQueue(exercises, completions, schedules, today) {
+function generateDailyQueue(exercises, completions, cards, today) {
   const byId = Object.fromEntries(exercises.map((e) => [e.id, e]));
   const completedIds = new Set(completions.completions.map((c) => c.exercise_id));
 
-  const due = Object.entries(schedules)
-    .filter(([id, s]) => byId[id] && s.next_review <= today)
-    .sort((a, b) => a[1].next_review.localeCompare(b[1].next_review) || a[0].localeCompare(b[0]))
+  const due = Object.entries(cards)
+    .filter(([id, c]) => byId[id] && cardDueDay(c) <= today)
+    .sort((a, b) => a[1].due.localeCompare(b[1].due) || a[0].localeCompare(b[0]))
     .map(([id]) => id);
 
   const newRung = exercises
@@ -133,8 +147,22 @@ function writeJson(file, data) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
 }
 
+// Read review state, migrating pre-FSRS (SM-2-lite) data on sight: each
+// old schedule becomes a fresh card that keeps its existing next-review
+// date, so the upgrade changes nothing about tomorrow's queue.
 function getReviews() {
-  return readJson(REVIEWS_FILE, { schedules: {} });
+  const data = readJson(REVIEWS_FILE, { cards: {} });
+  if (data.schedules) {
+    const cards = {};
+    for (const [id, old] of Object.entries(data.schedules)) {
+      cards[id] = serializeCard(freshCardDue(old.next_review));
+    }
+    const migrated = { cards };
+    writeJson(REVIEWS_FILE, migrated);
+    return migrated;
+  }
+  if (!data.cards) data.cards = {};
+  return data;
 }
 
 // Lessons are read-once (nothing to re-solve) and onboarding is a
@@ -150,13 +178,8 @@ function backfillSchedules(completions, today, byId = {}) {
   let changed = false;
   for (const c of completions.completions) {
     if (byId[c.exercise_id] && !isSchedulable(byId[c.exercise_id])) continue;
-    if (!reviews.schedules[c.exercise_id]) {
-      reviews.schedules[c.exercise_id] = {
-        interval_days: 1,
-        ease: 2.3,
-        next_review: today,
-        last_result: 'pass',
-      };
+    if (!reviews.cards[c.exercise_id]) {
+      reviews.cards[c.exercise_id] = serializeCard(freshCardDue(today));
       changed = true;
     }
   }
@@ -169,7 +192,7 @@ function ensureDaily(exercises, completions, today) {
   if (!daily || daily.date !== today) {
     const byId = Object.fromEntries(exercises.map((e) => [e.id, e]));
     const reviews = backfillSchedules(completions, today, byId);
-    const queue = generateDailyQueue(exercises, completions, reviews.schedules, today);
+    const queue = generateDailyQueue(exercises, completions, reviews.cards, today);
     // Why each item was queued, frozen at generation time — a "new" item
     // passed later today must not start reading as a "review".
     const completedIds = new Set(completions.completions.map((c) => c.exercise_id));
@@ -243,11 +266,11 @@ function applyPass(exercise, firstCompletion, exercises, completions, profile, t
   const events = { review: false, dailyCleared: false, weeklyCompleted: false, bonusXp: 0 };
 
   if (isSchedulable(exercise)) {
-    const prev = reviews.schedules[exercise.id];
+    const prev = reviews.cards[exercise.id];
     if (!prev) {
-      reviews.schedules[exercise.id] = nextSchedule(null, 'pass', today, exercise.review_interval_days);
-    } else if (prev.next_review <= today) {
-      reviews.schedules[exercise.id] = nextSchedule(prev, 'pass', today);
+      reviews.cards[exercise.id] = serializeCard(rateCard(null, Rating.Good));
+    } else if (cardDueDay(prev) <= today) {
+      reviews.cards[exercise.id] = serializeCard(rateCard(prev, Rating.Good));
       events.review = true;
     }
     writeJson(REVIEWS_FILE, reviews);
@@ -285,11 +308,16 @@ function applyPass(exercise, firstCompletion, exercises, completions, profile, t
 
 // After a failed run: only a DUE review takes the hit; casual failures on
 // unscheduled or not-yet-due exercises don't touch the schedule.
+// Only a DUE review takes the hit (Rating.Again), and only once per day —
+// repeated attempts while relearning don't compound. Casual failures on
+// unscheduled or not-yet-due exercises never touch the card.
 function applyFailure(exercise, today = localDateString()) {
   const reviews = getReviews();
-  const prev = reviews.schedules[exercise.id];
-  if (prev && prev.next_review <= today && prev.last_result !== 'fail') {
-    reviews.schedules[exercise.id] = nextSchedule(prev, 'fail', today);
+  const prev = reviews.cards[exercise.id];
+  if (prev && cardDueDay(prev) <= today && prev.sq_last_failed_on !== today) {
+    reviews.cards[exercise.id] = serializeCard(rateCard(prev, Rating.Again), {
+      sq_last_failed_on: today,
+    });
     writeJson(REVIEWS_FILE, reviews);
     return { reviewFailed: true };
   }
@@ -297,8 +325,12 @@ function applyFailure(exercise, today = localDateString()) {
 }
 
 module.exports = {
-  // pure — exported for tests and future scheduler versions
-  nextSchedule,
+  // exported for tests and future scheduler versions
+  rateCard,
+  serializeCard,
+  cardDueDay,
+  freshCardDue,
+  Rating,
   generateDailyQueue,
   streakAfterClear,
   effectiveStreak,
