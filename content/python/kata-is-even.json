@@ -1,0 +1,30 @@
+{
+  "id": "py-is-even",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Even or odd",
+  "xp": 15,
+  "prerequisites": [
+    "lesson-booleans"
+  ],
+  "review_interval_days": null,
+  "prompt": "Return True if n is even, False if it's odd. The % operator gives the remainder after division: n % 2 is 0 for even numbers. So `return n % 2 == 0` answers the whole thing.",
+  "starter_code": "def is_even(n):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "is_even(4)",
+        "expect": true
+      },
+      {
+        "call": "is_even(7)",
+        "expect": false
+      },
+      {
+        "call": "is_even(0)",
+        "expect": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "lesson-booleans",
+  "type": "lesson",
+  "track": "progression",
+  "title": "True, False, and remainders",
+  "xp": 5,
+  "prerequisites": [
+    "py-square"
+  ],
+  "review_interval_days": null,
+  "body": "Some values are simply *True* or *False* \u2014 those are called *booleans*, and they're how code makes decisions. You get one by comparing things: `==` asks \"are these equal?\". There's also `%`, which gives the *remainder* after dividing \u2014 `10 % 2` is `0`, so `n % 2 == 0` is a neat way to ask \"is n even?\". You'll use exactly that next.",
+  "completion": "acknowledge"
+}

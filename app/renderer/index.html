@@ -9,10 +9,13 @@
 <body>
   <header class="topbar">
     <div class="brand">shellquest<span class="brand-cursor">▌</span></div>
-    <div class="topbar-stats" id="topbar-stats" hidden>
-      <span class="stat-chip" id="chip-level"></span>
-      <span class="stat-chip" id="chip-xp"></span>
-      <span class="stat-chip" id="chip-streak"></span>
+    <div class="topbar-right">
+      <div class="topbar-stats" id="topbar-stats" hidden>
+        <span class="stat-chip" id="chip-level"></span>
+        <span class="stat-chip" id="chip-xp"></span>
+        <span class="stat-chip" id="chip-streak"></span>
+      </div>
+      <button class="btn-ghost btn-small" id="btn-glossary" title="glossary">? glossary</button>
     </div>
   </header>
 
@@ -91,6 +94,15 @@
       </div>
     </div>
 
+    <!-- lesson -->
+    <div id="lesson-panel" hidden>
+      <div class="lesson-body" id="lesson-body"></div>
+      <div class="run-row">
+        <button class="btn-accent" id="btn-gotit">✓ Got it</button>
+        <span class="run-hint">that's all — reading it is completing it</span>
+      </div>
+    </div>
+
     <!-- shell-challenge -->
     <div id="challenge-panel" hidden>
       <div class="lab-box">
@@ -121,6 +133,17 @@
       <div class="reward-daily" id="reward-daily" hidden></div>
       <div class="reward-streak" id="reward-streak"></div>
       <div class="reward-hint">click to continue</div>
+    </div>
+  </div>
+
+  <!-- Glossary -->
+  <div class="glossary-overlay" id="glossary-overlay" hidden>
+    <div class="glossary-modal">
+      <div class="glossary-head">
+        <input class="glossary-search" id="glossary-search" type="text" placeholder="filter terms…" spellcheck="false" />
+        <button class="btn-ghost btn-small" id="btn-glossary-close">✕</button>
+      </div>
+      <dl class="glossary-list" id="glossary-list"></dl>
     </div>
   </div>
 

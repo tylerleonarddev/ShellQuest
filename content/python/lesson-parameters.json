@@ -1,0 +1,13 @@
+{
+  "id": "lesson-parameters",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Giving a function input",
+  "xp": 5,
+  "prerequisites": [
+    "py-say-hello"
+  ],
+  "review_interval_days": null,
+  "body": "A function can take input, and each input has a name \u2014 that name is called a *parameter*. In `greet(name)`, `name` is a parameter: whatever gets passed in shows up there for you to use. You can also glue strings together with the `+` sign \u2014 `\"Hello, \" + name` builds one bigger string. Try it next.",
+  "completion": "acknowledge"
+}

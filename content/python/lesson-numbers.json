@@ -1,0 +1,13 @@
+{
+  "id": "lesson-numbers",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Numbers and math",
+  "xp": 5,
+  "prerequisites": [
+    "py-greet"
+  ],
+  "review_interval_days": null,
+  "body": "Whole numbers like `5` or `-3` are called *integers*. Python does math with the usual signs: `+` to add, `-` to subtract, `*` to multiply. So `return a + b` hands back the sum of two numbers. The next few challenges are just small math machines.",
+  "completion": "acknowledge"
+}

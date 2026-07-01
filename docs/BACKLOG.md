@@ -21,7 +21,14 @@ Every out-of-scope idea gets parked here instead of built. See
   extending the python-test runner to accept a multi-step test *script*
   instead of single-expression calls (per CURRICULUM-python.md).
 - **v0.4** — Weekly digest, snippet queue.
-- **v0.5** — Stats page, packaged binary, migration runbook.
+- ~~**v0.5** — teaching foundation + ship it~~ *shipped: onboarding,
+  lessons, friendly errors, glossary, full ladder, MIGRATION.md, Pages
+  workflow.*
+- **Portable binary** — explicitly rejected in v0.5 (would sever app from
+  repo data). If ever wanted, it's an architecture change: app must take a
+  data-repo path. Don't sneak it in.
+- **Community content PRs** — threat-model first (the linter's dangerous-
+  command denylist is a start, not a security boundary).
 - **v2** — System-state verification with proper sandboxing.
 
 ## Noted during the v0.1 build
@@ -43,3 +50,7 @@ Every out-of-scope idea gets parked here instead of built. See
 - **Re-practice UX.** Re-running a mastered kata awards 0 XP but still
   updates the streak. The v0.3 review track will replace this with real
   spaced-repetition scheduling.
+- **Stale daily queue after content rewiring** — if a queued item becomes
+  locked by a same-day prerequisite change, the daily can't be cleared
+  until regeneration. Rare (content-drop days only); consider filtering
+  locked items at render time or regenerating on content change.

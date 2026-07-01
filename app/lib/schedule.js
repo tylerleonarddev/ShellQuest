@@ -91,6 +91,7 @@ function generateDailyQueue(exercises, completions, schedules, today) {
     .map(([id]) => id);
 
   const newRung = exercises
+    .filter((e) => e.track !== 'onboarding')
     .filter((e) => !completedIds.has(e.id) && isUnlocked(e, completions))
     .sort((a, b) => ladderDepth(a, byId) - ladderDepth(b, byId) || a.id.localeCompare(b.id))
     .slice(0, DAILY_MAX_NEW)
@@ -136,12 +137,19 @@ function getReviews() {
   return readJson(REVIEWS_FILE, { schedules: {} });
 }
 
+// Lessons are read-once (nothing to re-solve) and onboarding is a
+// mechanics demo — neither belongs in spaced repetition.
+function isSchedulable(exercise) {
+  return exercise && exercise.type !== 'lesson' && exercise.track !== 'onboarding';
+}
+
 // Completions that predate the scheduler get a schedule due immediately —
 // migration means your existing wins enter the review pool, not vanish.
-function backfillSchedules(completions, today) {
+function backfillSchedules(completions, today, byId = {}) {
   const reviews = getReviews();
   let changed = false;
   for (const c of completions.completions) {
+    if (byId[c.exercise_id] && !isSchedulable(byId[c.exercise_id])) continue;
     if (!reviews.schedules[c.exercise_id]) {
       reviews.schedules[c.exercise_id] = {
         interval_days: 1,
@@ -159,7 +167,8 @@ function backfillSchedules(completions, today) {
 function ensureDaily(exercises, completions, today) {
   let daily = readJson(DAILY_FILE, null);
   if (!daily || daily.date !== today) {
-    const reviews = backfillSchedules(completions, today);
+    const byId = Object.fromEntries(exercises.map((e) => [e.id, e]));
+    const reviews = backfillSchedules(completions, today, byId);
     const queue = generateDailyQueue(exercises, completions, reviews.schedules, today);
     // Why each item was queued, frozen at generation time — a "new" item
     // passed later today must not start reading as a "review".
@@ -233,14 +242,16 @@ function applyPass(exercise, firstCompletion, exercises, completions, profile, t
   const weekly = ensureWeekly(today);
   const events = { review: false, dailyCleared: false, weeklyCompleted: false, bonusXp: 0 };
 
-  const prev = reviews.schedules[exercise.id];
-  if (!prev) {
-    reviews.schedules[exercise.id] = nextSchedule(null, 'pass', today, exercise.review_interval_days);
-  } else if (prev.next_review <= today) {
-    reviews.schedules[exercise.id] = nextSchedule(prev, 'pass', today);
-    events.review = true;
+  if (isSchedulable(exercise)) {
+    const prev = reviews.schedules[exercise.id];
+    if (!prev) {
+      reviews.schedules[exercise.id] = nextSchedule(null, 'pass', today, exercise.review_interval_days);
+    } else if (prev.next_review <= today) {
+      reviews.schedules[exercise.id] = nextSchedule(prev, 'pass', today);
+      events.review = true;
+    }
+    writeJson(REVIEWS_FILE, reviews);
   }
-  writeJson(REVIEWS_FILE, reviews);
 
   if (firstCompletion) bumpWeekly(weekly, 'new_exercises');
 

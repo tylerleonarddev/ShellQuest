@@ -1,0 +1,13 @@
+{
+  "id": "lesson-decisions",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Making a decision",
+  "xp": 5,
+  "prerequisites": [
+    "py-shout"
+  ],
+  "review_interval_days": null,
+  "body": "Sometimes a function should do one thing or another depending on the input. The shortest way to choose is `a if condition else b` \u2014 read it as \"give a when the condition is true, otherwise give b\". For example `return a if a > b else b` hands back whichever is larger. That one line solves the last two challenges.",
+  "completion": "acknowledge"
+}

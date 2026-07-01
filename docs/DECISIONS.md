@@ -1,5 +1,30 @@
 # Design decisions (deviations & clarifications)
 
+## v0.5
+
+**Onboarding is content + a first-launch gate,** not a prerequisite of
+every root. `content/onboarding.json` is a normal python-kata whose track
+is `onboarding`; the renderer opens it on launch until it's completed. It
+is excluded from the ladder view, the daily queue, spaced repetition, and
+devlog scaffolding.
+
+**Lesson guards live in the engine,** per the spec: no devlog, no review
+schedule, allowed in the daily queue as "new" items. The content loader
+and linter validate lessons by their own shape (body/completion instead of
+prompt/verification).
+
+**Pages deploys via GitHub Actions** (`.github/workflows/pages.yml`)
+rather than branch-based Pages, because branch deploys only serve / or
+/docs and the stats page lives in site/. The workflow regenerates the page
+from progress data on every push, so it's always current. The launch
+moment is flipping Settings → Pages → Source to "GitHub Actions".
+
+**glossary.json** lives in content/ (it is content) but is skipped by the
+exercise loader and schema-linted by its own rule; its "flag" definition
+legitimately mentions the SQ{...} shape, which the flag-leak rule would
+otherwise reject.
+
+
 Where the build diverged from or extended the specs, and why. The specs are
 kept verbatim in this folder; this file is the delta.
 

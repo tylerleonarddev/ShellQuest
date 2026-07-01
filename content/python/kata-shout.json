@@ -1,0 +1,30 @@
+{
+  "id": "py-shout",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Make it loud",
+  "xp": 15,
+  "prerequisites": [
+    "py-last-char"
+  ],
+  "review_interval_days": null,
+  "prompt": "Return the string s in ALL CAPS. Strings have built-in tools called methods; s.upper() gives the uppercase version. shout('hello') returns 'HELLO'.",
+  "starter_code": "def shout(s):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "shout('hello')",
+        "expect": "HELLO"
+      },
+      {
+        "call": "shout('Cyber')",
+        "expect": "CYBER"
+      },
+      {
+        "call": "shout('')",
+        "expect": ""
+      }
+    ]
+  }
+}

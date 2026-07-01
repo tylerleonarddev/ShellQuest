@@ -1,0 +1,22 @@
+{
+  "id": "py-say-hello",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Your first function",
+  "xp": 10,
+  "prerequisites": [
+    "lesson-functions"
+  ],
+  "review_interval_days": null,
+  "prompt": "Every kata asks you to finish a function. A function hands back a value using the `return` keyword. Make say_hello() return exactly this text: Hello, world!",
+  "starter_code": "def say_hello():\n    # replace pass with:  return \"Hello, world!\"\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "say_hello()",
+        "expect": "Hello, world!"
+      }
+    ]
+  }
+}

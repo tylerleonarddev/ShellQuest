@@ -1,0 +1,30 @@
+{
+  "id": "py-square",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Square a number",
+  "xp": 10,
+  "prerequisites": [
+    "py-double"
+  ],
+  "review_interval_days": null,
+  "prompt": "Return n times itself. square(5) should give 25.",
+  "starter_code": "def square(n):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "square(5)",
+        "expect": 25
+      },
+      {
+        "call": "square(1)",
+        "expect": 1
+      },
+      {
+        "call": "square(10)",
+        "expect": 100
+      }
+    ]
+  }
+}

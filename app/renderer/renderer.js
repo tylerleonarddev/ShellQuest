@@ -175,23 +175,45 @@ function renderStats(state) {
 
 /* ── Exercise view ── */
 
+// Minimal safe markdown for lesson bodies: *italic*, `code`, "quotes" stay
+// literal; everything is escaped first.
+function lessonHtml(body) {
+  const esc = body
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  return esc
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .split(/\n{2,}/)
+    .map((p) => `<p>${p}</p>`)
+    .join('');
+}
+
 async function openExercise(id) {
   const ex = await window.shellquest.getExercise(id);
   if (!ex) return;
   currentExercise = ex;
 
+  const isChallenge = ex.type === 'shell-challenge';
+  const isLesson = ex.type === 'lesson';
+
   $('exercise-title').textContent = ex.title;
-  $('exercise-prompt').textContent = ex.prompt;
+  $('exercise-prompt').textContent = isLesson ? '' : ex.prompt;
   $('exercise-xp').textContent = `+${ex.xp} XP`;
   $('exercise-done-badge').hidden = !ex.completed;
   $('results').hidden = true;
   $('results').innerHTML = '';
 
-  const isChallenge = ex.type === 'shell-challenge';
-  $('kata-panel').hidden = isChallenge;
+  $('kata-panel').hidden = isChallenge || isLesson;
   $('challenge-panel').hidden = !isChallenge;
+  $('lesson-panel').hidden = !isLesson;
 
-  if (isChallenge) {
+  if (isLesson) {
+    if (editor) { editor.destroy(); editor = null; }
+    $('lesson-body').innerHTML = lessonHtml(ex.body);
+    $('btn-gotit').disabled = false;
+  } else if (isChallenge) {
     if (editor) { editor.destroy(); editor = null; }
     $('lab-path').textContent = ex.labPath;
     $('flag-row').hidden = !ex.needsFlag;
@@ -206,7 +228,16 @@ async function openExercise(id) {
   $('view-dashboard').hidden = true;
   $('view-exercise').hidden = false;
   if (isChallenge && ex.needsFlag) $('flag-input').focus();
-  else if (!isChallenge) editor.focus();
+  else if (!isChallenge && !isLesson) editor.focus();
+}
+
+async function completeCurrentLesson() {
+  if (!currentExercise || currentExercise.type !== 'lesson') return;
+  const btn = $('btn-gotit');
+  btn.disabled = true;
+  const res = await window.shellquest.completeLesson(currentExercise.id);
+  if (res.passed) rewardBeat(res);
+  else btn.disabled = false;
 }
 
 async function runCurrent() {
@@ -245,10 +276,16 @@ function renderResults(res) {
   box.hidden = false;
 
   if (res.error || res.fatal) {
-    const pre = document.createElement('div');
-    pre.className = 'result-error';
-    pre.textContent = res.error || res.fatal;
-    box.appendChild(pre);
+    const wrap = document.createElement('div');
+    wrap.className = 'result-error';
+    if (res.fatal) {
+      const friendly = friendlyError(res.fatal.trim().split('\n').pop() || res.fatal);
+      wrap.textContent = friendly.plain;
+      wrap.appendChild(rawDetails(res.fatal));
+    } else {
+      wrap.textContent = res.error;
+    }
+    box.appendChild(wrap);
     return;
   }
 
@@ -273,13 +310,49 @@ function renderResults(res) {
     if (r.passed) {
       detail.textContent = r.expected !== undefined ? `→ ${JSON.stringify(r.expected)}` : '';
     } else if (r.error) {
-      detail.textContent = r.error;
+      const friendly = friendlyError(r.error);
+      detail.textContent = friendly.plain;
+      if (friendly.raw) line.appendChild(rawDetails(friendly.raw));
     } else {
-      detail.textContent = `expected ${JSON.stringify(r.expected)}, got ${JSON.stringify(r.actual)}`;
+      detail.textContent = `your code gave back ${JSON.stringify(r.actual)}, but the challenge expected ${JSON.stringify(r.expected)}`;
     }
     line.append(mark, call, detail);
     box.appendChild(line);
   }
+}
+
+/* ── Beginner-friendly error translation ── */
+
+const ERROR_EXPLANATIONS = {
+  NameError: "You used a name Python doesn't recognize — check the spelling, or make sure it's defined.",
+  SyntaxError: "Python couldn't read this — often a missing : or an unclosed quote or bracket.",
+  IndentationError: 'The spacing at the start of a line is off — Python is strict about indentation.',
+  TypeError: "You mixed two kinds of value that don't go together (like a number and text).",
+  IndexError: 'You reached past the end of a list or string.',
+  KeyError: "You asked a dict for a key it doesn't have.",
+  ValueError: "A value was the right kind but didn't make sense there.",
+  ZeroDivisionError: 'Something divided by zero.',
+  RecursionError: 'Your function kept calling itself and never stopped — check the base case.',
+  AttributeError: "You asked a value for something it doesn't have — check the method name and the value's type.",
+};
+
+// Runner errors look like "TypeError: can only concatenate str…".
+function friendlyError(raw) {
+  const name = (raw.match(/^([A-Za-z]+Error)\b/) || [])[1];
+  if (name && ERROR_EXPLANATIONS[name]) return { plain: ERROR_EXPLANATIONS[name], raw };
+  if (name) return { plain: `Your code hit an error: ${name}.`, raw };
+  return { plain: raw, raw: null };
+}
+
+function rawDetails(raw) {
+  const det = document.createElement('details');
+  det.className = 'result-raw';
+  const sum = document.createElement('summary');
+  sum.textContent = 'show details';
+  const pre = document.createElement('pre');
+  pre.textContent = raw;
+  det.append(sum, pre);
+  return det;
 }
 
 /* ── The reward beat: overlay, XP count-up, back to dashboard ── */
@@ -333,6 +406,48 @@ function rewardBeat(res) {
 
 /* ── Wiring ── */
 
+/* ── Glossary ── */
+
+let glossaryTerms = null;
+
+function renderGlossaryList(filter = '') {
+  const list = $('glossary-list');
+  list.innerHTML = '';
+  const q = filter.toLowerCase();
+  for (const { term, definition } of glossaryTerms) {
+    if (q && !term.toLowerCase().includes(q) && !definition.toLowerCase().includes(q)) continue;
+    const dt = document.createElement('dt');
+    dt.textContent = term;
+    const dd = document.createElement('dd');
+    dd.textContent = definition;
+    list.append(dt, dd);
+  }
+  if (!list.children.length) {
+    const dd = document.createElement('dd');
+    dd.textContent = 'no matching terms';
+    list.appendChild(dd);
+  }
+}
+
+async function openGlossary() {
+  if (!glossaryTerms) glossaryTerms = await window.shellquest.getGlossary();
+  renderGlossaryList($('glossary-search').value);
+  $('glossary-overlay').hidden = false;
+  $('glossary-search').focus();
+}
+
+$('btn-glossary').addEventListener('click', openGlossary);
+$('btn-glossary-close').addEventListener('click', () => { $('glossary-overlay').hidden = true; });
+$('glossary-overlay').addEventListener('click', (ev) => {
+  if (ev.target === $('glossary-overlay')) $('glossary-overlay').hidden = true;
+});
+$('glossary-search').addEventListener('input', (ev) => renderGlossaryList(ev.target.value));
+document.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Escape') $('glossary-overlay').hidden = true;
+});
+
+/* ── Wiring ── */
+
 $('btn-digest').addEventListener('click', async () => {
   await window.shellquest.draftDigest();
   renderDevlogs();
@@ -340,6 +455,7 @@ $('btn-digest').addEventListener('click', async () => {
 $('btn-back').addEventListener('click', showDashboard);
 $('btn-run').addEventListener('click', runCurrent);
 $('btn-verify').addEventListener('click', runCurrent);
+$('btn-gotit').addEventListener('click', completeCurrentLesson);
 $('btn-reset-lab').addEventListener('click', resetLab);
 $('flag-input').addEventListener('keydown', (ev) => {
   if (ev.key === 'Enter') runCurrent();
@@ -351,4 +467,10 @@ document.addEventListener('keydown', (ev) => {
   }
 });
 
-showDashboard();
+// First launch: one unfailable exercise that teaches only the mechanics.
+// Once it's completed it never appears again.
+(async function init() {
+  const state = await window.shellquest.getState();
+  if (!state.onboardingDone) openExercise('onboarding');
+  else showDashboard();
+})();

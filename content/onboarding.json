@@ -1,0 +1,15 @@
+{
+  "id": "onboarding",
+  "type": "python-kata",
+  "track": "onboarding",
+  "title": "Welcome to ShellQuest",
+  "xp": 10,
+  "prerequisites": [],
+  "review_interval_days": null,
+  "prompt": "This is the whole loop: read the task at the top, edit the code below, press Run. This first one is on the house — the editor already contains the correct answer. Just press ▶ Run tests (or Ctrl+Enter). Green means you passed: XP ticks up and you head back to the dashboard. That's everything you need to know.",
+  "starter_code": "def ready():\n    # Nothing to fix here. Just press Run.\n    return True\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [{ "call": "ready()", "expect": true }]
+  }
+}

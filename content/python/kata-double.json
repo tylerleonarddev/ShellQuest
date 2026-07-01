@@ -1,0 +1,30 @@
+{
+  "id": "py-double",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Double it",
+  "xp": 10,
+  "prerequisites": [
+    "py-add"
+  ],
+  "review_interval_days": null,
+  "prompt": "Return n multiplied by 2. double(7) should give 14. (Multiply with the * sign.)",
+  "starter_code": "def double(n):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "double(7)",
+        "expect": 14
+      },
+      {
+        "call": "double(0)",
+        "expect": 0
+      },
+      {
+        "call": "double(-3)",
+        "expect": -6
+      }
+    ]
+  }
+}

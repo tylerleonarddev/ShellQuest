@@ -1,0 +1,26 @@
+{
+  "id": "py-greet",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Give it an input",
+  "xp": 10,
+  "prerequisites": [
+    "lesson-parameters"
+  ],
+  "review_interval_days": null,
+  "prompt": "Functions can take input, called a parameter. Here `name` is handed to you. Return the text: Hello, <name>! \u2014 for example greet('Tyler') returns 'Hello, Tyler!'. Join pieces of text with the + sign.",
+  "starter_code": "def greet(name):\n    # return \"Hello, \" + name + \"!\"\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "greet('Tyler')",
+        "expect": "Hello, Tyler!"
+      },
+      {
+        "call": "greet('world')",
+        "expect": "Hello, world!"
+      }
+    ]
+  }
+}

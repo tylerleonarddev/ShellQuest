@@ -1,0 +1,30 @@
+{
+  "id": "py-add",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Add two numbers",
+  "xp": 10,
+  "prerequisites": [
+    "lesson-numbers"
+  ],
+  "review_interval_days": null,
+  "prompt": "Return the sum of the two numbers a and b. add(2, 3) should give 5.",
+  "starter_code": "def add(a, b):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "add(2,3)",
+        "expect": 5
+      },
+      {
+        "call": "add(-1,1)",
+        "expect": 0
+      },
+      {
+        "call": "add(100,250)",
+        "expect": 350
+      }
+    ]
+  }
+}

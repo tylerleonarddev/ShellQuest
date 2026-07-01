@@ -1,0 +1,13 @@
+{
+  "id": "lesson-strings",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Working with strings",
+  "xp": 5,
+  "prerequisites": [
+    "py-is-even"
+  ],
+  "review_interval_days": null,
+  "body": "A *string* is text in quotes. You can grab one character by its position: `s[0]` is the first, and `s[-1]` is the last. Strings also come with built-in tools called *methods* \u2014 `s.upper()` gives you the ALL-CAPS version. The next two challenges practice both.",
+  "completion": "acknowledge"
+}

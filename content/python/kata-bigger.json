@@ -1,0 +1,30 @@
+{
+  "id": "py-bigger",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Pick the bigger one",
+  "xp": 20,
+  "prerequisites": [
+    "lesson-decisions"
+  ],
+  "review_interval_days": null,
+  "prompt": "Return whichever of a or b is larger. This needs a decision. One clean way: `return a if a > b else b` \u2014 read it as 'give a when a is bigger, otherwise give b'. bigger(3, 8) returns 8.",
+  "starter_code": "def bigger(a, b):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "bigger(3,8)",
+        "expect": 8
+      },
+      {
+        "call": "bigger(10,2)",
+        "expect": 10
+      },
+      {
+        "call": "bigger(5,5)",
+        "expect": 5
+      }
+    ]
+  }
+}

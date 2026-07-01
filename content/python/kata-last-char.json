@@ -1,0 +1,30 @@
+{
+  "id": "py-last-char",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Last letter",
+  "xp": 15,
+  "prerequisites": [
+    "lesson-strings"
+  ],
+  "review_interval_days": null,
+  "prompt": "Return the last character of the string s. In Python, s[-1] means 'the last character'. last_char('cyber') returns 'r'.",
+  "starter_code": "def last_char(s):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "last_char('cyber')",
+        "expect": "r"
+      },
+      {
+        "call": "last_char('a')",
+        "expect": "a"
+      },
+      {
+        "call": "last_char('Python')",
+        "expect": "n"
+      }
+    ]
+  }
+}

@@ -24,7 +24,8 @@ function buildState() {
     levelCurve: {
       currentLevelStart: null, // filled below per-profile
     },
-    exercises: exercises.map((e) => ({
+    onboardingDone: completedIds.has('onboarding'),
+    exercises: exercises.filter((e) => e.track !== 'onboarding').map((e) => ({
       id: e.id,
       title: e.title,
       xp: e.xp,
@@ -103,6 +104,9 @@ ipcMain.handle('exercise:get', (_ev, id) => {
     prompt: exercise.prompt,
     completed: progress.isCompleted(exercise.id),
   };
+  if (exercise.type === 'lesson') {
+    return { ...common, body: exercise.body };
+  }
   if (exercise.type === 'shell-challenge') {
     return {
       ...common,
@@ -148,7 +152,9 @@ async function onPass(exercise, run, userCode) {
   if (events.weeklyCompleted) message += ' · weekly goal met';
   if (events.bonusXp) message += ` (+${events.bonusXp} bonus XP)`;
 
-  if (record.firstCompletion) {
+  // Lessons and onboarding aren't achievements to write up.
+  const devloggable = exercise.type !== 'lesson' && exercise.track !== 'onboarding';
+  if (record.firstCompletion && devloggable) {
     devlogFile = scaffoldDraft(exercise, userCode, run.results, record.awardedXp);
   }
   commit = await commitProgress(message);
@@ -186,6 +192,22 @@ ipcMain.handle('lab:reset', (_ev, id) => {
   const { exercise, error } = getUnlockedExercise(id);
   if (error) return { error };
   return { labPath: resetLab(exercise) };
+});
+
+ipcMain.handle('lesson:complete', async (_ev, id) => {
+  const { exercise, error } = getUnlockedExercise(id);
+  if (error) return { passed: false, error };
+  if (exercise.type !== 'lesson') return { passed: false, error: 'Not a lesson.' };
+  return onPass(exercise, { passed: true, results: [] }, null);
+});
+
+ipcMain.handle('glossary:get', () => {
+  try {
+    const file = require('path').join(require('../lib/paths').CONTENT_DIR, 'glossary.json');
+    return JSON.parse(require('fs').readFileSync(file, 'utf8'));
+  } catch {
+    return [];
+  }
 });
 
 ipcMain.handle('devlogs:list', () => ({

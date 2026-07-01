@@ -36,7 +36,21 @@ function walk(dir) {
   return out;
 }
 
-const files = walk(CONTENT);
+const files = walk(CONTENT).filter((f) => path.basename(f) !== 'glossary.json');
+
+// The glossary is its own shape: an array of {term, definition}.
+const glossaryFile = path.join(CONTENT, 'glossary.json');
+if (fs.existsSync(glossaryFile)) {
+  try {
+    const g = JSON.parse(fs.readFileSync(glossaryFile, 'utf8'));
+    if (!Array.isArray(g) || g.some((e) => !e.term || !e.definition)) {
+      errors.push('content/glossary.json: must be an array of {term, definition}');
+    }
+  } catch (e) {
+    errors.push(`content/glossary.json: invalid JSON — ${e.message}`);
+  }
+}
+
 const ids = new Map(); // id -> file
 const allPrereqs = []; // [file, id, prereq]
 
@@ -59,8 +73,9 @@ for (const file of files) {
     continue;
   }
 
-  // 2. Schema sanity
-  for (const f of REQUIRED) {
+  // 2. Schema sanity (lessons are read-cards: body/completion, no verification)
+  const required = ex.type === 'lesson' ? ['id', 'type', 'body', 'completion'] : REQUIRED;
+  for (const f of required) {
     if (ex[f] === undefined) errors.push(`${rel}: missing required field "${f}"`);
   }
   if (ex.id) {
