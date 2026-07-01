@@ -1,0 +1,23 @@
+{
+  "id": "sq-04-copy",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Copy that",
+  "xp": 30,
+  "prerequisites": ["sq-03-tree"],
+  "review_interval_days": null,
+  "prompt": "Your lab has important.txt and an empty folder backup/. Put a COPY of important.txt inside backup/ (same name) — the original must stay where it is. Useful command: cp FILE DEST.",
+  "setup": {
+    "dirs": ["backup"],
+    "files": [
+      { "path": "important.txt", "contents": "Quarterly numbers — do not lose.\n" }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      { "kind": "file-contains", "path": "important.txt", "pattern": "Quarterly numbers" },
+      { "kind": "file-contains", "path": "backup/important.txt", "pattern": "Quarterly numbers" }
+    ]
+  }
+}

@@ -17,18 +17,30 @@ async function showDashboard() {
   list.innerHTML = '';
   for (const ex of state.exercises) {
     const li = document.createElement('li');
-    li.className = 'kata-item' + (ex.completed ? ' completed' : '');
+    li.className =
+      'kata-item' + (ex.completed ? ' completed' : '') + (ex.locked ? ' locked' : '');
     const title = document.createElement('span');
     title.className = 'kata-item-title';
-    title.textContent = ex.title;
+    title.textContent = (ex.locked ? '🔒 ' : '') + ex.title;
     const meta = document.createElement('span');
     meta.className = 'kata-item-meta';
+    if (ex.type === 'shell-challenge') {
+      const kind = document.createElement('span');
+      kind.className = 'kata-item-kind';
+      kind.textContent = 'terminal';
+      meta.appendChild(kind);
+    }
     const xp = document.createElement('span');
     xp.className = 'kata-item-xp';
-    xp.textContent = ex.completed ? 'mastered' : `+${ex.xp} XP`;
+    if (ex.locked) {
+      xp.textContent = `requires: ${ex.requires.join(', ')}`;
+      xp.classList.add('kata-item-requires');
+    } else {
+      xp.textContent = ex.completed ? 'mastered' : `+${ex.xp} XP`;
+    }
     meta.appendChild(xp);
     li.append(title, meta);
-    li.addEventListener('click', () => openExercise(ex.id));
+    if (!ex.locked) li.addEventListener('click', () => openExercise(ex.id));
     list.appendChild(li);
   }
 
@@ -78,31 +90,58 @@ async function openExercise(id) {
   $('exercise-prompt').textContent = ex.prompt;
   $('exercise-xp').textContent = `+${ex.xp} XP`;
   $('exercise-done-badge').hidden = !ex.completed;
-  $('test-count').textContent = `${ex.testCount} hidden tests`;
   $('results').hidden = true;
   $('results').innerHTML = '';
 
-  if (editor) editor.destroy();
-  editor = SQEditor.create($('editor-host'), ex.starter_code);
+  const isChallenge = ex.type === 'shell-challenge';
+  $('kata-panel').hidden = isChallenge;
+  $('challenge-panel').hidden = !isChallenge;
+
+  if (isChallenge) {
+    if (editor) { editor.destroy(); editor = null; }
+    $('lab-path').textContent = ex.labPath;
+    $('flag-row').hidden = !ex.needsFlag;
+    $('flag-input').value = '';
+    $('check-count').textContent = `${ex.checkCount} check${ex.checkCount === 1 ? '' : 's'}`;
+  } else {
+    $('test-count').textContent = `${ex.testCount} hidden tests`;
+    if (editor) editor.destroy();
+    editor = SQEditor.create($('editor-host'), ex.starter_code);
+  }
 
   $('view-dashboard').hidden = true;
   $('view-exercise').hidden = false;
-  editor.focus();
+  if (isChallenge && ex.needsFlag) $('flag-input').focus();
+  else if (!isChallenge) editor.focus();
 }
 
 async function runCurrent() {
   if (!currentExercise) return;
-  const btn = $('btn-run');
+  const isChallenge = currentExercise.type === 'shell-challenge';
+  const btn = $(isChallenge ? 'btn-verify' : 'btn-run');
+  const idleLabel = isChallenge ? '▶ Verify' : '▶ Run tests';
   btn.disabled = true;
   btn.textContent = '… running';
 
   try {
-    const res = await window.shellquest.runKata(currentExercise.id, editor.getValue());
+    const res = isChallenge
+      ? await window.shellquest.runChallenge(currentExercise.id, $('flag-input').value)
+      : await window.shellquest.runKata(currentExercise.id, editor.getValue());
     renderResults(res);
     if (res.passed) rewardBeat(res);
   } finally {
     btn.disabled = false;
-    btn.textContent = '▶ Run tests';
+    btn.textContent = idleLabel;
+  }
+}
+
+async function resetLab() {
+  if (!currentExercise) return;
+  const res = await window.shellquest.resetLab(currentExercise.id);
+  if (res.labPath) {
+    $('lab-path').textContent = res.labPath;
+    $('results').hidden = true;
+    $('results').innerHTML = '';
   }
 }
 
@@ -127,11 +166,11 @@ function renderResults(res) {
     mark.textContent = r.passed ? '✓' : '✗';
     const call = document.createElement('span');
     call.className = 'result-call';
-    call.textContent = r.call;
+    call.textContent = r.call || r.detail;
     const detail = document.createElement('span');
     detail.className = 'result-detail';
     if (r.passed) {
-      detail.textContent = `→ ${JSON.stringify(r.expected)}`;
+      detail.textContent = r.expected !== undefined ? `→ ${JSON.stringify(r.expected)}` : '';
     } else if (r.error) {
       detail.textContent = r.error;
     } else {
@@ -182,6 +221,11 @@ function rewardBeat(res) {
 
 $('btn-back').addEventListener('click', showDashboard);
 $('btn-run').addEventListener('click', runCurrent);
+$('btn-verify').addEventListener('click', runCurrent);
+$('btn-reset-lab').addEventListener('click', resetLab);
+$('flag-input').addEventListener('keydown', (ev) => {
+  if (ev.key === 'Enter') runCurrent();
+});
 document.addEventListener('keydown', (ev) => {
   if (ev.ctrlKey && ev.key === 'Enter' && !$('view-exercise').hidden) {
     ev.preventDefault();

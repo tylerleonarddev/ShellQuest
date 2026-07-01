@@ -1,0 +1,25 @@
+{
+  "id": "sq-01-explore",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Follow the manifest",
+  "xp": 25,
+  "prerequisites": [],
+  "review_interval_days": null,
+  "prompt": "Your lab has three doors (folders) and a long manifest.txt. The very LAST line of the manifest names the right door; inside that door, doorcode.txt holds the flag. Useful commands: ls (look around), cd NAME (step in), cat FILE (read), tail FILE (read the end).",
+  "setup": {
+    "dirs": ["red", "green"],
+    "files": [
+      { "path": "red/note.txt", "contents": "Nothing but dust in here.\n" },
+      { "path": "green/note.txt", "contents": "A cold draft. Wrong door.\n" },
+      { "path": "blue/doorcode.txt", "contents": "The code on the door reads: {{FLAG}}\n" },
+      { "path": "manifest.txt", "contents": "log entry 1 — nothing important here\nlog entry 2 — nothing important here\nlog entry 3 — nothing important here\nlog entry 4 — nothing important here\nlog entry 5 — nothing important here\nlog entry 6 — nothing important here\nlog entry 7 — nothing important here\nlog entry 8 — nothing important here\nlog entry 9 — nothing important here\nlog entry 10 — nothing important here\nlog entry 11 — nothing important here\nlog entry 12 — nothing important here\nlog entry 13 — nothing important here\nlog entry 14 — nothing important here\nlog entry 15 — nothing important here\nlog entry 16 — nothing important here\nlog entry 17 — nothing important here\nlog entry 18 — nothing important here\nlog entry 19 — nothing important here\nlog entry 20 — nothing important here\nlog entry 21 — nothing important here\nlog entry 22 — nothing important here\nlog entry 23 — nothing important here\nlog entry 24 — nothing important here\nlog entry 25 — nothing important here\nlog entry 26 — nothing important here\nlog entry 27 — nothing important here\nlog entry 28 — nothing important here\nlog entry 29 — nothing important here\nlog entry 30 — nothing important here\nlog entry 31 — nothing important here\nlog entry 32 — nothing important here\nlog entry 33 — nothing important here\nlog entry 34 — nothing important here\nlog entry 35 — nothing important here\nlog entry 36 — nothing important here\nlog entry 37 — nothing important here\nlog entry 38 — nothing important here\nlog entry 39 — nothing important here\nlog entry 40 — nothing important here\nENTER: blue\n" }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      { "kind": "flag" }
+    ]
+  }
+}

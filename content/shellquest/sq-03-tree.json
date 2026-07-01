@@ -1,0 +1,22 @@
+{
+  "id": "sq-03-tree",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Build the nest",
+  "xp": 30,
+  "prerequisites": ["sq-02-make"],
+  "review_interval_days": null,
+  "prompt": "Folders can live inside folders inside folders — and mkdir -p builds a whole chain in one shot (mkdir -p a/b/c). In your lab, create the structure project/src/utils/ plus an empty file project/src/main.txt.",
+  "setup": {
+    "files": [
+      { "path": "TASK.txt", "contents": "Goal: project/src/utils/ and an empty file project/src/main.txt\n" }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      { "kind": "file-exists", "path": "project/src/utils" },
+      { "kind": "file-exists", "path": "project/src/main.txt" }
+    ]
+  }
+}

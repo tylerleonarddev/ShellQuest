@@ -11,9 +11,24 @@ function scaffoldDraft(exercise, userCode, results, xpAwarded) {
   const date = localDateString();
   const file = path.join(DRAFTS_DIR, `${date}-${exercise.id}.md`);
 
-  const testLines = results
-    .map((r) => `- \`${r.call}\` → \`${JSON.stringify(r.expected)}\` ✓`)
+  // Kata results carry the test call; artifact results carry a check
+  // description. Flags never land in a devlog — a published post must
+  // not leak an answer.
+  const verifiedLines = results
+    .map((r) => `- \`${r.call || r.detail}\`${r.expected !== undefined ? ` → \`${JSON.stringify(r.expected)}\`` : ''} ✓`)
     .join('\n');
+
+  const solutionSection = userCode
+    ? `## My solution
+
+\`\`\`python
+${userCode.trimEnd()}
+\`\`\`
+`
+    : `## How I did it
+
+<!-- Which commands got you there? Retrace the trail while it's fresh. -->
+`;
 
   const body = `# ${exercise.title}
 
@@ -23,15 +38,10 @@ function scaffoldDraft(exercise, userCode, results, xpAwarded) {
 
 ${exercise.prompt}
 
-## My solution
-
-\`\`\`python
-${userCode.trimEnd()}
-\`\`\`
-
+${solutionSection}
 ## Verified against
 
-${testLines}
+${verifiedLines}
 
 ## Reflection
 

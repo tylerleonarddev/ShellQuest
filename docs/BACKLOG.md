@@ -5,11 +5,11 @@ Every out-of-scope idea gets parked here instead of built. See
 
 ## Scheduled for later versions (from the roadmap)
 
-- **v0.2** — ShellQuest artifact/flag challenges; prerequisite gating (the
-  field is already read and stored, just not enforced).
-- **v0.2** — Import the 14 missions from `~/shellquest-classic` as
-  artifact/flag content. The classic game's `check.sh` model maps directly
-  onto the artifact/flag verification runner.
+- ~~**v0.2** — artifact/flag challenges; prerequisite gating~~ *shipped;
+  see `DECISIONS.md` for the setup/dynamic-flag design.*
+- **v0.2 content trickle** — 5 of 14 classic missions ported
+  (explore/make/tree/copy/find). Remaining: move, remove, find+size,
+  grep, pipes, redirect, perms, glob, boss. Just data — port anytime.
 - **v0.3** — Scheduler: dailies, weeklies, spaced-repetition pool.
 - **v0.4** — Weekly digest, snippet queue.
 - **v0.5** — Stats page, packaged binary, migration runbook.

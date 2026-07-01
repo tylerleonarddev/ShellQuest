@@ -1,0 +1,23 @@
+{
+  "id": "sq-02-make",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Make your mark",
+  "xp": 25,
+  "prerequisites": ["sq-01-explore"],
+  "review_interval_days": null,
+  "prompt": "In your lab, create three things: a folder called workshop, an empty file workshop/notes.txt, and a file name.txt containing exactly the word ready. Useful commands: mkdir NAME (make a folder), touch FILE (make an empty file), echo text > FILE (make a file containing text).",
+  "setup": {
+    "files": [
+      { "path": "TASK.txt", "contents": "Build: a 'workshop' folder, an empty workshop/notes.txt, and name.txt holding the word ready.\n" }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      { "kind": "file-exists", "path": "workshop" },
+      { "kind": "file-exists", "path": "workshop/notes.txt" },
+      { "kind": "file-contains", "path": "name.txt", "pattern": "^ready$" }
+    ]
+  }
+}

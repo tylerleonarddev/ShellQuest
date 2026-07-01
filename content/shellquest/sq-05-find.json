@@ -1,0 +1,29 @@
+{
+  "id": "sq-05-find",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Cut through the noise",
+  "xp": 40,
+  "prerequisites": ["sq-04-copy"],
+  "review_interval_days": null,
+  "prompt": "Somewhere in your lab's maze of folders is a single file named beacon.txt — it holds the flag. Don't crawl the tree by hand: find . -name beacon.txt searches everything below your current directory. Then read what it found.",
+  "setup": {
+    "dirs": ["logs/a", "logs/b", "logs/c", "archive/2021/q1", "archive/2021/q3", "archive/2022/q2", "archive/2023/q1"],
+    "files": [
+      { "path": "logs/a/report.txt", "contents": "routine traffic, nothing flagged\n" },
+      { "path": "logs/b/report.txt", "contents": "routine traffic, nothing flagged\n" },
+      { "path": "logs/c/report.txt", "contents": "checksum mismatch retried, resolved\n" },
+      { "path": "archive/2021/q1/report.txt", "contents": "archived. no anomalies.\n" },
+      { "path": "archive/2021/q3/report.txt", "contents": "archived. no anomalies.\n" },
+      { "path": "archive/2022/q2/report.txt", "contents": "archived. no anomalies.\n" },
+      { "path": "archive/2023/q1/deep/beacon.txt", "contents": "signal acquired: {{FLAG}}\n" },
+      { "path": "archive/2023/q1/report.txt", "contents": "archived. one anomaly, see deep/\n" }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      { "kind": "flag" }
+    ]
+  }
+}

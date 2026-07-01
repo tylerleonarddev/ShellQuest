@@ -56,17 +56,39 @@
     <h1 class="exercise-title" id="exercise-title"></h1>
     <p class="exercise-prompt" id="exercise-prompt"></p>
 
-    <div class="editor-frame">
-      <div class="editor-frame-bar">
-        <span>solution.py</span>
-        <span id="test-count"></span>
+    <!-- python-kata -->
+    <div id="kata-panel" hidden>
+      <div class="editor-frame">
+        <div class="editor-frame-bar">
+          <span>solution.py</span>
+          <span id="test-count"></span>
+        </div>
+        <div id="editor-host"></div>
       </div>
-      <div id="editor-host"></div>
+
+      <div class="run-row">
+        <button class="btn-accent" id="btn-run">▶ Run tests</button>
+        <span class="run-hint">Ctrl+Enter</span>
+      </div>
     </div>
 
-    <div class="run-row">
-      <button class="btn-accent" id="btn-run">▶ Run tests</button>
-      <span class="run-hint">Ctrl+Enter</span>
+    <!-- shell-challenge -->
+    <div id="challenge-panel" hidden>
+      <div class="lab-box">
+        <div class="lab-label">your lab — open a real terminal and work here</div>
+        <code class="lab-path" id="lab-path"></code>
+      </div>
+
+      <div class="flag-row" id="flag-row">
+        <input class="flag-input" id="flag-input" type="text" spellcheck="false"
+               placeholder="paste the flag here" />
+      </div>
+
+      <div class="run-row">
+        <button class="btn-accent" id="btn-verify">▶ Verify</button>
+        <button class="btn-ghost" id="btn-reset-lab">↺ reset lab</button>
+        <span class="run-hint" id="check-count"></span>
+      </div>
     </div>
 
     <div class="results" id="results" hidden></div>
