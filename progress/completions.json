@@ -29,6 +29,11 @@
       "exercise_id": "lesson-parameters",
       "passed_at": "2026-07-02T18:18:36.994Z",
       "xp_awarded": 5
+    },
+    {
+      "exercise_id": "py-greet",
+      "passed_at": "2026-07-02T18:22:59.276Z",
+      "xp_awarded": 10
     }
   ]
 }
