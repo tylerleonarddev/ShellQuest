@@ -2,6 +2,10 @@
 
 The repo is the save file. Moving machines is a clone, not a restore.
 
+*Verified for real on 2026-07-01 (v0.9): a fresh clone carried XP, level,
+streak, completions, and FSRS review state intact, and rebuilt lab state
+from scratch on the "new machine." See `COLD-START.md`.*
+
 ## The steps
 
 ```bash
