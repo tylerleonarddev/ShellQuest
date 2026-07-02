@@ -13,7 +13,8 @@
     "lesson-parameters": "new"
   },
   "completed": [
-    "py-say-hello"
+    "py-say-hello",
+    "sq-01-explore"
   ],
   "bonus_awarded": false,
   "bonus_xp": 15
