@@ -12,7 +12,9 @@
     "sq-02-make": "new",
     "lesson-parameters": "new"
   },
-  "completed": [],
+  "completed": [
+    "py-say-hello"
+  ],
   "bonus_awarded": false,
   "bonus_xp": 15
 }
