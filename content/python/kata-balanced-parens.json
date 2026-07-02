@@ -1,0 +1,25 @@
+{
+  "id": "py-balanced-parens",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Balanced brackets",
+  "xp": 40,
+  "prerequisites": ["py-stack"],
+  "review_interval_days": null,
+  "prompt": "Write is_balanced(s) returning True if every bracket in s — (), [], {} — closes in the right order. This is the classic first payoff of a stack: push each opener, and each closer must match the most recent open one (pop and compare). Non-bracket characters are ignored.",
+  "starter_code": "def is_balanced(s):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      { "call": "is_balanced('()')", "expect": true },
+      { "call": "is_balanced('([{}])')", "expect": true },
+      { "call": "is_balanced('(]')", "expect": false },
+      { "call": "is_balanced('(()')", "expect": false },
+      { "call": "is_balanced('())')", "expect": false },
+      { "call": "is_balanced('')", "expect": true },
+      { "call": "is_balanced(')(')", "expect": false },
+      { "call": "is_balanced('([)]')", "expect": false },
+      { "call": "is_balanced('f(x[0]) { return x }')", "expect": true }
+    ]
+  }
+}

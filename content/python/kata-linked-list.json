@@ -1,0 +1,32 @@
+{
+  "id": "py-linked-list",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Singly linked list",
+  "xp": 50,
+  "prerequisites": ["py-queue"],
+  "review_interval_days": null,
+  "prompt": "A linked list is a chain of nodes, each holding a value and a reference to the next node — the structure that teaches how references work. Implement LinkedList with append(x) (add to the end), to_list() (return the values as a plain Python list, front to back), and reverse() (reverse the chain in place). Hint: a Node class with .value and .next, and a .head reference on the list.",
+  "starter_code": "class Node:\n    def __init__(self, value):\n        self.value = value\n        self.next = None\n\nclass LinkedList:\n    def __init__(self):\n        self.head = None\n",
+  "verification": {
+    "runner": "python-script",
+    "tests": [
+      {
+        "setup": ["ll = LinkedList()", "ll.append(1)", "ll.append(2)", "ll.append(3)"],
+        "checks": [{ "call": "ll.to_list()", "expect": [1, 2, 3] }]
+      },
+      {
+        "setup": ["ll = LinkedList()", "ll.append(1)", "ll.append(2)", "ll.append(3)", "ll.reverse()"],
+        "checks": [{ "call": "ll.to_list()", "expect": [3, 2, 1] }]
+      },
+      {
+        "setup": ["ll = LinkedList()"],
+        "checks": [{ "call": "ll.to_list()", "expect": [] }]
+      },
+      {
+        "setup": ["ll = LinkedList()", "ll.append('only')", "ll.reverse()"],
+        "checks": [{ "call": "ll.to_list()", "expect": ["only"] }]
+      }
+    ]
+  }
+}

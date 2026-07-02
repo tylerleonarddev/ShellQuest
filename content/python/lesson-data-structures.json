@@ -1,0 +1,11 @@
+{
+  "id": "lesson-data-structures",
+  "type": "lesson",
+  "track": "progression",
+  "title": "What is a data structure?",
+  "xp": 5,
+  "prerequisites": ["py-merge"],
+  "review_interval_days": null,
+  "body": "A *data structure* is a deliberate way of organizing data so certain operations are fast. You already know two: lists and dicts. From here you'll build your own as *classes* — a class is a blueprint (`class Stack:`) and each `Stack()` you create from it is an object carrying its own data. Inside a class, functions are called *methods*, and their first parameter `self` means \"this particular object\". The next challenges have you build the classics — stack, queue, linked list — the exact structures CS courses and interviews assume you've touched.",
+  "completion": "acknowledge"
+}

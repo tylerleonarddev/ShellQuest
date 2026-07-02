@@ -1,0 +1,37 @@
+{
+  "id": "py-stack",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Build a Stack",
+  "xp": 45,
+  "prerequisites": ["lesson-data-structures"],
+  "review_interval_days": null,
+  "prompt": "A stack is last-in, first-out — like a stack of plates. Implement a Stack class with push(x), pop() (removes and returns the top), peek() (returns the top without removing), is_empty(), and support for len() (define __len__). The next few challenges build on this one.",
+  "starter_code": "class Stack:\n    def __init__(self):\n        pass\n",
+  "verification": {
+    "runner": "python-script",
+    "tests": [
+      {
+        "setup": ["s = Stack()", "s.push(1)", "s.push(2)", "s.push(3)"],
+        "checks": [
+          { "call": "s.pop()", "expect": 3 },
+          { "call": "s.peek()", "expect": 2 },
+          { "call": "len(s)", "expect": 2 }
+        ]
+      },
+      {
+        "setup": ["s = Stack()"],
+        "checks": [{ "call": "s.is_empty()", "expect": true }]
+      },
+      {
+        "setup": ["s = Stack()", "s.push('a')", "s.push('b')", "x = s.pop()", "s.push('c')"],
+        "checks": [
+          { "call": "x", "expect": "b" },
+          { "call": "s.pop()", "expect": "c" },
+          { "call": "s.pop()", "expect": "a" },
+          { "call": "s.is_empty()", "expect": true }
+        ]
+      }
+    ]
+  }
+}

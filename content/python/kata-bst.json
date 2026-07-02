@@ -1,0 +1,33 @@
+{
+  "id": "py-bst",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Binary search tree",
+  "xp": 50,
+  "prerequisites": ["py-linked-list"],
+  "review_interval_days": null,
+  "prompt": "A binary search tree keeps every value in order: smaller values go left, larger go right — so finding a value halves the search at every step, the same intuition as binary search. Implement BST with insert(x) and contains(x) returning True/False. Duplicates: inserting a value already present may leave the tree unchanged.",
+  "starter_code": "class BST:\n    def __init__(self):\n        self.root = None\n",
+  "verification": {
+    "runner": "python-script",
+    "tests": [
+      {
+        "setup": ["t = BST()", "t.insert(5)", "t.insert(3)", "t.insert(8)", "t.insert(1)"],
+        "checks": [
+          { "call": "t.contains(3)", "expect": true },
+          { "call": "t.contains(8)", "expect": true },
+          { "call": "t.contains(1)", "expect": true },
+          { "call": "t.contains(7)", "expect": false }
+        ]
+      },
+      {
+        "setup": ["t = BST()"],
+        "checks": [{ "call": "t.contains(1)", "expect": false }]
+      },
+      {
+        "setup": ["t = BST()", "t.insert(2)", "t.insert(2)", "t.insert(2)"],
+        "checks": [{ "call": "t.contains(2)", "expect": true }]
+      }
+    ]
+  }
+}
