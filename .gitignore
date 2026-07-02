@@ -8,3 +8,6 @@ devlogs/drafts/*
 
 # Machine-local facts are never synced as truth (see ARCHITECTURE.md §5)
 machine-state/
+
+# Built artifact — CI regenerates and deploys it; a committed copy only goes stale
+site/

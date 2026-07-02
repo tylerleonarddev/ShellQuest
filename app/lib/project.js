@@ -23,8 +23,23 @@ function resolveProjectFile(project) {
     return { error: `invalid project name: ${project.name}` };
   }
   const projectDir = path.join(PROJECTS_ROOT, project.name);
-  const target = path.resolve(REPO_ROOT, project.file);
-  const rel = path.relative(projectDir, target);
+  let target = path.resolve(REPO_ROOT, project.file);
+  // Resolve symlinks in every existing path component — a committed
+  // symlink inside projects/ must not be able to point the write
+  // elsewhere. (The lexical check alone can be defeated by one.)
+  try {
+    const dir = fs.existsSync(path.dirname(target))
+      ? fs.realpathSync(path.dirname(target))
+      : path.dirname(target);
+    target = path.join(dir, path.basename(target));
+    if (fs.existsSync(target) && fs.lstatSync(target).isSymbolicLink()) {
+      return { error: `assembly refused: ${project.file} is a symlink` };
+    }
+  } catch (err) {
+    return { error: `assembly refused: ${err.message}` };
+  }
+  const realProjectDir = fs.existsSync(projectDir) ? fs.realpathSync(projectDir) : projectDir;
+  const rel = path.relative(realProjectDir, target);
   if (rel === '' || rel.startsWith('..') || path.isAbsolute(rel)) {
     return { error: `assembly refused: ${project.file} is outside projects/${project.name}/` };
   }
@@ -43,6 +58,11 @@ function markerRegex(fn) {
 function assembleStep(exercise, solutionCode) {
   const project = exercise.project;
   if (!project || !project.function) return { assembled: false };
+  // The function name is interpolated into a RegExp — constrain it to a
+  // plain Python identifier (the linter enforces the same rule).
+  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(project.function)) {
+    return { assembled: false, error: `invalid project function name: ${project.function}` };
+  }
 
   const resolved = resolveProjectFile(project);
   if (resolved.error) return { assembled: false, error: resolved.error };
@@ -57,12 +77,16 @@ function assembleStep(exercise, solutionCode) {
   }
 
   const block = solutionCode.trimEnd() + '\n';
-  fs.writeFileSync(resolved.file, source.replace(re, `$1${block}$2`));
+  // Function replacer, NOT a replacement string: learner code containing
+  // `$'`, `$&`, or `$1` (e.g. the regex r'ERROR$' + a quote) would be
+  // interpreted by String.replace and corrupt the assembled file.
+  fs.writeFileSync(resolved.file, source.replace(re, (_m, begin, end) => `${begin}${block}${end}`));
 
   // v0.9 amendment: the curriculum repo commits ONLY stubs. The learner's
   // assembled copy stays local — skip-worktree makes git blind to it, so
   // completed solutions can never ride into a public commit. (Finished
   // tools graduate to their own repo instead.)
+  let gitHidden = true;
   try {
     require('child_process').execFileSync(
       'git',
@@ -70,10 +94,12 @@ function assembleStep(exercise, solutionCode) {
       { cwd: REPO_ROOT }
     );
   } catch {
-    // non-fatal: worst case the file shows as modified and the linter's
-    // stubs-only rule still blocks a bad commit in CI
+    // Not fatal, but be honest about the consequence: the assembled file
+    // is now visible to git, and the stubs-only lint checks HEAD — so a
+    // careless add+commit+push WOULD leak before CI flags it. Surface it.
+    gitHidden = false;
   }
-  return { assembled: true, file: project.file, function: project.function };
+  return { assembled: true, file: project.file, function: project.function, gitHidden };
 }
 
 // The capstone runner: execute the assembled tool, pass when every
@@ -81,12 +107,15 @@ function assembleStep(exercise, solutionCode) {
 function runProject(exercise) {
   const v = exercise.verification;
   return new Promise((resolve) => {
-    execFile(
+    // Own process group + group kill, so a hung tool's subprocesses die
+    // with it (same policy as the python harness).
+    const child = execFile(
       'bash',
       ['-c', v.command],
-      { cwd: REPO_ROOT, timeout: TIMEOUT_MS, killSignal: 'SIGKILL' },
+      { cwd: REPO_ROOT, timeout: TIMEOUT_MS, killSignal: 'SIGKILL', detached: true },
       (err, stdout, stderr) => {
         if (err && err.killed) {
+          try { process.kill(-child.pid, 'SIGKILL'); } catch { /* gone */ }
           return resolve({
             passed: false,
             error: `Timed out after ${TIMEOUT_MS / 1000}s — is the tool stuck in a loop?`,

@@ -19,7 +19,7 @@
       },
       {
         "call": "count_vowels('SIGINT')",
-        "expect": 1
+        "expect": 2
       },
       {
         "call": "count_vowels('')",

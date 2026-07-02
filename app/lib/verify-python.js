@@ -2,7 +2,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { execFile } = require('child_process');
+const { spawn } = require('child_process');
 
 const TIMEOUT_MS = 5000;
 const SENTINEL = '__SHELLQUEST_RESULTS__';
@@ -31,7 +31,11 @@ with open("tests.json") as f:
 _ns = {}
 try:
     exec(compile(_src, "solution.py", "exec"), _ns)
-except Exception:
+except SystemExit:
+    print("${SENTINEL}")
+    print(json.dumps({"fatal": "SystemExit: your code called exit()/sys.exit() — remove it; just define the function and let the tests call it."}))
+    sys.exit(0)
+except BaseException:
     print("${SENTINEL}")
     print(json.dumps({"fatal": traceback.format_exc(limit=3)}))
     sys.exit(0)
@@ -42,12 +46,14 @@ for _t in _tests:
     try:
         _actual = eval(_t["call"], _ns)
         try:
-            _actual = json.loads(json.dumps(_actual))
+            _actual = json.loads(json.dumps(_actual, allow_nan=False))
             _r["actual"] = _actual
             _r["passed"] = _match(_actual, _t["expect"])
         except (TypeError, ValueError):
             _r["error"] = "result is not a JSON-comparable value: " + repr(_actual)
-    except Exception as _e:
+    except SystemExit:
+        _r["error"] = "SystemExit: your code called exit()/sys.exit() — remove it and return a value instead"
+    except BaseException as _e:
         _r["error"] = type(_e).__name__ + ": " + str(_e)
     _results.append(_r)
 
@@ -86,12 +92,29 @@ except Exception:
 _results = []
 for _t in _tests:
     _ns = {}
-    exec(compile(_src, "solution.py", "exec"), _ns)
+    # Top-level runtime errors in learner code must surface as the same
+    # friendly "fatal" payload the single-expression harness uses — never
+    # as a raw harness traceback.
+    try:
+        exec(compile(_src, "solution.py", "exec"), _ns)
+    except SystemExit:
+        print("${SENTINEL}")
+        print(json.dumps({"fatal": "SystemExit: your code called exit()/sys.exit() — remove it; define the class and let the tests drive it."}))
+        sys.exit(0)
+    except BaseException:
+        print("${SENTINEL}")
+        print(json.dumps({"fatal": traceback.format_exc(limit=3)}))
+        sys.exit(0)
     _setup_ok = True
     for _line in _t.get("setup", []):
         try:
             exec(_line, _ns)
-        except Exception as _e:
+        except SystemExit:
+            _results.append({"call": "setup: " + _line, "passed": False,
+                             "error": "SystemExit: your code called exit()/sys.exit()"})
+            _setup_ok = False
+            break
+        except BaseException as _e:
             _results.append({"call": "setup: " + _line, "passed": False,
                              "error": type(_e).__name__ + ": " + str(_e)})
             _setup_ok = False
@@ -103,12 +126,14 @@ for _t in _tests:
         try:
             _actual = eval(_c["call"], _ns)
             try:
-                _actual = json.loads(json.dumps(_actual))
+                _actual = json.loads(json.dumps(_actual, allow_nan=False))
                 _r["actual"] = _actual
                 _r["passed"] = _match(_actual, _c["expect"])
             except (TypeError, ValueError):
                 _r["error"] = "result is not a JSON-comparable value: " + repr(_actual)
-        except Exception as _e:
+        except SystemExit:
+            _r["error"] = "SystemExit: your code called exit()/sys.exit() — remove it and return a value instead"
+        except BaseException as _e:
             _r["error"] = type(_e).__name__ + ": " + str(_e)
         _results.append(_r)
 
@@ -128,40 +153,85 @@ function runHarness(harness, exercise, userCode) {
       return resolve({ passed: false, error: `Could not set up test run: ${err.message}` });
     }
 
-    execFile(
-      'python3',
-      ['harness.py'],
-      { cwd: tmpDir, timeout: TIMEOUT_MS, killSignal: 'SIGKILL' },
-      (err, stdout, stderr) => {
-        fs.rmSync(tmpDir, { recursive: true, force: true });
+    // detached => own process group, and the timeout kills the whole
+    // group (-pid), so learner-spawned subprocesses die with the harness
+    // instead of being orphaned.
+    const child = spawn('python3', ['harness.py'], {
+      cwd: tmpDir,
+      detached: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
 
-        if (err && err.killed) {
-          return resolve({
-            passed: false,
-            error: `Timed out after ${TIMEOUT_MS / 1000}s — check for an infinite loop.`,
-          });
-        }
+    let stdout = '';
+    let stderr = '';
+    let timedOut = false;
+    let oversize = false;
 
-        const idx = stdout.lastIndexOf(SENTINEL);
-        if (idx === -1) {
-          const detail = (stderr || (err && err.message) || 'no output').trim();
-          return resolve({ passed: false, error: `Test runner failed: ${detail}` });
-        }
+    const killGroup = () => {
+      try { process.kill(-child.pid, 'SIGKILL'); } catch { /* already gone */ }
+    };
+    const timer = setTimeout(() => { timedOut = true; killGroup(); }, TIMEOUT_MS);
 
-        let payload;
-        try {
-          payload = JSON.parse(stdout.slice(idx + SENTINEL.length).trim());
-        } catch {
-          return resolve({ passed: false, error: 'Test runner produced unreadable output.' });
-        }
+    child.stdout.on('data', (d) => {
+      stdout += d;
+      if (stdout.length > 4 * 1024 * 1024 && !oversize) { oversize = true; killGroup(); }
+    });
+    child.stderr.on('data', (d) => { if (stderr.length < 64 * 1024) stderr += d; });
 
-        if (payload.fatal) {
-          return resolve({ passed: false, fatal: payload.fatal.trim() });
-        }
-        const results = payload.results || [];
-        resolve({ passed: results.length > 0 && results.every((r) => r.passed), results });
+    child.on('error', (err) => {
+      clearTimeout(timer);
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+      resolve({
+        passed: false,
+        error: err.code === 'ENOENT'
+          ? 'python3 was not found on this machine — install Python 3 to run katas.'
+          : `Test runner failed: ${err.message}`,
+      });
+    });
+
+    child.on('close', () => {
+      clearTimeout(timer);
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+
+      if (timedOut) {
+        return resolve({
+          passed: false,
+          error: `Timed out after ${TIMEOUT_MS / 1000}s — check for an infinite loop.`,
+        });
       }
-    );
+      if (oversize) {
+        return resolve({
+          passed: false,
+          error: 'Your code printed far too much output — remove the print loop and try again.',
+        });
+      }
+
+      // Line-based protocol: the payload is everything after the LAST
+      // line that is exactly the sentinel. Learner output that merely
+      // contains the sentinel string can't break parsing.
+      const lines = stdout.split('\n');
+      let mark = -1;
+      for (let i = lines.length - 1; i >= 0; i--) {
+        if (lines[i].trim() === SENTINEL) { mark = i; break; }
+      }
+      if (mark === -1) {
+        const detail = (stderr || 'no output').trim();
+        return resolve({ passed: false, error: `Test runner failed: ${detail}` });
+      }
+
+      let payload;
+      try {
+        payload = JSON.parse(lines.slice(mark + 1).join('\n').trim());
+      } catch {
+        return resolve({ passed: false, error: 'Test runner produced unreadable output.' });
+      }
+
+      if (payload.fatal) {
+        return resolve({ passed: false, fatal: payload.fatal.trim() });
+      }
+      const results = payload.results || [];
+      resolve({ passed: results.length > 0 && results.every((r) => r.passed), results });
+    });
   });
 }
 

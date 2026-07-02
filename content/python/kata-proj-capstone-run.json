@@ -8,7 +8,7 @@
     "proj-summarize"
   ],
   "review_interval_days": null,
-  "prompt": "You've built every piece. Your functions are now assembled in projects/logparser/logparser.py. Run it against the sample log: `python projects/logparser/logparser.py projects/logparser/fixtures/sample.log`. This challenge passes when your real tool produces the correct summary.",
+  "prompt": "You've built every piece. Your functions are now assembled in projects/logparser/logparser.py. Run it against the sample log: `python3 projects/logparser/logparser.py projects/logparser/fixtures/sample.log`. This challenge passes when your real tool produces the correct summary.",
   "starter_code": "# Nothing to write \u2014 run your assembled tool from the terminal.\n",
   "verification": {
     "runner": "project-run",

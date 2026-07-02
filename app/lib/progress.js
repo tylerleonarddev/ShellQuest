@@ -10,17 +10,8 @@ const DEFAULT_PROFILE = {
   last_cleared_date: null,
 };
 
-function readJson(file, fallback) {
-  try {
-    return JSON.parse(fs.readFileSync(file, 'utf8'));
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJson(file, data) {
-  fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
-}
+// Durable reads/writes: atomic renames, loud corruption recovery (store.js).
+const { readJson, writeJson } = require('./store');
 
 function getProfile() {
   return { ...DEFAULT_PROFILE, ...readJson(PROFILE_FILE, {}) };

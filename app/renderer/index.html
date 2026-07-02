@@ -21,6 +21,13 @@
 
   <!-- Dashboard -->
   <main id="view-dashboard" class="view">
+    <section class="prompt-line" id="prompt-line" hidden>
+      <span class="prompt-chev">❯</span>
+      <span class="prompt-label" id="prompt-label"></span>
+      <span class="prompt-meta" id="prompt-meta"></span>
+      <span class="prompt-hint">enter ↵</span>
+    </section>
+
     <section class="hud">
       <div class="hud-tile">
         <div class="hud-label">Level</div>
@@ -40,6 +47,14 @@
       </div>
     </section>
 
+    <section class="record-section" id="record-section" hidden>
+      <div class="today-header">
+        <h2 class="section-title">// the record</h2>
+        <span class="record-caption" id="record-caption"></span>
+      </div>
+      <div class="record-grid" id="record-grid"></div>
+    </section>
+
     <section class="today-section">
       <div class="today-header">
         <h2 class="section-title">// today</h2>
@@ -48,6 +63,10 @@
       <ul class="today-list" id="today-list"></ul>
       <div class="today-status" id="today-status"></div>
       <div class="weekly-goals" id="weekly-goals"></div>
+      <div class="forecast" id="forecast" hidden>
+        <div class="forecast-title">// scheduled</div>
+        <div id="forecast-rows"></div>
+      </div>
     </section>
 
     <section class="kata-section">
@@ -132,6 +151,7 @@
       <div class="reward-xp"><span id="reward-xp-count">+0</span> XP</div>
       <div class="reward-daily" id="reward-daily" hidden></div>
       <div class="reward-streak" id="reward-streak"></div>
+      <div class="reward-tomorrow" id="reward-tomorrow" hidden></div>
       <div class="reward-hint">click to continue</div>
     </div>
   </div>

@@ -3,7 +3,7 @@
   "type": "python-kata",
   "track": "progression",
   "title": "Binary search",
-  "xp": 35,
+  "xp": 45,
   "prerequisites": [
     "py-sum-digits"
   ],

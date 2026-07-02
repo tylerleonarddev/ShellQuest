@@ -115,8 +115,29 @@ for (const file of files) {
       if (relToProject.startsWith('..') || path.isAbsolute(relToProject)) {
         errors.push(`${rel}: project.file "${p.file}" escapes projects/${p.name}/`);
       } else if (p.function) {
-        scaffoldChecks.push([rel, p.file, p.function]);
+        // The function name is interpolated into RegExps (here and at
+        // runtime) — it must be a plain Python identifier.
+        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(p.function)) {
+          errors.push(`${rel}: project.function "${p.function}" is not a valid identifier`);
+        } else {
+          scaffoldChecks.push([rel, p.file, p.function]);
+        }
       }
+    }
+  }
+
+  // Shell-challenge setup materializes into the lab dir — every declared
+  // path must stay inside it (same isolation rule as project assembly).
+  if (ex.setup) {
+    const labSafe = (p) => {
+      const r = path.relative('/lab', path.resolve('/lab', p));
+      return r !== '' && !r.startsWith('..') && !path.isAbsolute(r);
+    };
+    for (const dir of ex.setup.dirs || []) {
+      if (!labSafe(dir)) errors.push(`${rel}: setup dir "${dir}" escapes the lab directory`);
+    }
+    for (const f of ex.setup.files || []) {
+      if (!labSafe(f.path)) errors.push(`${rel}: setup file "${f.path}" escapes the lab directory`);
     }
   }
 

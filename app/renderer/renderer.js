@@ -4,6 +4,21 @@
 
 const $ = (id) => document.getElementById(id);
 
+// Keyboard/screen-reader access for clickable list items: every actionable
+// row is a focusable button, not a click-only <li>.
+function makeActionable(el, fn) {
+  el.tabIndex = 0;
+  el.setAttribute('role', 'button');
+  el.addEventListener('click', fn);
+  el.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter' || ev.key === ' ') {
+      ev.preventDefault();
+      ev.stopPropagation();
+      fn();
+    }
+  });
+}
+
 let editor = null;
 let currentExercise = null;
 
@@ -13,6 +28,104 @@ const GOAL_LABELS = {
   clear_daily_days: 'days cleared',
   new_exercises: 'new exercises',
 };
+
+/* ── The prompt line: one glance answers "what do I do next" ── */
+
+let promptTarget = null;
+
+function renderPromptLine(state) {
+  const line = $('prompt-line');
+  const next =
+    state.daily.items.find((i) => !i.done) ||
+    state.exercises.find((e) => !e.locked && !e.completed);
+  promptTarget = next ? next.id : null;
+
+  line.hidden = false;
+  if (!next) {
+    $('prompt-label').textContent = state.daily.cleared
+      ? 'daily cleared — all caught up'
+      : 'all caught up';
+    $('prompt-meta').textContent = '';
+    line.classList.add('prompt-done');
+    return;
+  }
+  line.classList.remove('prompt-done');
+  $('prompt-label').textContent = `next: ${next.title}`;
+  const kind = next.kind || (next.completed ? 'review' : 'new');
+  $('prompt-meta').textContent = `${kind} · +${next.xp} XP`;
+}
+
+/* ── The record: every pass, bucketed by day, 26 weeks ── */
+
+function renderRecord(state) {
+  const section = $('record-section');
+  const days = state.activity.days || {};
+  if (!state.activity.firstPass) {
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+
+  const grid = $('record-grid');
+  grid.innerHTML = '';
+  const today = new Date(`${state.activity.today}T12:00:00`);
+  // Start 181 days back, aligned to the top of the week column.
+  const start = new Date(today);
+  start.setDate(start.getDate() - 181 - ((today.getDay() + 6) % 7));
+  let totalPasses = 0;
+  for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const info = days[key];
+    const cell = document.createElement('span');
+    const n = info ? info.passes : 0;
+    totalPasses += n;
+    cell.className = 'record-cell' + (n ? ` r${Math.min(4, n)}` : '');
+    if (key === state.activity.today) cell.classList.add('record-today');
+    cell.title = info ? `${key} · ${n} pass${n === 1 ? '' : 'es'} · ${info.xp} XP` : key;
+    grid.appendChild(cell);
+  }
+  const daysSince = Math.round((today - new Date(`${state.activity.firstPass}T12:00:00`)) / 86400000) + 1;
+  $('record-caption').textContent = `day ${daysSince} · ${totalPasses} passes`;
+}
+
+/* ── The forecast: FSRS's schedule, rendered like an atq listing ── */
+
+function renderForecast(state) {
+  const box = $('forecast');
+  const cards = state.reviewForecast || [];
+  if (!cards.length) {
+    box.hidden = true;
+    return;
+  }
+  box.hidden = false;
+  const rows = $('forecast-rows');
+  rows.innerHTML = '';
+  for (const c of cards) {
+    const row = document.createElement('div');
+    row.className = 'forecast-row';
+    const due = document.createElement('span');
+    due.className = 'forecast-due';
+    if (c.dueDay < state.activity.today) {
+      due.textContent = 'overdue';
+      due.classList.add('overdue');
+    } else if (c.dueDay === state.activity.today) {
+      due.textContent = 'today';
+      due.classList.add('due-today');
+    } else {
+      const gap = Math.round((new Date(`${c.dueDay}T12:00:00`) - new Date(`${state.activity.today}T12:00:00`)) / 86400000);
+      due.textContent = `in ${gap}d`;
+    }
+    const title = document.createElement('span');
+    title.className = 'forecast-title-cell';
+    title.textContent = c.title;
+    const stab = document.createElement('span');
+    stab.className = 'forecast-stab';
+    stab.textContent = `↻ ${c.stability}d`;
+    stab.title = 'memory stability — how long this skill holds';
+    row.append(due, title, stab);
+    rows.appendChild(row);
+  }
+}
 
 function renderToday(state) {
   const daily = state.daily;
@@ -34,12 +147,17 @@ function renderToday(state) {
     kind.className = `today-kind ${item.kind}`;
     kind.textContent = item.kind;
     li.append(mark, title, kind);
-    if (!item.done) li.addEventListener('click', () => openExercise(item.id));
+    if (!item.done) makeActionable(li, () => openExercise(item.id));
     list.appendChild(li);
   }
 
+  const handoff = (state.tomorrow || []).length
+    ? ` · tomorrow: ${state.tomorrow.filter((t) => t.kind === 'review').length} review${state.tomorrow.filter((t) => t.kind === 'review').length === 1 ? '' : 's'}${state.tomorrow.some((t) => t.kind === 'new') ? ` + ${state.tomorrow.find((t) => t.kind === 'new').title}` : ''}`
+    : '';
   $('today-status').textContent = daily.cleared
-    ? `daily cleared ✓ streak safe at ${state.profile.streak_days}`
+    ? (daily.items.length
+        ? `daily cleared ✓ streak safe at ${state.profile.streak_days}${handoff}`
+        : `rest day — nothing due, streak safe at ${state.profile.streak_days}${handoff}`)
     : daily.items.length
       ? `clear all ${daily.items.length} to keep the streak (+${daily.bonusXp} XP)`
       : 'nothing due — the ladder awaits';
@@ -124,8 +242,9 @@ async function buildDraftEditor(file) {
       status.textContent = 'published & pushed ✓ it’s public';
       setTimeout(renderDevlogs, 1200);
     } else {
-      status.textContent = `committed locally, but push failed — ${res.push.reason}. Retry below.`;
-      setTimeout(renderDevlogs, 2500);
+      // Persistent: this guidance must outlive a 2.5s glance — the user
+      // needs it to find the retry button.
+      status.textContent = `committed locally, but push failed — ${res.push.reason}. Use "⇡ push now" below to retry.`;
     }
   });
 
@@ -134,8 +253,12 @@ async function buildDraftEditor(file) {
   return box;
 }
 
+let devlogsRenderSeq = 0;
+
 async function renderDevlogs() {
+  const seq = ++devlogsRenderSeq;
   const { drafts, published } = await window.shellquest.listDevlogs();
+  if (seq !== devlogsRenderSeq) return; // a newer render superseded us
 
   const list = $('devlog-drafts');
   list.innerHTML = '';
@@ -160,7 +283,9 @@ async function renderDevlogs() {
     head.append(title, file, btn);
     li.appendChild(head);
     if (expandedDraft === d.file) {
-      li.appendChild(await buildDraftEditor(d.file));
+      const editorBox = await buildDraftEditor(d.file);
+      if (seq !== devlogsRenderSeq) return; // superseded mid-await
+      li.appendChild(editorBox);
     }
     list.appendChild(li);
   }
@@ -199,7 +324,10 @@ async function renderDevlogs() {
 async function showDashboard() {
   const state = await window.shellquest.getState();
   renderStats(state);
+  renderPromptLine(state);
+  renderRecord(state);
   renderToday(state);
+  renderForecast(state);
   renderDevlogs();
 
   const list = $('kata-list');
@@ -258,7 +386,7 @@ async function showDashboard() {
     }
     meta.appendChild(xp);
     li.append(title, meta);
-    if (!ex.locked) li.addEventListener('click', () => openExercise(ex.id));
+    if (!ex.locked) makeActionable(li, () => openExercise(ex.id));
     list.appendChild(li);
   }
 
@@ -292,9 +420,18 @@ function renderStats(state) {
   $('hud-xp-detail').textContent = `${into} / ${span} XP to level ${p.level + 1}`;
 
   $('topbar-stats').hidden = false;
-  $('chip-level').innerHTML = `lvl <b>${p.level}</b>`;
-  $('chip-xp').innerHTML = `<b>${p.xp}</b> xp`;
-  $('chip-streak').innerHTML = `<b>${p.streak_days}</b>d streak`;
+  const chip = (id, pre, val, post) => {
+    const el = $(id);
+    el.textContent = '';
+    if (pre) el.append(pre);
+    const b = document.createElement('b');
+    b.textContent = String(val);
+    el.append(b);
+    if (post) el.append(post);
+  };
+  chip('chip-level', 'lvl ', p.level, '');
+  chip('chip-xp', '', p.xp, ' xp');
+  chip('chip-streak', '', p.streak_days, 'd streak');
 }
 
 /* ── Exercise view ── */
@@ -366,8 +503,11 @@ async function completeCurrentLesson() {
 
 async function runCurrent() {
   if (!currentExercise) return;
+  // Lessons have no runner — Ctrl+Enter means "Got it".
+  if (currentExercise.type === 'lesson') return completeCurrentLesson();
   const isChallenge = currentExercise.type === 'shell-challenge';
   const btn = $(isChallenge ? 'btn-verify' : 'btn-run');
+  if (btn.disabled) return; // keyboard paths must respect an in-flight run
   const idleLabel = isChallenge ? '▶ Verify' : '▶ Run tests';
   btn.disabled = true;
   btn.textContent = '… running';
@@ -454,6 +594,30 @@ function renderResults(res) {
     box.hidden = false;
   }
 
+  // Assembly must never fail silently: the learner earned the XP but the
+  // tool didn't get their function — say so, with the reason.
+  if (res.passed && res.assembly && !res.assembly.assembled && res.assembly.error) {
+    const note = document.createElement('div');
+    note.className = 'result-line fail';
+    note.textContent = `⚠ passed, but your solution was NOT written into the project — ${res.assembly.error}`;
+    box.appendChild(note);
+    box.hidden = false;
+  }
+  if (res.passed && res.assembly && res.assembly.assembled && res.assembly.gitHidden === false) {
+    const note = document.createElement('div');
+    note.className = 'result-line fail';
+    note.textContent = '⚠ heads up: git could not be told to ignore your assembled file — avoid committing projects/ by hand';
+    box.appendChild(note);
+    box.hidden = false;
+  }
+  for (const e of res.stepErrors || []) {
+    const note = document.createElement('div');
+    note.className = 'result-line fail';
+    note.textContent = `⚠ pass recorded, but one step hiccuped — ${e}`;
+    box.appendChild(note);
+    box.hidden = false;
+  }
+
   // project-run failures show the tool's real output so the learner can
   // see what's off.
   if (!res.passed && res.output) {
@@ -529,6 +693,22 @@ function rewardBeat(res) {
         ? 'review passed — interval extended'
         : 'already mastered — practice reps still count';
 
+  // The handoff: plant tomorrow's hook at the moment of maximum attention.
+  const tomorrowLine = $('reward-tomorrow');
+  const tm = res.state.tomorrow || [];
+  if (events.dailyCleared && tm.length) {
+    const reviews = tm.filter((t) => t.kind === 'review').length;
+    const firstNew = tm.find((t) => t.kind === 'new');
+    tomorrowLine.textContent =
+      'tomorrow: ' +
+      [reviews ? `${reviews} review${reviews === 1 ? '' : 's'}` : '', firstNew ? `new: ${firstNew.title}` : '']
+        .filter(Boolean)
+        .join(' · ');
+    tomorrowLine.hidden = false;
+  } else {
+    tomorrowLine.hidden = true;
+  }
+
   overlay.hidden = false;
   const t0 = performance.now();
   const DURATION = 900;
@@ -547,7 +727,10 @@ function rewardBeat(res) {
     showDashboard();
   };
   overlay.addEventListener('click', dismiss);
-  setTimeout(() => {
+  // Track the auto-dismiss timer: a stale timer from a previous beat must
+  // not cut the next one short.
+  if (rewardBeat._timer) clearTimeout(rewardBeat._timer);
+  rewardBeat._timer = setTimeout(() => {
     if (!overlay.hidden) dismiss();
   }, 3200);
 }
@@ -606,13 +789,31 @@ $('btn-verify').addEventListener('click', runCurrent);
 $('btn-gotit').addEventListener('click', completeCurrentLesson);
 $('btn-reset-lab').addEventListener('click', resetLab);
 $('flag-input').addEventListener('keydown', (ev) => {
-  if (ev.key === 'Enter') runCurrent();
+  // Plain Enter only — Ctrl+Enter belongs to the global handler, and
+  // matching both fired two runs from one keystroke.
+  if (ev.key === 'Enter' && !ev.ctrlKey) runCurrent();
 });
 document.addEventListener('keydown', (ev) => {
   if (ev.ctrlKey && ev.key === 'Enter' && !$('view-exercise').hidden) {
     ev.preventDefault();
     runCurrent();
   }
+  // Dashboard: plain Enter follows the ❯ prompt line to the next item.
+  if (
+    ev.key === 'Enter' && !ev.ctrlKey &&
+    !$('view-dashboard').hidden &&
+    $('glossary-overlay').hidden &&
+    promptTarget &&
+    !/^(INPUT|TEXTAREA|BUTTON|A)$/.test((ev.target && ev.target.tagName) || '') &&
+    (!ev.target || ev.target.getAttribute('role') !== 'button')
+  ) {
+    ev.preventDefault();
+    openExercise(promptTarget);
+  }
+});
+
+$('prompt-line').addEventListener('click', () => {
+  if (promptTarget) openExercise(promptTarget);
 });
 
 // First launch: one unfailable exercise that teaches only the mechanics.

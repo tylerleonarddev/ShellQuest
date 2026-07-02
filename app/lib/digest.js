@@ -39,10 +39,13 @@ function generateDigest(weekStart, weeklyStats) {
     return d >= weekStart && d <= weekEnd;
   });
 
+  // Human labels — raw internal type strings must not appear in a post
+  // that's headed for a public devlog.
+  const TYPE_LABELS = { 'python-kata': 'Python', 'shell-challenge': 'Terminal', lesson: 'Lessons' };
   const byTrack = {};
   for (const c of week) {
     const ex = byId[c.exercise_id];
-    const track = ex ? ex.type : 'other';
+    const track = ex ? TYPE_LABELS[ex.type] || ex.type : 'other';
     (byTrack[track] = byTrack[track] || []).push(ex ? ex.title : c.exercise_id);
   }
 
@@ -78,6 +81,9 @@ ${trackLines || '_No new exercises this week — reviews only._'}
 
   fs.mkdirSync(DRAFTS_DIR, { recursive: true });
   const file = path.join(DRAFTS_DIR, digestFilename(weekStart));
+  // Never clobber a draft the user may have edited (their reflection
+  // lives in it). Regenerating means deleting the draft first, on purpose.
+  if (fs.existsSync(file)) return file;
   fs.writeFileSync(file, body);
   return file;
 }

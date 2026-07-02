@@ -12,7 +12,7 @@ const progress = require(path.join(ROOT, 'app/lib/progress'));
 const schedule = require(path.join(ROOT, 'app/lib/schedule'));
 const { listPublished } = require(path.join(ROOT, 'app/lib/publish'));
 
-const TYPE_LABELS = { 'python-kata': 'Python', 'shell-challenge': 'Terminal' };
+const TYPE_LABELS = { 'python-kata': 'Python', 'shell-challenge': 'Terminal', lesson: 'Lessons' };
 
 function esc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

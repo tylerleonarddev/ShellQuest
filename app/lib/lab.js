@@ -44,11 +44,19 @@ function materialize(exercise) {
     setup._flag = flag;
   }
 
+  // Setup paths are content-authored data — enforce the same isolation
+  // rule as project assembly: nothing materializes outside the lab dir.
+  const inLab = (p) => {
+    const rel = path.relative(dir, path.resolve(dir, p));
+    return rel !== '' && !rel.startsWith('..') && !path.isAbsolute(rel);
+  };
   for (const d of setup.dirs || []) {
+    if (!inLab(d)) continue; // linter rejects these; refuse at runtime too
     fs.mkdirSync(path.join(dir, d), { recursive: true });
   }
   for (const f of setup.files || []) {
-    const full = path.join(dir, f.path);
+    if (!inLab(f.path)) continue;
+    const full = path.resolve(dir, f.path);
     fs.mkdirSync(path.dirname(full), { recursive: true });
     fs.writeFileSync(full, f.contents.replaceAll('{{FLAG}}', setup._flag || ''));
   }

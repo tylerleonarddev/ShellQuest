@@ -18,7 +18,10 @@ async function commitPaths(paths, message) {
     await git(['add', '--', ...paths]);
     const status = await git(['status', '--porcelain', '--', ...paths]);
     if (!status) return { committed: false };
-    await git(['commit', '-m', message]);
+    // Pathspec-scoped commit: ONLY these paths land in the commit, even
+    // if the user has other files manually staged — an unscoped commit
+    // would sweep them into the auto-commit and push them.
+    await git(['commit', '-m', message, '--', ...paths]);
     return { committed: true };
   } catch (err) {
     // A failed auto-commit (e.g. missing git identity) must never block
@@ -40,12 +43,14 @@ async function push() {
   } catch (err) {
     const msg = err.message || '';
     let reason = msg.split('\n')[0] || 'unknown error';
-    if (/no configured push destination|does not appear to be a git repository/i.test(msg)) {
+    // Auth patterns FIRST: HTTPS failures say "unable to access ... 403",
+    // which the network pattern would otherwise misread as offline.
+    if (/permission denied|publickey|authentication failed|401|403|could not read username/i.test(msg)) {
+      reason = 'authentication failed — check your SSH key or credentials';
+    } else if (/no configured push destination|does not appear to be a git repository/i.test(msg)) {
       reason = 'no remote configured';
-    } else if (/could not resolve host|unable to access|network is unreachable|connection (refused|timed out)/i.test(msg)) {
+    } else if (/could not resolve host|network is unreachable|connection (refused|timed out)|unable to access/i.test(msg)) {
       reason = 'no internet connection';
-    } else if (/permission denied|publickey|authentication failed/i.test(msg)) {
-      reason = 'authentication failed — check the SSH key';
     } else if (/rejected|non-fast-forward|fetch first/i.test(msg)) {
       reason = 'remote has newer commits — pull first';
     }

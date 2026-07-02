@@ -16,9 +16,10 @@ ladder starts at absolute zero — lesson cards explain each concept before
 the katas that use it, and a glossary (`? glossary`, top right) defines
 every term. Moving machines? See [`docs/MIGRATION.md`](docs/MIGRATION.md).
 
-**Launching day to day:** `sq` from any terminal, or the ShellQuest entry
-in your app grid (both are thin wrappers around `npm start` run from this
-repo — the app deliberately lives *with* its data; see ARCHITECTURE.md §2).
+**Launching day to day:** symlink the launcher once —
+`ln -s "$PWD/tools/sq-launcher.sh" ~/.local/bin/sq` — then `sq` from any
+terminal (a thin wrapper around `npm start` run from this repo; the app
+deliberately lives *with* its data — see ARCHITECTURE.md §2).
 
 **Maintenance scripts:** `npm run publish <draft>` (move a devlog draft to
 published + commit) · `npm run digest` (draft the weekly summary) ·

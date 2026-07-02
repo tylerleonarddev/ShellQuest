@@ -32,6 +32,10 @@
       {
         "call": "is_prime(97)",
         "expect": true
+      },
+      {
+        "call": "is_prime(0)",
+        "expect": false
       }
     ]
   }

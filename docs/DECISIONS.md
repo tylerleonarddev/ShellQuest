@@ -1,5 +1,30 @@
 # Design decisions (deviations & clarifications)
 
+## v0.9.2 (pre-1.0 hardening audit)
+
+A 78-agent adversarially-verified audit produced 46 confirmed findings;
+all were fixed. The load-bearing decisions:
+
+**Progress durability:** all progress JSON goes through `app/lib/store.js`
+— atomic temp+rename writes; a corrupt file is backed up
+(`*.corrupt-<ts>`), restored from the last git commit when possible, and
+never silently replaced by defaults.
+
+**Rest days:** a day whose daily queue generates empty (all content done,
+no reviews due) auto-clears with no bonus XP — a caught-up user's streak
+survives. Ghost ids stranded in today's queue by a content change are
+reconciled on load.
+
+**FSRS fairness:** failed runs only rate `Again` when a real graded
+attempt happened (per-test results exist) — timeouts, syntax errors, and
+environment failures don't count as forgetting.
+
+**`review_interval_days`** remains in the content schema as a reserved
+field; FSRS supersedes it and nothing consumes it.
+
+**The stats page build (`site/`) is no longer committed** — CI regenerates
+and deploys it on every push; a committed copy only goes stale.
+
 ## v0.8
 
 **Assembly does not auto-commit the assembled tool.** The spec says the

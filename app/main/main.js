@@ -29,7 +29,7 @@ function buildState() {
   const completedIds = new Set(completions.completions.map((c) => c.exercise_id));
   const titleById = new Map(exercises.map((e) => [e.id, e.title]));
 
-  const byId = Object.fromEntries(exercises.map((e) => [e.id, e]));
+  const depths = schedule.computeDepths(exercises); // one memoized pass
   const groupOrder = ['python', 'terminal']; // project groups follow
   const sorted = [...exercises].sort((a, b) => {
     const ga = ladderGroup(a);
@@ -39,7 +39,7 @@ function buildState() {
       const ib = groupOrder.indexOf(gb);
       return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || ga.localeCompare(gb);
     }
-    return schedule.ladderDepth(a, byId) - schedule.ladderDepth(b, byId) || a.id.localeCompare(b.id);
+    return depths.get(a.id) - depths.get(b.id) || a.id.localeCompare(b.id);
   });
 
   return {
@@ -100,6 +100,42 @@ function stateForRenderer() {
   };
   state.weekly = weekly;
   state.profile.streak_days = schedule.effectiveStreak(state.profile, today);
+
+  // ── Dashboard data (v0.9.2) ──
+  // The record: passes bucketed by local day, last 182 days.
+  const activity = {};
+  let firstPass = null;
+  for (const c of completions.completions) {
+    const day = progress.localDateString(new Date(c.passed_at));
+    activity[day] = activity[day] || { passes: 0, xp: 0 };
+    activity[day].passes += 1;
+    activity[day].xp += c.xp_awarded || 0;
+    if (!firstPass || day < firstPass) firstPass = day;
+  }
+  state.activity = { days: activity, firstPass, today };
+
+  // The forecast: next due cards, FSRS's view of the coming week.
+  const reviews = schedule.getReviews();
+  state.reviewForecast = Object.entries(reviews.cards)
+    .filter(([id]) => byId.has(id))
+    .map(([id, card]) => ({
+      id,
+      title: byId.get(id).title,
+      dueDay: schedule.cardDueDay(card),
+      stability: Math.round((card.stability || 0) * 10) / 10,
+    }))
+    .sort((a, b) => a.dueDay.localeCompare(b.dueDay) || a.id.localeCompare(b.id))
+    .slice(0, 5);
+
+  // The handoff: once today is cleared, what tomorrow holds (as of now).
+  if (daily.bonus_awarded) {
+    const tomorrow = schedule.addDays(today, 1);
+    const tq = schedule.generateDailyQueue(exercises, completions, reviews.cards, tomorrow);
+    state.tomorrow = tq.map((id) => ({
+      title: byId.get(id) ? byId.get(id).title : id,
+      kind: completedIds.has(id) ? 'review' : 'new',
+    }));
+  }
   return state;
 }
 
@@ -151,24 +187,33 @@ ipcMain.handle('exercise:get', (_ev, id) => {
 async function onPass(exercise, run, userCode) {
   const record = progress.recordPass(exercise);
 
-  // Scheduler hooks: schedule the review, tick the daily/weekly, and
-  // collect any bonus XP + streak movement.
-  const { exercises } = content.loadExercises();
-  const profile = progress.getProfile();
-  const events = schedule.applyPass(
-    exercise,
-    record.firstCompletion,
-    exercises,
-    progress.getCompletions(),
-    profile,
-    progress.localDateString(),
-    record.awardedXp
-  );
-  if (events.bonusXp) profile.xp += events.bonusXp;
-  if (events.bonusXp || events.dailyCleared) progress.saveProfile(profile);
-
+  // Error containment: recordPass has happened — from here on, any step
+  // that throws must degrade to a reported warning, never a rejected IPC
+  // that swallows the pass and loses first-completion artifacts.
+  const stepErrors = [];
+  let events = { review: false, dailyCleared: false, weeklyCompleted: false, bonusXp: 0 };
+  let assembly = null;
   let devlogFile = null;
   let commit = { committed: false };
+
+  try {
+    const { exercises } = content.loadExercises();
+    const profile = progress.getProfile();
+    events = schedule.applyPass(
+      exercise,
+      record.firstCompletion,
+      exercises,
+      progress.getCompletions(),
+      profile,
+      progress.localDateString(),
+      record.awardedXp
+    );
+    if (events.bonusXp) profile.xp += events.bonusXp;
+    if (events.bonusXp || events.dailyCleared) progress.saveProfile(profile);
+  } catch (err) {
+    stepErrors.push(`scheduler: ${err.message}`);
+  }
+
   let message = record.firstCompletion
     ? `Complete ${exercise.title} (+${record.awardedXp} XP)`
     : `Practice ${exercise.title}`;
@@ -178,17 +223,29 @@ async function onPass(exercise, run, userCode) {
 
   // Project build steps assemble the verified solution into the real
   // tool under projects/<name>/ (and only ever there).
-  let assembly = null;
-  if (exercise.project && exercise.project.function && userCode) {
-    assembly = require('../lib/project').assembleStep(exercise, userCode);
+  try {
+    if (exercise.project && exercise.project.function && userCode) {
+      assembly = require('../lib/project').assembleStep(exercise, userCode);
+    }
+  } catch (err) {
+    assembly = { assembled: false, error: err.message };
   }
 
   // Lessons and onboarding aren't achievements to write up.
-  const devloggable = exercise.type !== 'lesson' && exercise.track !== 'onboarding';
-  if (record.firstCompletion && devloggable) {
-    devlogFile = scaffoldDraft(exercise, userCode, run.results, record.awardedXp);
+  try {
+    const devloggable = exercise.type !== 'lesson' && exercise.track !== 'onboarding';
+    if (record.firstCompletion && devloggable) {
+      devlogFile = scaffoldDraft(exercise, userCode, run.results, record.awardedXp);
+    }
+  } catch (err) {
+    stepErrors.push(`devlog: ${err.message}`);
   }
-  commit = await commitProgress(message);
+
+  try {
+    commit = await commitProgress(message);
+  } catch (err) {
+    commit = { committed: false, error: err.message };
+  }
 
   return {
     ...run,
@@ -198,32 +255,53 @@ async function onPass(exercise, run, userCode) {
     assembly,
     devlogFile,
     commit,
+    stepErrors,
     state: stateForRenderer(),
   };
 }
 
 ipcMain.handle('kata:run', async (_ev, { id, code }) => {
-  const { exercise, error } = getUnlockedExercise(id);
+  const { exercise, error } = getUnlockedExercise(String(id || ''));
   if (error) return { passed: false, error };
+  if (exercise.type !== 'python-kata') {
+    return { passed: false, error: `${exercise.title} isn't a code kata.` };
+  }
 
-  const run = await runTests(exercise, code);
-  if (!run.passed) return { ...run, ...schedule.applyFailure(exercise) };
-  return onPass(exercise, run, code);
+  const run = await runTests(exercise, String(code ?? ''));
+  // A failed run only counts against the FSRS card when it was a real
+  // graded attempt (per-test results exist) — environment failures,
+  // timeouts, and syntax errors aren't evidence of forgetting.
+  if (!run.passed) {
+    const penalty = run.results && run.results.length ? schedule.applyFailure(exercise) : {};
+    return { ...run, ...penalty };
+  }
+  return onPass(exercise, run, String(code ?? ''));
 });
 
 ipcMain.handle('challenge:run', async (_ev, { id, flag }) => {
-  const { exercise, error } = getUnlockedExercise(id);
+  const { exercise, error } = getUnlockedExercise(String(id || ''));
   if (error) return { passed: false, error };
+  if (exercise.type !== 'shell-challenge') {
+    return { passed: false, error: `${exercise.title} isn't a terminal challenge.` };
+  }
 
-  const run = await runChecks(exercise, { flag });
-  if (!run.passed) return { ...run, ...schedule.applyFailure(exercise) };
+  const run = await runChecks(exercise, { flag: String(flag ?? '') });
+  if (!run.passed) {
+    const penalty = run.results && run.results.length ? schedule.applyFailure(exercise) : {};
+    return { ...run, ...penalty };
+  }
   return onPass(exercise, run, null);
 });
 
 ipcMain.handle('lab:reset', (_ev, id) => {
-  const { exercise, error } = getUnlockedExercise(id);
+  const { exercise, error } = getUnlockedExercise(String(id || ''));
   if (error) return { error };
-  return { labPath: resetLab(exercise) };
+  if (exercise.type !== 'shell-challenge') return { error: 'Only terminal challenges have labs.' };
+  try {
+    return { labPath: resetLab(exercise) };
+  } catch (err) {
+    return { error: `Could not reset the lab: ${err.message}` };
+  }
 });
 
 ipcMain.handle('lesson:complete', async (_ev, id) => {
@@ -290,18 +368,23 @@ function createWindow() {
     });
     win.webContents.once('did-finish-load', () => {
       setTimeout(async () => {
-        if (process.env.SQ_SCREENSHOT_CLICK) {
-          await win.webContents.executeJavaScript(
-            `{ const el = document.querySelector(${JSON.stringify(process.env.SQ_SCREENSHOT_CLICK)});
-               if (el) { el.click(); setTimeout(() => (document.querySelector(${JSON.stringify(
-                 process.env.SQ_SCREENSHOT_SCROLL || 'body'
-               )}) || el).scrollIntoView({ block: 'center' }), 300); } }`
-          );
-          await new Promise((r) => setTimeout(r, 800));
+        try {
+          if (process.env.SQ_SCREENSHOT_CLICK) {
+            await win.webContents.executeJavaScript(
+              `{ const el = document.querySelector(${JSON.stringify(process.env.SQ_SCREENSHOT_CLICK)});
+                 if (el) { el.click(); setTimeout(() => (document.querySelector(${JSON.stringify(
+                   process.env.SQ_SCREENSHOT_SCROLL || 'body'
+                 )}) || el).scrollIntoView({ block: 'center' }), 300); } }`
+            );
+            await new Promise((r) => setTimeout(r, 800));
+          }
+          const image = await win.webContents.capturePage();
+          require('fs').writeFileSync(process.env.SQ_SCREENSHOT, image.toPNG());
+        } catch (err) {
+          console.error('[screenshot] capture failed:', err.message);
+        } finally {
+          app.quit(); // never leave a headless capture run alive
         }
-        const image = await win.webContents.capturePage();
-        require('fs').writeFileSync(process.env.SQ_SCREENSHOT, image.toPNG());
-        app.quit();
       }, 1500);
     });
   }
