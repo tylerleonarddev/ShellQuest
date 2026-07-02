@@ -24,6 +24,18 @@
       "state": 2,
       "last_review": "2026-07-02T17:57:48.578Z",
       "sq_last_failed_on": "2026-07-02"
+    },
+    "sq-02-make": {
+      "due": "2026-07-05T18:16:17.051Z",
+      "stability": 2.3065,
+      "difficulty": 2.11810397,
+      "elapsed_days": 0,
+      "scheduled_days": 3,
+      "reps": 1,
+      "lapses": 0,
+      "learning_steps": 0,
+      "state": 2,
+      "last_review": "2026-07-02T18:16:17.051Z"
     }
   }
 }

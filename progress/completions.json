@@ -19,6 +19,11 @@
       "exercise_id": "py-say-hello",
       "passed_at": "2026-07-01T22:46:39.649Z",
       "xp_awarded": 10
+    },
+    {
+      "exercise_id": "sq-02-make",
+      "passed_at": "2026-07-02T18:16:17.050Z",
+      "xp_awarded": 25
     }
   ]
 }
