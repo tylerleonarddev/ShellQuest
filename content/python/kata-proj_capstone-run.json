@@ -1,0 +1,27 @@
+{
+  "id": "proj-capstone-run",
+  "type": "python-kata",
+  "track": "project:logparser",
+  "title": "Run your log analyzer",
+  "xp": 75,
+  "prerequisites": [
+    "proj-summarize"
+  ],
+  "review_interval_days": null,
+  "prompt": "You've built every piece. Your functions are now assembled in projects/logparser/logparser.py. Run it against the sample log: `python projects/logparser/logparser.py projects/logparser/fixtures/sample.log`. This challenge passes when your real tool produces the correct summary.",
+  "starter_code": "# Nothing to write \u2014 run your assembled tool from the terminal.\n",
+  "verification": {
+    "runner": "project-run",
+    "command": "python3 projects/logparser/logparser.py projects/logparser/fixtures/sample.log",
+    "expect_contains": [
+      "Total lines: 5",
+      "ERROR: 2",
+      "write failed on /var/log"
+    ]
+  },
+  "project": {
+    "name": "logparser",
+    "file": "projects/logparser/logparser.py",
+    "capstone": true
+  }
+}

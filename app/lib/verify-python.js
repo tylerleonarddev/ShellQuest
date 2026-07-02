@@ -166,9 +166,11 @@ function runHarness(harness, exercise, userCode) {
 }
 
 // Dispatch on the exercise's declared runner — content stays data.
+// (project-run lives in project.js; lazy require avoids a module cycle.)
 function runTests(exercise, userCode) {
   const runner = exercise.verification.runner;
   if (runner === 'python-script') return runHarness(SCRIPT_HARNESS, exercise, userCode);
+  if (runner === 'project-run') return require('./project').runProject(exercise);
   return runHarness(HARNESS, exercise, userCode);
 }
 

@@ -1,5 +1,26 @@
 # Design decisions (deviations & clarifications)
 
+## v0.8
+
+**Assembly does not auto-commit the assembled tool.** The spec says the
+learner's completed logparser.py is "fine to commit if they want" — but it
+also mandates (and v0.9 re-asserts) a linter rule that committed scaffolds
+contain only stubs. Those two can't both hold if the learner commits their
+work. v0.8 resolution: pass-commits stage only progress/ as always; the
+assembled file stays a local working copy, and the linter checks the
+HEAD version of scaffold files (falling back to the working tree for
+never-committed files). **Open question for v0.9:** decide whether the
+stubs rule should exempt learner-completed blocks, or whether assembled
+work should live somewhere untracked. Until then: don't commit assembled
+solutions.
+
+**Isolation is enforced in code, twice.** `resolveProjectFile` refuses any
+`project.file` whose resolved path escapes `projects/<name>/` (traversal,
+absolute paths, sibling projects, the dir itself), and the linter rejects
+such content before it ships. Marker format and project-block shape are
+frozen — v0.9's cold-start walkthrough asserts against them.
+
+
 ## v0.6
 
 **FSRS runs with `enable_short_term: false`.** The library's default

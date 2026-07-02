@@ -1,0 +1,39 @@
+{
+  "id": "proj-parse-line",
+  "type": "python-kata",
+  "track": "project:logparser",
+  "title": "Parse one log line",
+  "xp": 35,
+  "prerequisites": [
+    "lesson-project-logparser"
+  ],
+  "review_interval_days": null,
+  "prompt": "Log lines look like: '2026-07-02 14:23:01 ERROR disk usage at 95%'. Write parse_line(line) that returns a dict with 'timestamp' (the date and time joined, e.g. '2026-07-02 14:23:01'), 'level' (e.g. 'ERROR'), and 'message' (the rest). Hint: line.split(' ', 3) splits into at most 4 pieces.",
+  "starter_code": "def parse_line(line):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "parse_line('2026-07-02 14:23:01 ERROR disk usage at 95%')",
+        "expect": {
+          "timestamp": "2026-07-02 14:23:01",
+          "level": "ERROR",
+          "message": "disk usage at 95%"
+        }
+      },
+      {
+        "call": "parse_line('2026-07-02 09:00:00 INFO service started')",
+        "expect": {
+          "timestamp": "2026-07-02 09:00:00",
+          "level": "INFO",
+          "message": "service started"
+        }
+      }
+    ]
+  },
+  "project": {
+    "name": "logparser",
+    "file": "projects/logparser/logparser.py",
+    "function": "parse_line"
+  }
+}

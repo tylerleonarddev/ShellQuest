@@ -1,0 +1,5 @@
+2026-07-02 09:00:00 INFO service started
+2026-07-02 09:01:14 INFO user login succeeded
+2026-07-02 09:03:22 WARN disk usage at 80%
+2026-07-02 14:23:01 ERROR disk usage at 95%
+2026-07-02 14:23:05 ERROR write failed on /var/log

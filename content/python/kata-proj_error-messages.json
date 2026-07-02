@@ -1,0 +1,34 @@
+{
+  "id": "proj-error-messages",
+  "type": "python-kata",
+  "track": "project:logparser",
+  "title": "Pull out the error messages",
+  "xp": 40,
+  "prerequisites": [
+    "proj-filter-by-level"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write error_messages(entries) returning a list of just the 'message' strings from entries whose level is 'ERROR', in order.",
+  "starter_code": "def error_messages(entries):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "error_messages([{'level':'ERROR','message':'boom'},{'level':'INFO','message':'ok'},{'level':'ERROR','message':'bang'}])",
+        "expect": [
+          "boom",
+          "bang"
+        ]
+      },
+      {
+        "call": "error_messages([{'level':'INFO','message':'fine'}])",
+        "expect": []
+      }
+    ]
+  },
+  "project": {
+    "name": "logparser",
+    "file": "projects/logparser/logparser.py",
+    "function": "error_messages"
+  }
+}

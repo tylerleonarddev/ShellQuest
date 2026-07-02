@@ -1,0 +1,34 @@
+{
+  "id": "proj-count-by-level",
+  "type": "python-kata",
+  "track": "project:logparser",
+  "title": "Count events by level",
+  "xp": 35,
+  "prerequisites": [
+    "proj-parse-line"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write count_by_level(entries) \u2014 a list of parsed dicts \u2014 returning a dict of how many times each level appears, e.g. {'INFO':2,'ERROR':1}.",
+  "starter_code": "def count_by_level(entries):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "count_by_level([{'level':'INFO'},{'level':'ERROR'},{'level':'INFO'}])",
+        "expect": {
+          "INFO": 2,
+          "ERROR": 1
+        }
+      },
+      {
+        "call": "count_by_level([])",
+        "expect": {}
+      }
+    ]
+  },
+  "project": {
+    "name": "logparser",
+    "file": "projects/logparser/logparser.py",
+    "function": "count_by_level"
+  }
+}

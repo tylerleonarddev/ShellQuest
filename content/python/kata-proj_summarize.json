@@ -1,0 +1,44 @@
+{
+  "id": "proj-summarize",
+  "type": "python-kata",
+  "track": "project:logparser",
+  "title": "Summarize the whole log",
+  "xp": 45,
+  "prerequisites": [
+    "proj-error-messages"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write summarize(entries) returning a dict: 'total' (count), 'by_level' (the level->count dict), 'first' and 'last' (the timestamp of the first and last entry, or None if empty).",
+  "starter_code": "def summarize(entries):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "summarize([{'timestamp':'t1','level':'INFO'},{'timestamp':'t2','level':'ERROR'},{'timestamp':'t3','level':'INFO'}])",
+        "expect": {
+          "total": 3,
+          "by_level": {
+            "INFO": 2,
+            "ERROR": 1
+          },
+          "first": "t1",
+          "last": "t3"
+        }
+      },
+      {
+        "call": "summarize([])",
+        "expect": {
+          "total": 0,
+          "by_level": {},
+          "first": null,
+          "last": null
+        }
+      }
+    ]
+  },
+  "project": {
+    "name": "logparser",
+    "file": "projects/logparser/logparser.py",
+    "function": "summarize"
+  }
+}

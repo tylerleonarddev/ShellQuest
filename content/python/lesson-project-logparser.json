@@ -1,0 +1,13 @@
+{
+  "id": "lesson-project-logparser",
+  "type": "lesson",
+  "track": "project:logparser",
+  "title": "Project: build a log analyzer",
+  "xp": 5,
+  "prerequisites": [
+    "py-merge"
+  ],
+  "review_interval_days": null,
+  "completion": "acknowledge",
+  "body": "You've got the fundamentals. Now you'll build a *real tool* \u2014 a log analyzer, the exact thing a security analyst reaches for to find trouble in a flood of log lines. Each step adds one working piece, and as you pass each one it gets written into a real file at `projects/logparser/`. By the end you'll have a script that runs on your own machine. Let's build it."
+}

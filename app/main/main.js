@@ -118,7 +118,7 @@ ipcMain.handle('exercise:get', (_ev, id) => {
   return {
     ...common,
     starter_code: exercise.starter_code || '',
-    testCount: exercise.verification.tests.length,
+    testCount: (exercise.verification.tests || exercise.verification.expect_contains || []).length,
   };
 });
 
@@ -152,6 +152,13 @@ async function onPass(exercise, run, userCode) {
   if (events.weeklyCompleted) message += ' · weekly goal met';
   if (events.bonusXp) message += ` (+${events.bonusXp} bonus XP)`;
 
+  // Project build steps assemble the verified solution into the real
+  // tool under projects/<name>/ (and only ever there).
+  let assembly = null;
+  if (exercise.project && exercise.project.function && userCode) {
+    assembly = require('../lib/project').assembleStep(exercise, userCode);
+  }
+
   // Lessons and onboarding aren't achievements to write up.
   const devloggable = exercise.type !== 'lesson' && exercise.track !== 'onboarding';
   if (record.firstCompletion && devloggable) {
@@ -164,6 +171,7 @@ async function onPass(exercise, run, userCode) {
     awardedXp: record.awardedXp,
     firstCompletion: record.firstCompletion,
     events,
+    assembly,
     devlogFile,
     commit,
     state: stateForRenderer(),

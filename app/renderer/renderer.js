@@ -414,6 +414,18 @@ function renderResults(res) {
     line.append(mark, call, detail);
     box.appendChild(line);
   }
+
+  // project-run failures show the tool's real output so the learner can
+  // see what's off.
+  if (!res.passed && res.output) {
+    const out = document.createElement('div');
+    out.className = 'result-error';
+    out.textContent = 'your tool printed:';
+    const pre = document.createElement('pre');
+    pre.textContent = res.output;
+    out.appendChild(pre);
+    box.appendChild(out);
+  }
 }
 
 /* ── Beginner-friendly error translation ── */
@@ -462,10 +474,12 @@ function rewardBeat(res) {
   const xp = (res.awardedXp || 0) + (events.bonusXp || 0);
   const streak = res.state.profile.streak_days;
 
-  dailyLine.hidden = !(events.dailyCleared || events.weeklyCompleted);
+  const assembled = res.assembly && res.assembly.assembled;
+  dailyLine.hidden = !(events.dailyCleared || events.weeklyCompleted || assembled);
   dailyLine.textContent = [
     events.dailyCleared ? 'DAILY CLEARED' : '',
     events.weeklyCompleted ? 'WEEKLY GOAL MET' : '',
+    assembled ? `⚙ ${res.assembly.function}() → ${res.assembly.file}` : '',
   ].filter(Boolean).join(' · ');
 
   streakLine.textContent = events.dailyCleared

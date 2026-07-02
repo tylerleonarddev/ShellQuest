@@ -1,0 +1,36 @@
+{
+  "id": "proj-filter-by-level",
+  "type": "python-kata",
+  "track": "project:logparser",
+  "title": "Filter by level",
+  "xp": 35,
+  "prerequisites": [
+    "proj-count-by-level"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write filter_by_level(entries, level) returning only the entries whose 'level' matches the given level.",
+  "starter_code": "def filter_by_level(entries, level):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "filter_by_level([{'level':'INFO','message':'a'},{'level':'ERROR','message':'b'}], 'ERROR')",
+        "expect": [
+          {
+            "level": "ERROR",
+            "message": "b"
+          }
+        ]
+      },
+      {
+        "call": "filter_by_level([], 'INFO')",
+        "expect": []
+      }
+    ]
+  },
+  "project": {
+    "name": "logparser",
+    "file": "projects/logparser/logparser.py",
+    "function": "filter_by_level"
+  }
+}

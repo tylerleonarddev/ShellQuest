@@ -53,6 +53,7 @@ if (fs.existsSync(glossaryFile)) {
 
 const ids = new Map(); // id -> file
 const allPrereqs = []; // [file, id, prereq]
+const scaffoldChecks = []; // [contentFile, projectFile, function]
 
 for (const file of files) {
   const rel = path.relative(ROOT, file);
@@ -92,8 +93,32 @@ for (const file of files) {
   const v = ex.verification || {};
   const checks = v.checks || [];
   const tests = v.tests || [];
-  if (ex.type === 'python-kata' && !tests.length) errors.push(`${rel}: python-kata with no tests`);
+  if (ex.type === 'python-kata' && v.runner !== 'project-run' && !tests.length) {
+    errors.push(`${rel}: python-kata with no tests`);
+  }
+  if (v.runner === 'project-run') {
+    if (!v.command) errors.push(`${rel}: project-run with no command`);
+    if (!(v.expect_contains || []).length) errors.push(`${rel}: project-run with no expect_contains`);
+    for (const re of DANGEROUS) {
+      if (v.command && re.test(v.command)) errors.push(`${rel}: dangerous command matches ${re}: "${v.command}"`);
+    }
+  }
   if (ex.type === 'shell-challenge' && !checks.length) errors.push(`${rel}: shell-challenge with no checks`);
+
+  // Project blocks: shape + isolation + collect scaffold files for the
+  // stubs-only rule below.
+  if (ex.project) {
+    const p = ex.project;
+    if (!p.name || !p.file) errors.push(`${rel}: project block missing name/file`);
+    else {
+      const relToProject = path.relative(path.join(ROOT, 'projects', p.name), path.resolve(ROOT, p.file));
+      if (relToProject.startsWith('..') || path.isAbsolute(relToProject)) {
+        errors.push(`${rel}: project.file "${p.file}" escapes projects/${p.name}/`);
+      } else if (p.function) {
+        scaffoldChecks.push([rel, p.file, p.function]);
+      }
+    }
+  }
 
   for (const c of checks) {
     if (!KNOWN_CHECK_KINDS.has(c.kind)) errors.push(`${rel}: unknown check kind "${c.kind}"`);
@@ -131,6 +156,32 @@ for (const file of files) {
 for (const [dir, roots] of Object.entries(rootsByDir)) {
   if (roots.length > 1) {
     errors.push(`content/${dir}: ${roots.length} items have no prerequisites (${roots.join(', ')}) — only one entry point allowed; the rest are floating`);
+  }
+}
+
+// 7. Scaffold stubs-only: the COMMITTED version of any project file a
+// build step assembles into must contain a stub (NotImplementedError)
+// between its markers — a public repo must never ship the answers.
+// Checks HEAD (falling back to the working tree for not-yet-committed
+// files) so the learner's local assembled work doesn't trip local runs.
+const { execSync } = require('child_process');
+for (const [contentFile, projectFile, fn] of scaffoldChecks) {
+  let source;
+  try {
+    source = execSync(`git show HEAD:${JSON.stringify(projectFile)}`, { cwd: ROOT, stdio: ['pipe', 'pipe', 'pipe'] }).toString();
+  } catch {
+    try {
+      source = fs.readFileSync(path.resolve(ROOT, projectFile), 'utf8');
+    } catch {
+      errors.push(`${contentFile}: project file ${projectFile} does not exist`);
+      continue;
+    }
+  }
+  const m = source.match(new RegExp(`# --- BEGIN ${fn} ---\\n([\\s\\S]*?)# --- END ${fn} ---`));
+  if (!m) {
+    errors.push(`${projectFile}: markers for ${fn} missing (referenced by ${contentFile})`);
+  } else if (!m[1].includes('NotImplementedError')) {
+    errors.push(`${projectFile}: committed scaffold for ${fn} contains a solution, not a stub — answers must never ship in the public repo`);
   }
 }
 
