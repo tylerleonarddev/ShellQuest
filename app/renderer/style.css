@@ -185,6 +185,31 @@ body {
 .kata-item-xp { color: var(--accent); }
 .kata-item.completed { opacity: 0.65; }
 .kata-item.completed .kata-item-title::before { content: '✓ '; color: var(--accent); }
+.ladder-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  padding: 14px 2px 2px;
+  user-select: none;
+}
+.ladder-group:first-child { padding-top: 0; }
+.ladder-group-count { color: var(--accent); letter-spacing: 0.06em; }
+.kata-item.next-up { border-color: var(--accent); }
+.kata-item-next {
+  color: var(--bg);
+  background: var(--accent);
+  border-radius: 3px;
+  padding: 1px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
 .kata-item.locked {
   opacity: 0.45;
   cursor: default;

@@ -14,18 +14,41 @@ const { commitProgress } = require('../lib/git');
 const publishLib = require('../lib/publish');
 const digestLib = require('../lib/digest');
 
+// Dashboard grouping: the ladder reads as the story of the climb —
+// grouped by track, ordered by prerequisite depth (curriculum order,
+// same as the daily queue), never alphabetically.
+function ladderGroup(e) {
+  if ((e.track || '').startsWith('project:')) return `project: ${e.track.slice(8)}`;
+  if (e.type === 'shell-challenge') return 'terminal';
+  return 'python';
+}
+
 function buildState() {
   const { exercises, errors } = content.loadExercises();
   const completions = progress.getCompletions();
   const completedIds = new Set(completions.completions.map((c) => c.exercise_id));
   const titleById = new Map(exercises.map((e) => [e.id, e.title]));
+
+  const byId = Object.fromEntries(exercises.map((e) => [e.id, e]));
+  const groupOrder = ['python', 'terminal']; // project groups follow
+  const sorted = [...exercises].sort((a, b) => {
+    const ga = ladderGroup(a);
+    const gb = ladderGroup(b);
+    if (ga !== gb) {
+      const ia = groupOrder.indexOf(ga);
+      const ib = groupOrder.indexOf(gb);
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || ga.localeCompare(gb);
+    }
+    return schedule.ladderDepth(a, byId) - schedule.ladderDepth(b, byId) || a.id.localeCompare(b.id);
+  });
+
   return {
     profile: progress.getProfile(),
     levelCurve: {
       currentLevelStart: null, // filled below per-profile
     },
     onboardingDone: completedIds.has('onboarding'),
-    exercises: exercises.filter((e) => e.track !== 'onboarding').map((e) => ({
+    exercises: sorted.filter((e) => e.track !== 'onboarding').map((e) => ({
       id: e.id,
       title: e.title,
       xp: e.xp,
@@ -33,6 +56,7 @@ function buildState() {
       prerequisites: e.prerequisites || [],
       completed: completedIds.has(e.id),
       locked: !isUnlocked(e, completions),
+      group: ladderGroup(e),
       requires: (e.prerequisites || [])
         .filter((id) => !completedIds.has(id))
         .map((id) => titleById.get(id) || id),

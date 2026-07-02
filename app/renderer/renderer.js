@@ -204,20 +204,49 @@ async function showDashboard() {
 
   const list = $('kata-list');
   list.innerHTML = '';
+  let currentGroup = null;
+  const nextMarked = new Set(); // one "next up" highlight per group
   for (const ex of state.exercises) {
+    if (ex.group !== currentGroup) {
+      currentGroup = ex.group;
+      const done = state.exercises.filter((e) => e.group === ex.group && e.completed).length;
+      const total = state.exercises.filter((e) => e.group === ex.group).length;
+      const header = document.createElement('li');
+      header.className = 'ladder-group';
+      const name = document.createElement('span');
+      name.textContent = ex.group;
+      const count = document.createElement('span');
+      count.className = 'ladder-group-count';
+      count.textContent = `${done} / ${total}`;
+      header.append(name, count);
+      list.appendChild(header);
+    }
+
+    const isNext = !ex.locked && !ex.completed && !nextMarked.has(ex.group);
+    if (isNext) nextMarked.add(ex.group);
+
     const li = document.createElement('li');
     li.className =
-      'kata-item' + (ex.completed ? ' completed' : '') + (ex.locked ? ' locked' : '');
+      'kata-item' +
+      (ex.completed ? ' completed' : '') +
+      (ex.locked ? ' locked' : '') +
+      (isNext ? ' next-up' : '');
     const title = document.createElement('span');
     title.className = 'kata-item-title';
     title.textContent = (ex.locked ? '🔒 ' : '') + ex.title;
     const meta = document.createElement('span');
     meta.className = 'kata-item-meta';
-    if (ex.type === 'shell-challenge') {
+    if (ex.type === 'lesson') {
       const kind = document.createElement('span');
       kind.className = 'kata-item-kind';
-      kind.textContent = 'terminal';
+      kind.textContent = 'lesson';
       meta.appendChild(kind);
+    }
+    if (isNext) {
+      const next = document.createElement('span');
+      next.className = 'kata-item-next';
+      next.textContent = 'next up';
+      meta.appendChild(next);
     }
     const xp = document.createElement('span');
     xp.className = 'kata-item-xp';
