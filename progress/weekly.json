@@ -5,7 +5,7 @@
       "kind": "clear_daily_days",
       "target": 5,
       "bonus_xp": 60,
-      "progress": 1
+      "progress": 2
     },
     {
       "kind": "new_exercises",
@@ -17,6 +17,6 @@
   "bonus_awarded": false,
   "stats": {
     "reviews_cleared": 1,
-    "xp_gained": 90
+    "xp_gained": 110
   }
 }

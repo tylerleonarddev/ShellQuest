@@ -15,8 +15,9 @@
   "completed": [
     "py-say-hello",
     "sq-01-explore",
-    "sq-02-make"
+    "sq-02-make",
+    "lesson-parameters"
   ],
-  "bonus_awarded": false,
+  "bonus_awarded": true,
   "bonus_xp": 15
 }
