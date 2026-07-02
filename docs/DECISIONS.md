@@ -12,6 +12,10 @@ review, at most once per local day (`sq_last_failed_on` rides on the card;
 ts-fsrs ignores extra fields). Repeated same-day attempts while relearning
 don't compound lapses.
 
+**CI installs prod deps via `npm ci --omit=dev` before `build-stats.js`;**
+adding a runtime dep on the stats path needs no workflow change, but a new
+build tool might.
+
 **Migration preserved due dates** (the spec offered due=today or
 preserved): existing SM-2 schedules became fresh FSRS cards keeping their
 next_review as `due`, so the upgrade changed nothing about the next day's

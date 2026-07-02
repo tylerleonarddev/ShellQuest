@@ -28,6 +28,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+      # Runtime deps only (ts-fsrs et al) — skips the heavy/flaky Electron
+      # binary download, which the stats build doesn't need.
+      - run: npm ci --omit=dev
       - name: Build stats page from progress data
         run: node tools/build-stats.js
       - uses: actions/configure-pages@v5
