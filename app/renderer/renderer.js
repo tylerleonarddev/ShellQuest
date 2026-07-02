@@ -415,6 +415,16 @@ function renderResults(res) {
     box.appendChild(line);
   }
 
+  // A pass whose auto-commit failed must say so — progress is saved to
+  // disk either way, but the git trail (and the graph) didn't advance.
+  if (res.passed && res.commit && !res.commit.committed && res.commit.error) {
+    const note = document.createElement('div');
+    note.className = 'result-line fail';
+    note.textContent = `⚠ progress saved, but the git commit failed — ${res.commit.error}`;
+    box.appendChild(note);
+    box.hidden = false;
+  }
+
   // project-run failures show the tool's real output so the learner can
   // see what's off.
   if (!res.passed && res.output) {

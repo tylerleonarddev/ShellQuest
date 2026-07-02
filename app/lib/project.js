@@ -58,6 +58,21 @@ function assembleStep(exercise, solutionCode) {
 
   const block = solutionCode.trimEnd() + '\n';
   fs.writeFileSync(resolved.file, source.replace(re, `$1${block}$2`));
+
+  // v0.9 amendment: the curriculum repo commits ONLY stubs. The learner's
+  // assembled copy stays local — skip-worktree makes git blind to it, so
+  // completed solutions can never ride into a public commit. (Finished
+  // tools graduate to their own repo instead.)
+  try {
+    require('child_process').execFileSync(
+      'git',
+      ['update-index', '--skip-worktree', '--', project.file],
+      { cwd: REPO_ROOT }
+    );
+  } catch {
+    // non-fatal: worst case the file shows as modified and the linter's
+    // stubs-only rule still blocks a bad commit in CI
+  }
   return { assembled: true, file: project.file, function: project.function };
 }
 

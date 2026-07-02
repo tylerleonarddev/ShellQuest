@@ -135,9 +135,26 @@ for (const file of files) {
   }
 }
 
-// 5. Prerequisites resolve
+// 5. Prerequisites resolve, and the graph is a valid DAG (no cycles —
+// a cycle would make part of the ladder permanently unreachable)
+const prereqsOf = {};
 for (const [rel, id, p] of allPrereqs) {
   if (!ids.has(p)) errors.push(`${rel}: ${id} requires unknown exercise "${p}"`);
+  (prereqsOf[id] = prereqsOf[id] || []).push(p);
+}
+{
+  const state = {}; // 1 = visiting, 2 = done
+  const visit = (id, trail) => {
+    if (state[id] === 2) return;
+    if (state[id] === 1) {
+      errors.push(`prerequisite cycle: ${[...trail, id].join(' -> ')}`);
+      return;
+    }
+    state[id] = 1;
+    for (const p of prereqsOf[id] || []) visit(p, [...trail, id]);
+    state[id] = 2;
+  };
+  for (const id of ids.keys()) visit(id, []);
 }
 
 // 6. Exactly one ladder entry point per content directory — a second

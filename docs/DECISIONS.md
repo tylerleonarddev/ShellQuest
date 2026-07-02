@@ -9,10 +9,19 @@ contain only stubs. Those two can't both hold if the learner commits their
 work. v0.8 resolution: pass-commits stage only progress/ as always; the
 assembled file stays a local working copy, and the linter checks the
 HEAD version of scaffold files (falling back to the working tree for
-never-committed files). **Open question for v0.9:** decide whether the
-stubs rule should exempt learner-completed blocks, or whether assembled
-work should live somewhere untracked. Until then: don't commit assembled
-solutions.
+never-committed files).
+
+**RESOLVED (v0.9 amendment, decided upstream):** one clean rule, no
+exceptions — the curriculum repo commits only stubs under `projects/`;
+the learner's assembled copy never enters git; finished tools graduate to
+their own repo (e.g. tylerleonarddev/logparser), where they're genuinely
+the learner's to show. Implementation note: a tracked file can't be
+.gitignored, so assembly marks the target with
+`git update-index --skip-worktree` — git stays blind to local solutions
+while the committed scaffold remains stubs. If a curriculum update ever
+changes a scaffold, clear the flag first
+(`git update-index --no-skip-worktree <file>`), pull, and replay
+completed steps by re-passing them.
 
 **Isolation is enforced in code, twice.** `resolveProjectFile` refuses any
 `project.file` whose resolved path escapes `projects/<name>/` (traversal,

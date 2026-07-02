@@ -29,6 +29,10 @@ Every out-of-scope idea gets parked here instead of built. See
   data-repo path. Don't sneak it in.
 - **Community content PRs** — threat-model first (the linter's dangerous-
   command denylist is a start, not a security boundary).
+- **Project graduation helper** — a one-action "graduate this tool to its
+  own repo" flow (create tylerleonarddev/<name>, copy the assembled tool +
+  README, push). Per the v0.9 amendment, finished tools live in their own
+  repos; today that's a manual step.
 - **v2** — System-state verification with proper sandboxing.
 
 ## Noted during the v0.1 build
