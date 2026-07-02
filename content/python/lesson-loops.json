@@ -1,0 +1,13 @@
+{
+  "id": "lesson-loops",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Doing something to every item",
+  "xp": 5,
+  "prerequisites": [
+    "py-either-true"
+  ],
+  "review_interval_days": null,
+  "body": "A *loop* repeats work. `for x in things:` runs its block once for each item in `things`. `range(1, n+1)` gives you the numbers 1..n to loop over. The most common pattern is the **accumulator**: start a total at 0 (or a list at []), then update it each time through the loop. That one pattern \u2014 start empty, loop, build up \u2014 is behind a huge amount of code. The next two challenges drill it.",
+  "completion": "acknowledge"
+}

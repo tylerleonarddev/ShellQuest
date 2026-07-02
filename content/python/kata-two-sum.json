@@ -35,5 +35,16 @@
         ]
       }
     ]
+  },
+  "help": {
+    "plain": "For each number, you're asking: 'have I already seen the number that would complete the pair?'",
+    "analogy": "Like a coat check — as you pass each number you jot down where you left it, so when its partner shows up you instantly know where the first one is. No re-searching the whole pile.",
+    "mnemonic": "SIP — Seen It? Pair. For each number: have I *Seen* the complement? If so, *Pair* them; if not, note this one as Seen.",
+    "nudge": "What could you store as you go, so you don't have to re-scan the earlier numbers each time?",
+    "example": {
+      "problem": "Find the indices of two numbers that MULTIPLY to a target (a different task).",
+      "solution": "def product_pair(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if n != 0 and target % n == 0 and target // n in seen:\n            return [seen[target // n], i]\n        seen[n] = i",
+      "note": "Same 'jot down what you've seen, check for the partner' trick — a dict of value->index. Yours looks for the number that ADDS to the target instead of multiplies."
+    }
   }
 }

@@ -1,0 +1,13 @@
+{
+  "id": "lesson-lists",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Lists: holding many things",
+  "xp": 5,
+  "prerequisites": [
+    "py-count-evens"
+  ],
+  "review_interval_days": null,
+  "body": "A *list* holds many items in order: `[3, 7, 1]`. Grab one by position \u2014 `nums[0]` is the first, `nums[-1]` is the last (negative counts from the back). Add to the end with `nums.append(x)`, count items with `len(nums)`, and walk through them with `for x in nums:`. Lists show up everywhere from here on, so the next two challenges lock in indexing and appending.",
+  "completion": "acknowledge"
+}

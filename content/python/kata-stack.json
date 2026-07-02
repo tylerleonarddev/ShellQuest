@@ -4,7 +4,9 @@
   "track": "progression",
   "title": "Build a Stack",
   "xp": 45,
-  "prerequisites": ["lesson-data-structures"],
+  "prerequisites": [
+    "lesson-data-structures"
+  ],
   "review_interval_days": null,
   "prompt": "A stack is last-in, first-out — like a stack of plates. Implement a Stack class with push(x), pop() (removes and returns the top), peek() (returns the top without removing), is_empty(), and support for len() (define __len__). The next few challenges build on this one.",
   "starter_code": "class Stack:\n    def __init__(self):\n        pass\n",
@@ -12,26 +14,76 @@
     "runner": "python-script",
     "tests": [
       {
-        "setup": ["s = Stack()", "s.push(1)", "s.push(2)", "s.push(3)"],
+        "setup": [
+          "s = Stack()",
+          "s.push(1)",
+          "s.push(2)",
+          "s.push(3)"
+        ],
         "checks": [
-          { "call": "s.pop()", "expect": 3 },
-          { "call": "s.peek()", "expect": 2 },
-          { "call": "len(s)", "expect": 2 }
+          {
+            "call": "s.pop()",
+            "expect": 3
+          },
+          {
+            "call": "s.peek()",
+            "expect": 2
+          },
+          {
+            "call": "len(s)",
+            "expect": 2
+          }
         ]
       },
       {
-        "setup": ["s = Stack()"],
-        "checks": [{ "call": "s.is_empty()", "expect": true }]
+        "setup": [
+          "s = Stack()"
+        ],
+        "checks": [
+          {
+            "call": "s.is_empty()",
+            "expect": true
+          }
+        ]
       },
       {
-        "setup": ["s = Stack()", "s.push('a')", "s.push('b')", "x = s.pop()", "s.push('c')"],
+        "setup": [
+          "s = Stack()",
+          "s.push('a')",
+          "s.push('b')",
+          "x = s.pop()",
+          "s.push('c')"
+        ],
         "checks": [
-          { "call": "x", "expect": "b" },
-          { "call": "s.pop()", "expect": "c" },
-          { "call": "s.pop()", "expect": "a" },
-          { "call": "s.is_empty()", "expect": true }
+          {
+            "call": "x",
+            "expect": "b"
+          },
+          {
+            "call": "s.pop()",
+            "expect": "c"
+          },
+          {
+            "call": "s.pop()",
+            "expect": "a"
+          },
+          {
+            "call": "s.is_empty()",
+            "expect": true
+          }
         ]
       }
     ]
+  },
+  "help": {
+    "plain": "A stack only ever adds to and removes from the SAME end — the top. The last thing you push is the first thing you pop. Store the items in a list and always work its end.",
+    "analogy": "Like a stack of plates: you add to the top and take from the top. You never pull the bottom plate out.",
+    "mnemonic": "LIFO — Last In, First Out. The most recently pushed item is the next one to leave.",
+    "nudge": "A Python list already adds and removes at its end with `.append()` and `.pop()`. What should `peek()` return without removing anything?",
+    "example": {
+      "problem": "A tiny Counter class that goes up and down but never below zero (a different task — but the same 'class holds state, methods change it' shape).",
+      "solution": "class Counter:\n    def __init__(self):\n        self.n = 0\n    def up(self):\n        self.n += 1\n    def down(self):\n        if self.n > 0:\n            self.n -= 1\n    def value(self):\n        return self.n",
+      "note": "Notice the pattern: __init__ sets up the internal data (here a number, for you a list), and each method reads or changes it. Your Stack keeps a list and its methods push/pop/peek its end."
+    }
   }
 }

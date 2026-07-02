@@ -1,0 +1,13 @@
+{
+  "id": "lesson-comparisons",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Comparing and combining conditions",
+  "xp": 5,
+  "prerequisites": [
+    "py-absolute"
+  ],
+  "review_interval_days": null,
+  "body": "Comparisons ask a true/false question: `<` less than, `>` greater than, `==` equal, `!=` not equal, plus `<=` and `>=`. You can *combine* them: `and` needs **both** sides true, `or` needs **at least one**, and `not` flips a true/false. So `age >= 13 and age <= 19` asks \"is this a teenager?\". The next two challenges practice combining conditions.",
+  "completion": "acknowledge"
+}

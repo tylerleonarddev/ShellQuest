@@ -1,0 +1,44 @@
+{
+  "id": "py-in-range",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Is it in range?",
+  "xp": 15,
+  "prerequisites": [
+    "lesson-comparisons"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write in_range(n, lo, hi) that returns True if n is between lo and hi, INCLUDING the ends. in_range(5, 1, 10) is True; in_range(11, 1, 10) is False.",
+  "starter_code": "def in_range(n, lo, hi):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "in_range(5,1,10)",
+        "expect": true
+      },
+      {
+        "call": "in_range(0,1,10)",
+        "expect": false
+      },
+      {
+        "call": "in_range(1,1,10)",
+        "expect": true
+      },
+      {
+        "call": "in_range(10,1,10)",
+        "expect": true
+      },
+      {
+        "call": "in_range(11,1,10)",
+        "expect": false
+      }
+    ]
+  },
+  "help": {
+    "plain": "Check that n sits between lo and hi, and count the ends as inside.",
+    "analogy": "Like a bouncer who checks you're on the list AND old enough \u2014 both conditions have to hold at once.",
+    "mnemonic": "AND = All conditions Need to hold.",
+    "nudge": "Python lets you chain it: can you write lo, n, and hi in one comparison?"
+  }
+}

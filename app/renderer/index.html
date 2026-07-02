@@ -97,6 +97,18 @@
     <h1 class="exercise-title" id="exercise-title"></h1>
     <p class="exercise-prompt" id="exercise-prompt"></p>
 
+    <!-- tiered "Explain this" help (only shown when the exercise has a help block) -->
+    <div class="help-region" id="help-region" hidden>
+      <button class="btn-ghost btn-small" id="btn-help">💡 Explain this</button>
+      <div class="help-panel" id="help-panel" hidden>
+        <div class="help-tiers" id="help-tiers"></div>
+        <div class="help-controls">
+          <button class="btn-ghost btn-small" id="btn-help-more">still stuck? ↓</button>
+          <span class="help-floor-note" id="help-floor-note" hidden>that's all the help — the last step is the code to write</span>
+        </div>
+      </div>
+    </div>
+
     <!-- python-kata -->
     <div id="kata-panel" hidden>
       <div class="editor-frame">

@@ -5,7 +5,7 @@
   "title": "Reverse a string",
   "xp": 20,
   "prerequisites": [
-    "py-absolute"
+    "py-append-item"
   ],
   "review_interval_days": null,
   "prompt": "Write reverse_string(s) that returns s reversed. Do it without slicing tricks if you can, but any correct approach passes.",

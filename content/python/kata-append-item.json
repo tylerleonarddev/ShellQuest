@@ -1,0 +1,45 @@
+{
+  "id": "py-append-item",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Add to the end",
+  "xp": 20,
+  "prerequisites": [
+    "py-first-and-last"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write append_item(lst, x) that adds x to the end of lst and returns the list. append_item([1,2], 3) is [1, 2, 3].",
+  "starter_code": "def append_item(lst, x):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "append_item([1,2],3)",
+        "expect": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "call": "append_item([],'a')",
+        "expect": [
+          "a"
+        ]
+      },
+      {
+        "call": "append_item([5],5)",
+        "expect": [
+          5,
+          5
+        ]
+      }
+    ]
+  },
+  "help": {
+    "plain": "Stick x onto the end of the list, then return the list.",
+    "analogy": "Adding one more car to the back of a train.",
+    "mnemonic": "`.append()` = add onto the end.",
+    "nudge": "Which list method puts a single item on the end?"
+  }
+}

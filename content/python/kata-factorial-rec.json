@@ -27,5 +27,16 @@
         "expect": 720
       }
     ]
+  },
+  "help": {
+    "plain": "A recursive function answers a big case by asking itself the same question about a smaller case, until the case is so small the answer is obvious.",
+    "analogy": "Like a line of people each asking the person behind them their number, adding one, and passing it back — until the last person, who just knows their own. The answer bubbles back up the line.",
+    "mnemonic": "BRS — Base case Returns, else Recurse Smaller. If the input is at the base, return the known answer; otherwise combine this step with the function called on a smaller input.",
+    "nudge": "What is the one input where you know the answer without any more work? (For factorial, what is factorial_rec(0)?)",
+    "example": {
+      "problem": "Sum the numbers 1..n using recursion instead of a loop (a different task).",
+      "solution": "def sum_rec(n):\n    if n <= 0:\n        return 0\n    return n + sum_rec(n - 1)",
+      "note": "Same base-case-plus-smaller-call shape. Yours MULTIPLIES (n times the factorial of n-1) and bases out at 1, instead of adding and basing out at 0."
+    }
   }
 }

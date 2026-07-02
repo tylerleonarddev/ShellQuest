@@ -30,5 +30,16 @@
         "expect": 0
       }
     ]
+  },
+  "help": {
+    "plain": "The list is sorted, so you never look one-by-one. You check the middle: too big? throw away the right half. Too small? throw away the left half. Repeat on what's left.",
+    "analogy": "Like finding a word in a paper dictionary — you open to the middle, see if your word comes before or after, and instantly ignore half the book. A few halvings and you're there.",
+    "mnemonic": "MCH — Middle, Compare, Halve. Look at the Middle, Compare to the target, Halve the range toward the side it must be on.",
+    "nudge": "You need two markers for the range you're still searching — a low and a high. What happens to each when the middle is too small?",
+    "example": {
+      "problem": "Guess a secret number between 1 and 100 in as few tries as possible, given 'higher'/'lower' hints (a different task).",
+      "solution": "def guess(secret):\n    lo, hi, tries = 1, 100, 0\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        tries += 1\n        if mid == secret:\n            return tries\n        if mid < secret:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return tries",
+      "note": "Same halving engine: a low/high range, check the middle, move one edge inward. Yours returns the index it found (or -1) instead of a guess count."
+    }
   }
 }

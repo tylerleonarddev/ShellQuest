@@ -30,5 +30,16 @@
         "expect": 0
       }
     ]
+  },
+  "help": {
+    "plain": "Walk through the list and total only the even numbers, ignoring the rest.",
+    "analogy": "Like counting only the red M&Ms in a bag — you look at each one, skip the others, and tally the reds.",
+    "mnemonic": "LEA — Loop, Examine, Add. Loop over the list, Examine each item, Add it only if it qualifies.",
+    "nudge": "How do you test one number for even? You already built that idea with `%`.",
+    "example": {
+      "problem": "Sum the ODD numbers in a list (a different task).",
+      "solution": "def sum_odd(numbers):\n    total = 0\n    for n in numbers:\n        if n % 2 == 1:\n            total += n\n    return total",
+      "note": "Same shape as your task — loop, test each item, add when it matches. Yours tests for even (`n % 2 == 0`) instead of odd."
+    }
   }
 }

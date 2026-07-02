@@ -1,0 +1,40 @@
+{
+  "id": "py-either-true",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "At least one",
+  "xp": 15,
+  "prerequisites": [
+    "py-in-range"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write either_true(a, b) \u2014 both are True/False \u2014 returning True if AT LEAST ONE of them is True.",
+  "starter_code": "def either_true(a, b):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "either_true(True,False)",
+        "expect": true
+      },
+      {
+        "call": "either_true(False,False)",
+        "expect": false
+      },
+      {
+        "call": "either_true(True,True)",
+        "expect": true
+      },
+      {
+        "call": "either_true(False,True)",
+        "expect": true
+      }
+    ]
+  },
+  "help": {
+    "plain": "Return True when one or both inputs are True; only False when both are False.",
+    "analogy": "Two doors into a room \u2014 you get in if EITHER one is unlocked.",
+    "mnemonic": "OR = One is enough.",
+    "nudge": "Which keyword means 'at least one of these is true'?"
+  }
+}

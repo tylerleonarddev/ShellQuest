@@ -1,6 +1,6 @@
 {
   "name": "shellquest",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "A git-backed learning platform: katas, XP, streaks, and learning in public.",
   "main": "app/main/main.js",
@@ -11,7 +11,8 @@
     "publish": "node tools/publish.js",
     "digest": "node tools/digest.js",
     "build-stats": "node tools/build-stats.js",
-    "lint-content": "node tools/lint-content.js"
+    "lint-content": "node tools/lint-content.js",
+    "test": "node tests/run.js && node tools/lint-content.js"
   },
   "author": "Ty Leonard",
   "license": "MIT",

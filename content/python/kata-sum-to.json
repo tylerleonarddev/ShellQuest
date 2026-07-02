@@ -1,0 +1,40 @@
+{
+  "id": "py-sum-to",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Add them all up",
+  "xp": 20,
+  "prerequisites": [
+    "lesson-loops"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write sum_to(n) that returns 1 + 2 + ... + n using a loop. sum_to(5) is 15. If n is 0 or less, return 0.",
+  "starter_code": "def sum_to(n):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "sum_to(5)",
+        "expect": 15
+      },
+      {
+        "call": "sum_to(1)",
+        "expect": 1
+      },
+      {
+        "call": "sum_to(0)",
+        "expect": 0
+      },
+      {
+        "call": "sum_to(10)",
+        "expect": 55
+      }
+    ]
+  },
+  "help": {
+    "plain": "Keep a running total, and add each number from 1 up to n into it.",
+    "analogy": "Stacking coins into a pile \u2014 you keep the pile going and drop one more on each turn.",
+    "mnemonic": "SLA \u2014 Start (at 0), Loop, Add.",
+    "nudge": "What value should `total` start at BEFORE the loop begins?"
+  }
+}

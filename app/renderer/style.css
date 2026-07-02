@@ -522,6 +522,54 @@ body {
 }
 .lesson-body em { color: var(--text); font-style: normal; font-weight: 700; }
 
+/* ── Tiered "Explain this" help ── */
+.help-region { margin: 4px 0 22px; }
+#btn-help { color: var(--accent); border-color: var(--accent-dim); }
+#btn-help:hover { border-color: var(--accent); }
+.help-panel {
+  margin-top: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 16px 20px;
+  max-width: 64ch;
+}
+.help-tier { padding: 10px 0; }
+.help-tier + .help-tier { border-top: 1px solid var(--line); }
+.help-tier-label {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+.help-tier-body { color: var(--text); line-height: 1.65; }
+.help-tier-body code, .help-tier-note code {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: var(--accent);
+  font-size: 13px;
+}
+.help-tier-body em { color: var(--text); font-style: normal; font-weight: 700; }
+.help-tier-body + .help-tier-label { margin-top: 12px; }
+.help-example-code {
+  margin: 8px 0;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text);
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+.help-tier-note { color: var(--muted); font-size: 13px; font-style: italic; }
+.help-controls { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.help-floor-note { color: var(--faint); font-size: 12px; }
+
 /* ── Friendly errors ── */
 .result-raw { width: 100%; margin-top: 6px; }
 .result-raw summary {

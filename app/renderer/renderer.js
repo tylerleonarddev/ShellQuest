@@ -451,6 +451,89 @@ function lessonHtml(body) {
     .join('');
 }
 
+/* ── Tiered "Explain this" help ── */
+
+// Build the ordered reveal steps from whichever help tiers are present.
+// Tier 1 groups plain + analogy; the rest are one step each; the floor is
+// an analogous *different* worked example — never this kata's answer.
+function buildHelpSteps(help) {
+  const steps = [];
+  const t1 = [];
+  if (help.plain) t1.push({ label: 'In plain words', text: help.plain });
+  if (help.analogy) t1.push({ label: 'Think of it like…', text: help.analogy });
+  if (t1.length) steps.push({ kind: 'text', items: t1 });
+  if (help.mnemonic) steps.push({ kind: 'text', items: [{ label: 'A memory hook', text: help.mnemonic }] });
+  if (help.nudge) steps.push({ kind: 'text', items: [{ label: 'A nudge', text: help.nudge }] });
+  if (help.example) steps.push({ kind: 'example', example: help.example });
+  return steps;
+}
+
+let helpState = { steps: [], shown: 0 };
+
+function setupHelp(help) {
+  const region = $('help-region');
+  const panel = $('help-panel');
+  panel.hidden = true;
+  $('btn-help').textContent = '💡 Explain this';
+  if (!help) {
+    region.hidden = true;
+    helpState = { steps: [], shown: 0 };
+    return;
+  }
+  region.hidden = false;
+  helpState = { steps: buildHelpSteps(help), shown: 0 };
+}
+
+function revealNextHelpTier() {
+  const { steps, shown } = helpState;
+  if (shown >= steps.length) return;
+  const step = steps[shown];
+  const tiers = $('help-tiers');
+
+  const block = document.createElement('div');
+  block.className = 'help-tier';
+  if (step.kind === 'text') {
+    for (const item of step.items) {
+      const label = document.createElement('div');
+      label.className = 'help-tier-label';
+      label.textContent = item.label;
+      const body = document.createElement('div');
+      body.className = 'help-tier-body';
+      body.innerHTML = lessonHtml(item.text); // backticks/italics, escaped
+      block.append(label, body);
+    }
+  } else {
+    const label = document.createElement('div');
+    label.className = 'help-tier-label';
+    label.textContent = 'A similar example (a different problem)';
+    block.appendChild(label);
+    if (step.example.problem) {
+      const prob = document.createElement('div');
+      prob.className = 'help-tier-body';
+      prob.innerHTML = lessonHtml(step.example.problem);
+      block.appendChild(prob);
+    }
+    if (step.example.solution) {
+      const pre = document.createElement('pre');
+      pre.className = 'help-example-code';
+      pre.textContent = step.example.solution;
+      block.appendChild(pre);
+    }
+    if (step.example.note) {
+      const note = document.createElement('div');
+      note.className = 'help-tier-note';
+      note.innerHTML = lessonHtml(step.example.note);
+      block.appendChild(note);
+    }
+  }
+  tiers.appendChild(block);
+  helpState.shown += 1;
+
+  const done = helpState.shown >= steps.length;
+  $('btn-help-more').hidden = done;
+  $('help-floor-note').hidden = !done;
+}
+
 async function openExercise(id) {
   const ex = await window.shellquest.getExercise(id);
   if (!ex) return;
@@ -465,6 +548,9 @@ async function openExercise(id) {
   $('exercise-done-badge').hidden = !ex.completed;
   $('results').hidden = true;
   $('results').innerHTML = '';
+
+  $('help-tiers').innerHTML = '';
+  setupHelp(ex.help);
 
   $('kata-panel').hidden = isChallenge || isLesson;
   $('challenge-panel').hidden = !isChallenge;
@@ -788,6 +874,14 @@ $('btn-run').addEventListener('click', runCurrent);
 $('btn-verify').addEventListener('click', runCurrent);
 $('btn-gotit').addEventListener('click', completeCurrentLesson);
 $('btn-reset-lab').addEventListener('click', resetLab);
+$('btn-help').addEventListener('click', () => {
+  const panel = $('help-panel');
+  const opening = panel.hidden;
+  panel.hidden = !opening;
+  $('btn-help').textContent = opening ? '💡 hide help' : '💡 Explain this';
+  if (opening && helpState.shown === 0) revealNextHelpTier(); // first tier on open
+});
+$('btn-help-more').addEventListener('click', revealNextHelpTier);
 $('flag-input').addEventListener('keydown', (ev) => {
   // Plain Enter only — Ctrl+Enter belongs to the global handler, and
   // matching both fired two runs from one keystroke.

@@ -1,13 +1,13 @@
-name: Lint content
+name: Test & lint
 
-# Every accumulated content rule, on every push — a bad commit fails
-# loudly before it can reach a learner.
+# The regression suite + every content rule, on every push — a bad commit
+# fails loudly before it can reach a learner.
 on:
   push:
   pull_request:
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,4 +16,5 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci --omit=dev
-      - run: npm run lint-content
+      # Python 3 is preinstalled on ubuntu-latest; the runner needs it.
+      - run: npm test

@@ -163,6 +163,11 @@ ipcMain.handle('exercise:get', (_ev, id) => {
     xp: exercise.xp,
     prompt: exercise.prompt,
     completed: progress.isCompleted(exercise.id),
+    // Optional tiered "Explain this" help — pure content data. Absent =>
+    // no Help button. example.solution is deliberately withheld from the
+    // renderer payload only if we ever want to; today the whole block
+    // ships since it's an ANALOGOUS problem, not this kata's answer.
+    help: exercise.help || null,
   };
   if (exercise.type === 'lesson') {
     return { ...common, body: exercise.body };

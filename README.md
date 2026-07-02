@@ -13,6 +13,8 @@ commit; the contribution graph *is* the streak.
 
 ![Passing an exercise](docs/img/pass.png)
 
+![Tiered "Explain this" help](docs/img/help.png)
+
 ## Quick start
 
 ```bash
@@ -43,7 +45,10 @@ onboarding that teaches the loop; the ladder takes over from there.
 Along the way: **FSRS spaced repetition** resurfaces what you've learned
 right before you'd forget it, a daily queue keeps the habit honest, a
 glossary defines every term before it's used, and failures speak plain
-language, never raw tracebacks.
+language, never raw tracebacks. Stuck on a kata? An **"Explain this"**
+panel gives tiered help — plain words, an analogy, a memory hook, a nudge,
+and an analogous *different* example — revealed one step at a time, and it
+never hands you this exercise's answer.
 
 ## Learning in public
 

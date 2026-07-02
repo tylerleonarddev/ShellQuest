@@ -1,5 +1,30 @@
 # Design decisions (deviations & clarifications)
 
+## v1.1
+
+**Help-example no-leak is mechanical, not heuristic.** The spec asks the
+linter to confirm a `help.example.solution` doesn't solve its own kata.
+Rather than guess, `tools/lint-content.js` runs each example through the
+HOST kata's real tests via the runner and fails if it passes. Example
+functions are also deliberately named differently (sum_odd, product_pair,
+car_count…) so they can't accidentally satisfy the host test.
+
+**Help tiers group as the spec intends:** plain + analogy reveal together
+as tier 1, then mnemonic, nudge, and the analogous example each on their
+own "still stuck?" click. Any tier may be omitted; the bundle's gentle
+katas stop at the nudge, while the hard katas (two_sum, binary_search,
+recursion, data structures) carry the full example.
+
+**Regression suite lives in `tests/` now** (`npm test`), consolidated from
+the per-version scratchpad suites into one self-contained runner that
+validates every kata against a reference solution. Wired into CI so the
+net travels with the clone — it should have from the start.
+
+**reverse-string rewire:** its prerequisite moved from `py-absolute` to
+`py-append-item` so the new loops/lists/comparisons block sits before
+Tier 1. Both anchors are deep and locked, so no daily queue was stranded
+(and v0.9.2's ghost reconcile covers the general case regardless).
+
 ## v0.9.2 (pre-1.0 hardening audit)
 
 A 78-agent adversarially-verified audit produced 46 confirmed findings;

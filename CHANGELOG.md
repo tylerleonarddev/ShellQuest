@@ -4,6 +4,26 @@ The 0.1 → 1.0 story. Every version below shipped, was verified against
 its build spec's acceptance criteria, and went live on this repo — most
 of it in a single remarkable week.
 
+## 1.1.0 — 2026-07-02 · Teaching help + the drop-off gaps
+
+Closed the three fundamentals a coverage audit flagged as the exact
+concepts beginners quit on — **loops, lists, and comparisons** — with 3
+lessons + 6 gentle katas, each slotted into the ladder *before* the katas
+that had silently assumed them.
+
+Added the **tiered "Explain this" help system**: a stuck learner gets
+plain words → an analogy → a memory hook → a Socratic nudge → an
+analogous *different* worked example, revealed one tier at a time. The
+floor is never this exercise's answer — the linter mechanically enforces
+it by running every `help.example.solution` through its host kata's own
+tests and rejecting any that pass. Authored help for the trickiest katas
+(sum_even, two_sum, binary_search, recursion, Stack, linked list).
+
+Also: the regression suite moved into the repo as `tests/` with
+`npm test` (46 katas validated against reference solutions, ladder
+integrity, help-example safety, runner behaviors) and now runs in CI on
+every push — the safety net travels with the clone.
+
 ## 1.0.0 — 2026-07-02 · The release
 
 The declaration: ShellQuest is a real, stable, teaching, self-documenting

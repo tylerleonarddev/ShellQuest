@@ -54,6 +54,7 @@ if (fs.existsSync(glossaryFile)) {
 const ids = new Map(); // id -> file
 const allPrereqs = []; // [file, id, prereq]
 const scaffoldChecks = []; // [contentFile, projectFile, function]
+const helpExampleChecks = []; // [rel, exercise] — verified against the runner below
 
 for (const file of files) {
   const rel = path.relative(ROOT, file);
@@ -89,6 +90,27 @@ for (const file of files) {
     }
   }
   for (const p of ex.prerequisites || []) allPrereqs.push([rel, ex.id, p]);
+
+  // Help block shape + no-answer-leak. Static checks here; the real
+  // "example must not solve THIS kata" check runs against the test runner
+  // below (a mechanical guarantee, not a heuristic).
+  if (ex.help) {
+    const KNOWN_TIERS = new Set(['plain', 'analogy', 'mnemonic', 'nudge', 'example']);
+    for (const k of Object.keys(ex.help)) {
+      if (!KNOWN_TIERS.has(k)) errors.push(`${rel}: unknown help tier "${k}"`);
+    }
+    if (ex.help.example) {
+      const h = ex.help.example;
+      if (typeof h !== 'object' || Array.isArray(h)) {
+        errors.push(`${rel}: help.example must be an object {problem, solution, note}`);
+      } else {
+        if (!h.problem) errors.push(`${rel}: help.example is missing a "problem" (it must be a DIFFERENT task)`);
+        if (ex.type === 'python-kata' && (ex.verification || {}).runner !== 'project-run' && h.solution) {
+          helpExampleChecks.push([rel, ex]);
+        }
+      }
+    }
+  }
 
   const v = ex.verification || {};
   const checks = v.checks || [];
@@ -223,10 +245,33 @@ for (const [contentFile, projectFile, fn] of scaffoldChecks) {
   }
 }
 
-for (const w of warnings) console.log(`⚠ ${w}`);
-if (errors.length) {
-  for (const e of errors) console.error(`✗ ${e}`);
-  console.error(`\n${errors.length} error(s) across ${files.length} content files.`);
-  process.exit(1);
+// 8. Help-example no-leak (mechanical): run each help.example.solution
+// through the HOST kata's own tests. If it passes, the "analogous
+// example" is actually this kata's answer — reject it. Async, so it runs
+// in a tail that reuses the real python runner.
+async function verifyHelpExamples() {
+  if (!helpExampleChecks.length) return;
+  const { runTests } = require(path.join(ROOT, 'app/lib/verify-python.js'));
+  for (const [rel, ex] of helpExampleChecks) {
+    let res;
+    try {
+      res = await runTests(ex, ex.help.example.solution);
+    } catch (e) {
+      warnings.push(`${rel}: could not verify help.example against the runner (${e.message})`);
+      continue;
+    }
+    if (res.passed) {
+      errors.push(`${rel}: help.example.solution PASSES this kata's own tests — it must be a DIFFERENT problem, never the answer`);
+    }
+  }
 }
-console.log(`✓ ${files.length} content files clean (${warnings.length} naming warnings)`);
+
+verifyHelpExamples().then(() => {
+  for (const w of warnings) console.log(`⚠ ${w}`);
+  if (errors.length) {
+    for (const e of errors) console.error(`✗ ${e}`);
+    console.error(`\n${errors.length} error(s) across ${files.length} content files.`);
+    process.exit(1);
+  }
+  console.log(`✓ ${files.length} content files clean (${warnings.length} naming warnings)`);
+});
