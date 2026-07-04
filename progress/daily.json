@@ -1,23 +1,18 @@
 {
-  "date": "2026-07-02",
+  "date": "2026-07-04",
   "queue": [
     "py-say-hello",
-    "sq-01-explore",
-    "sq-02-make",
-    "lesson-parameters"
+    "sq-03-tree",
+    "lesson-numbers"
   ],
   "kinds": {
     "py-say-hello": "review",
-    "sq-01-explore": "review",
-    "sq-02-make": "new",
-    "lesson-parameters": "new"
+    "sq-03-tree": "new",
+    "lesson-numbers": "new"
   },
   "completed": [
-    "py-say-hello",
-    "sq-01-explore",
-    "sq-02-make",
-    "lesson-parameters"
+    "py-say-hello"
   ],
-  "bonus_awarded": true,
+  "bonus_awarded": false,
   "bonus_xp": 15
 }

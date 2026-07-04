@@ -13,16 +13,16 @@
       "last_review": "2026-07-02T18:00:59.647Z"
     },
     "py-say-hello": {
-      "due": "2026-07-03T17:57:48.578Z",
-      "stability": 0.212,
-      "difficulty": 6.4133,
-      "elapsed_days": 0,
-      "scheduled_days": 1,
-      "reps": 1,
+      "due": "2026-07-07T18:07:45.077Z",
+      "stability": 2.4329485,
+      "difficulty": 6.40211507,
+      "elapsed_days": 2,
+      "scheduled_days": 3,
+      "reps": 2,
       "lapses": 0,
       "learning_steps": 0,
       "state": 2,
-      "last_review": "2026-07-02T17:57:48.578Z",
+      "last_review": "2026-07-04T18:07:45.077Z",
       "sq_last_failed_on": "2026-07-02"
     },
     "sq-02-make": {
