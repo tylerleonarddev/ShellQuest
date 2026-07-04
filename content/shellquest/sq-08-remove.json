@@ -1,0 +1,77 @@
+{
+  "id": "sq-08-remove",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Surgical cleanup",
+  "xp": 30,
+  "prerequisites": [
+    "sq-07-move"
+  ],
+  "review_interval_days": null,
+  "prompt": "rm deletes files, and there is NO recycle bin — read twice, run once. The lab has one keeper (keep.txt) plus junk: temp1.tmp, temp2.tmp, temp3.tmp, and a cache/ folder. Delete the three .tmp files and the cache folder. keep.txt must survive. Folders need rm -r.",
+  "setup": {
+    "dirs": [
+      "cache"
+    ],
+    "files": [
+      {
+        "path": "keep.txt",
+        "contents": "Keep me!\n"
+      },
+      {
+        "path": "temp1.tmp",
+        "contents": "junk\n"
+      },
+      {
+        "path": "temp2.tmp",
+        "contents": "junk\n"
+      },
+      {
+        "path": "temp3.tmp",
+        "contents": "junk\n"
+      },
+      {
+        "path": "cache/a.bin",
+        "contents": "x\n"
+      },
+      {
+        "path": "cache/b.bin",
+        "contents": "y\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "file-exists",
+        "path": "keep.txt"
+      },
+      {
+        "kind": "command-output",
+        "command": "ls temp1.tmp temp2.tmp temp3.tmp 2>/dev/null | wc -l",
+        "expected_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+      },
+      {
+        "kind": "command-output",
+        "command": "test -d cache && echo present || echo gone",
+        "expected_sha256": "283bb9deef02e6843abfb538efa1eca70801bd8a701c3f98191e123496339247"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Delete exactly four things: the three .tmp files and the cache folder with everything in it. keep.txt stays untouched. If you delete the wrong thing, use ⟲ reset lab.",
+    "terms": [
+      {
+        "term": "rm -r",
+        "meaning": "delete a folder AND everything inside it (r = recursive); plain rm only handles files"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Plain rm removes the three .tmp files; the folder needs the recursive form.",
+    "analogy": "Shredding three loose papers is easy — shredding a whole binder means feeding in every page it contains, which is what -r does.",
+    "mnemonic": "files: rm · folders: rm -r · no undo, ever.",
+    "nudge": "rm can take several filenames in one command. What extra letter does a folder need?"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "id": "sq-13-glob",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Herd the logs",
+  "xp": 35,
+  "prerequisites": [
+    "sq-12-perms"
+  ],
+  "review_interval_days": null,
+  "prompt": "The * wildcard means 'any characters', so one command can act on many files: *.log matches every name ending in .log. The lab root is littered with files. Move EVERY .log file into logs/ in a single command — and leave data.txt and readme.md exactly where they are.",
+  "setup": {
+    "dirs": [
+      "logs"
+    ],
+    "files": [
+      {
+        "path": "report1.log",
+        "contents": "r1\n"
+      },
+      {
+        "path": "report2.log",
+        "contents": "r2\n"
+      },
+      {
+        "path": "report3.log",
+        "contents": "r3\n"
+      },
+      {
+        "path": "error.log",
+        "contents": "e\n"
+      },
+      {
+        "path": "data.txt",
+        "contents": "data\n"
+      },
+      {
+        "path": "readme.md",
+        "contents": "hi\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "file-exists",
+        "path": "logs/report1.log"
+      },
+      {
+        "kind": "file-exists",
+        "path": "logs/report2.log"
+      },
+      {
+        "kind": "file-exists",
+        "path": "logs/report3.log"
+      },
+      {
+        "kind": "file-exists",
+        "path": "logs/error.log"
+      },
+      {
+        "kind": "command-output",
+        "command": "ls *.log 2>/dev/null | wc -l",
+        "expected_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+      },
+      {
+        "kind": "file-exists",
+        "path": "data.txt"
+      },
+      {
+        "kind": "file-exists",
+        "path": "readme.md"
+      }
+    ]
+  },
+  "details": {
+    "restate": "All four .log files end up inside logs/; the root keeps data.txt and readme.md and has no .log files left. The point is doing it with ONE command, not four.",
+    "io": [
+      {
+        "call": "ls *.log",
+        "returns": "error.log report1.log report2.log report3.log",
+        "because": "* expands to every matching filename before the command even runs"
+      }
+    ],
+    "terms": [
+      {
+        "term": "wildcard ( * )",
+        "meaning": "a pattern piece meaning 'any characters' — the shell replaces it with every matching filename"
+      }
+    ]
+  },
+  "help": {
+    "plain": "mv accepts many files at once, and the wildcard hands it every .log in one go.",
+    "analogy": "A magnet over a parts bin — it lifts every screw at once and leaves the plastic bits behind.",
+    "mnemonic": "mv *.log logs/ — the pattern does the picking.",
+    "nudge": "mv can take a whole list of files with the destination folder last. What pattern produces 'every file ending in .log'?"
+  }
+}

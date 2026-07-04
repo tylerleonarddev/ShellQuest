@@ -1,0 +1,54 @@
+{
+  "id": "sq-09-grep",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Needle in the log",
+  "xp": 35,
+  "prerequisites": [
+    "sq-08-remove"
+  ],
+  "review_interval_days": null,
+  "prompt": "grep searches INSIDE files: grep WORD FILE prints every line containing WORD. server.log has 121 lines and exactly one mentions the word magic — that line carries the flag. Find it with grep, save the whole line into answer.txt (grep's output can go straight to a file with >), and submit the flag.",
+  "setup": {
+    "files": [
+      {
+        "path": "server.log",
+        "contents": "[INFO] request 1 handled normally\n[INFO] request 2 handled normally\n[INFO] request 3 handled normally\n[INFO] request 4 handled normally\n[INFO] request 5 handled normally\n[INFO] request 6 handled normally\n[INFO] request 7 handled normally\n[INFO] request 8 handled normally\n[INFO] request 9 handled normally\n[INFO] request 10 handled normally\n[INFO] request 11 handled normally\n[INFO] request 12 handled normally\n[INFO] request 13 handled normally\n[INFO] request 14 handled normally\n[INFO] request 15 handled normally\n[INFO] request 16 handled normally\n[INFO] request 17 handled normally\n[INFO] request 18 handled normally\n[INFO] request 19 handled normally\n[INFO] request 20 handled normally\n[INFO] request 21 handled normally\n[INFO] request 22 handled normally\n[INFO] request 23 handled normally\n[INFO] request 24 handled normally\n[INFO] request 25 handled normally\n[INFO] request 26 handled normally\n[INFO] request 27 handled normally\n[INFO] request 28 handled normally\n[INFO] request 29 handled normally\n[INFO] request 30 handled normally\n[INFO] request 31 handled normally\n[INFO] request 32 handled normally\n[INFO] request 33 handled normally\n[INFO] request 34 handled normally\n[INFO] request 35 handled normally\n[INFO] request 36 handled normally\n[INFO] request 37 handled normally\n[INFO] request 38 handled normally\n[INFO] request 39 handled normally\n[INFO] request 40 handled normally\n[INFO] request 41 handled normally\n[INFO] request 42 handled normally\n[INFO] request 43 handled normally\n[INFO] request 44 handled normally\n[INFO] request 45 handled normally\n[INFO] request 46 handled normally\n[INFO] request 47 handled normally\n[INFO] request 48 handled normally\n[INFO] request 49 handled normally\n[INFO] request 50 handled normally\n[INFO] request 51 handled normally\n[INFO] request 52 handled normally\n[INFO] request 53 handled normally\n[INFO] request 54 handled normally\n[INFO] request 55 handled normally\n[INFO] request 56 handled normally\n[INFO] request 57 handled normally\n[INFO] request 58 handled normally\n[INFO] request 59 handled normally\n[INFO] request 60 handled normally\nACCESS GRANTED: the magic word is {{FLAG}}\n[INFO] request 61 handled normally\n[INFO] request 62 handled normally\n[INFO] request 63 handled normally\n[INFO] request 64 handled normally\n[INFO] request 65 handled normally\n[INFO] request 66 handled normally\n[INFO] request 67 handled normally\n[INFO] request 68 handled normally\n[INFO] request 69 handled normally\n[INFO] request 70 handled normally\n[INFO] request 71 handled normally\n[INFO] request 72 handled normally\n[INFO] request 73 handled normally\n[INFO] request 74 handled normally\n[INFO] request 75 handled normally\n[INFO] request 76 handled normally\n[INFO] request 77 handled normally\n[INFO] request 78 handled normally\n[INFO] request 79 handled normally\n[INFO] request 80 handled normally\n[INFO] request 81 handled normally\n[INFO] request 82 handled normally\n[INFO] request 83 handled normally\n[INFO] request 84 handled normally\n[INFO] request 85 handled normally\n[INFO] request 86 handled normally\n[INFO] request 87 handled normally\n[INFO] request 88 handled normally\n[INFO] request 89 handled normally\n[INFO] request 90 handled normally\n[INFO] request 91 handled normally\n[INFO] request 92 handled normally\n[INFO] request 93 handled normally\n[INFO] request 94 handled normally\n[INFO] request 95 handled normally\n[INFO] request 96 handled normally\n[INFO] request 97 handled normally\n[INFO] request 98 handled normally\n[INFO] request 99 handled normally\n[INFO] request 100 handled normally\n[INFO] request 101 handled normally\n[INFO] request 102 handled normally\n[INFO] request 103 handled normally\n[INFO] request 104 handled normally\n[INFO] request 105 handled normally\n[INFO] request 106 handled normally\n[INFO] request 107 handled normally\n[INFO] request 108 handled normally\n[INFO] request 109 handled normally\n[INFO] request 110 handled normally\n[INFO] request 111 handled normally\n[INFO] request 112 handled normally\n[INFO] request 113 handled normally\n[INFO] request 114 handled normally\n[INFO] request 115 handled normally\n[INFO] request 116 handled normally\n[INFO] request 117 handled normally\n[INFO] request 118 handled normally\n[INFO] request 119 handled normally\n[INFO] request 120 handled normally\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "file-contains",
+        "path": "answer.txt",
+        "pattern": "ACCESS GRANTED: the magic word is"
+      },
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Two steps: get the one line of server.log that contains the word magic into a file called answer.txt, and type the flag from that line into the flag box.",
+    "io": [
+      {
+        "call": "grep magic server.log",
+        "returns": "(prints just the matching line)",
+        "because": "grep filters a file down to the lines that contain your word"
+      },
+      {
+        "call": "command > file.txt",
+        "returns": "(nothing on screen — the output went into the file)",
+        "because": "> redirects output into a file instead of the terminal"
+      }
+    ]
+  },
+  "help": {
+    "plain": "grep pulls the one interesting line out of 121; > saves what grep found into answer.txt.",
+    "analogy": "A metal detector on a beach — you don't sift every grain of sand, you walk the detector and it beeps at the one thing that matters.",
+    "mnemonic": "grep WORD FILE, then bolt on  > answer.txt  to keep it.",
+    "nudge": "You already have the command that PRINTS the line. What one symbol sends printed output into a file instead?"
+  }
+}

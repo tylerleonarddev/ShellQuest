@@ -1,0 +1,46 @@
+{
+  "id": "sq-11-redirect",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Sort out the mess",
+  "xp": 30,
+  "prerequisites": [
+    "sq-10-pipes"
+  ],
+  "review_interval_days": null,
+  "prompt": "names.txt is an unsorted list full of duplicates. Produce sorted.txt: the same names, alphabetical, each appearing once. sort FILE sorts lines; sort -u sorts AND drops duplicates; > saves the result.",
+  "setup": {
+    "files": [
+      {
+        "path": "names.txt",
+        "contents": "charlie\nalice\nbob\nalice\ndave\nbob\ncharlie\neve\nalice\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "command-output",
+        "command": "cat sorted.txt",
+        "expected_sha256": "c3c7d9aa9f0cc2e7ce9e75f45895c2361fcb071b4d43ad494bd3330888222a40"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Create sorted.txt containing the five distinct names from names.txt in alphabetical order — alice, bob, charlie, dave, eve — one per line, no duplicates.",
+    "io": [
+      {
+        "call": "sort -u names.txt",
+        "returns": "(the names alphabetized, duplicates gone)",
+        "because": "-u means unique: sort the lines and keep each one once"
+      }
+    ]
+  },
+  "help": {
+    "plain": "One sort flag does both jobs — alphabetize and de-duplicate — then redirect the result into sorted.txt.",
+    "analogy": "Alphabetizing a stack of business cards and tossing the doubles in the same pass.",
+    "mnemonic": "sort -u: u for unique.",
+    "nudge": "sort has a flag that removes repeated lines while it sorts. Then where does > come in?"
+  }
+}

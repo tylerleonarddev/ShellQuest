@@ -1,0 +1,60 @@
+{
+  "id": "sq-12-perms",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Flip the execute bit",
+  "xp": 35,
+  "prerequisites": [
+    "sq-11-redirect"
+  ],
+  "review_interval_days": null,
+  "prompt": "Files carry permissions: read, write, execute. A script won't run without the execute permission. run.sh is in your lab but not executable. Check it with ls -l (look at the rwx letters), make it executable with chmod +x, then run it with ./run.sh — it prints the flag.",
+  "setup": {
+    "files": [
+      {
+        "path": "run.sh",
+        "contents": "#!/usr/bin/env bash\necho 'access granted: {{FLAG}}'\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "command-output",
+        "command": "test -x run.sh && echo executable || echo locked",
+        "expected_sha256": "a29c2123a01df1d0febb9d308a20d8a2fe3d40a91ca8b1294f59f08f9773ebea"
+      },
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Two steps: give run.sh the execute permission, then actually run it. It prints the flag when it runs. The ./ prefix means 'the one in this folder'.",
+    "io": [
+      {
+        "call": "ls -l run.sh",
+        "returns": "-rw-r--r-- ... run.sh",
+        "because": "no x among the letters means no execute permission yet"
+      },
+      {
+        "call": "chmod +x run.sh",
+        "returns": "(no output — the permission changed)",
+        "because": "+x adds the execute permission"
+      }
+    ],
+    "terms": [
+      {
+        "term": "./",
+        "meaning": "run the file from the current folder — typing just run.sh searches the system PATH instead and won't find it"
+      }
+    ]
+  },
+  "help": {
+    "plain": "The script is fine — it just isn't allowed to run yet. Grant the permission, then execute it from this folder.",
+    "analogy": "A key that hasn't been cut yet: the metal is all there, but until the locksmith cuts it (chmod +x), it turns nothing.",
+    "mnemonic": "chmod +x makes it go; ./ says 'the one right here'.",
+    "nudge": "ls -l shows rw- but no x. Which command adds permissions, and how do you run a script that lives in the current folder?"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "id": "sq-10-pipes",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Count without counting",
+  "xp": 35,
+  "prerequisites": [
+    "sq-09-grep"
+  ],
+  "review_interval_days": null,
+  "prompt": "A pipe | feeds one command's output into the next — small tools chained into something powerful. app.log has 100 lines; some contain ERROR. Count how many lines contain ERROR (wc -l counts lines) and write just that number into answer.txt. No counting by eye.",
+  "setup": {
+    "files": [
+      {
+        "path": "app.log",
+        "contents": "[INFO] step 1 ok\n[INFO] step 2 ok\n[INFO] step 3 ok\n[INFO] step 4 ok\n[INFO] step 5 ok\n[INFO] step 6 ok\n[ERROR] something failed at step 7\n[INFO] step 8 ok\n[INFO] step 9 ok\n[INFO] step 10 ok\n[INFO] step 11 ok\n[INFO] step 12 ok\n[INFO] step 13 ok\n[ERROR] something failed at step 14\n[INFO] step 15 ok\n[INFO] step 16 ok\n[INFO] step 17 ok\n[INFO] step 18 ok\n[INFO] step 19 ok\n[INFO] step 20 ok\n[ERROR] something failed at step 21\n[INFO] step 22 ok\n[INFO] step 23 ok\n[INFO] step 24 ok\n[INFO] step 25 ok\n[INFO] step 26 ok\n[INFO] step 27 ok\n[ERROR] something failed at step 28\n[INFO] step 29 ok\n[INFO] step 30 ok\n[INFO] step 31 ok\n[INFO] step 32 ok\n[INFO] step 33 ok\n[INFO] step 34 ok\n[ERROR] something failed at step 35\n[INFO] step 36 ok\n[INFO] step 37 ok\n[INFO] step 38 ok\n[INFO] step 39 ok\n[INFO] step 40 ok\n[INFO] step 41 ok\n[ERROR] something failed at step 42\n[INFO] step 43 ok\n[INFO] step 44 ok\n[INFO] step 45 ok\n[INFO] step 46 ok\n[INFO] step 47 ok\n[INFO] step 48 ok\n[ERROR] something failed at step 49\n[INFO] step 50 ok\n[INFO] step 51 ok\n[INFO] step 52 ok\n[INFO] step 53 ok\n[INFO] step 54 ok\n[INFO] step 55 ok\n[ERROR] something failed at step 56\n[INFO] step 57 ok\n[INFO] step 58 ok\n[INFO] step 59 ok\n[INFO] step 60 ok\n[INFO] step 61 ok\n[INFO] step 62 ok\n[ERROR] something failed at step 63\n[INFO] step 64 ok\n[INFO] step 65 ok\n[INFO] step 66 ok\n[INFO] step 67 ok\n[INFO] step 68 ok\n[INFO] step 69 ok\n[ERROR] something failed at step 70\n[INFO] step 71 ok\n[INFO] step 72 ok\n[INFO] step 73 ok\n[INFO] step 74 ok\n[INFO] step 75 ok\n[INFO] step 76 ok\n[ERROR] something failed at step 77\n[INFO] step 78 ok\n[INFO] step 79 ok\n[INFO] step 80 ok\n[INFO] step 81 ok\n[INFO] step 82 ok\n[INFO] step 83 ok\n[ERROR] something failed at step 84\n[INFO] step 85 ok\n[INFO] step 86 ok\n[INFO] step 87 ok\n[INFO] step 88 ok\n[INFO] step 89 ok\n[INFO] step 90 ok\n[ERROR] something failed at step 91\n[INFO] step 92 ok\n[INFO] step 93 ok\n[INFO] step 94 ok\n[INFO] step 95 ok\n[INFO] step 96 ok\n[INFO] step 97 ok\n[ERROR] something failed at step 98\n[INFO] step 99 ok\n[INFO] step 100 ok\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "command-output",
+        "command": "cat answer.txt",
+        "expected_sha256": "8527a891e224136950ff32ca212b45bc93f69fbb801c3b1ebedac52775f99e61"
+      }
+    ]
+  },
+  "details": {
+    "restate": "answer.txt must contain one thing: the number of lines in app.log that contain the word ERROR. Nothing else — just the number.",
+    "io": [
+      {
+        "call": "grep ERROR app.log | wc -l",
+        "returns": "(a single number)",
+        "because": "grep keeps only the ERROR lines, the pipe hands them to wc -l, and wc -l counts them"
+      }
+    ],
+    "terms": [
+      {
+        "term": "pipe ( | )",
+        "meaning": "connects two commands: the left one's output becomes the right one's input"
+      }
+    ]
+  },
+  "help": {
+    "plain": "First filter to only the ERROR lines, then count what's left, then save the count.",
+    "analogy": "An assembly line: one station picks out the red parts, the next station counts them. The conveyor belt between stations is the pipe.",
+    "mnemonic": "filter | count > save.",
+    "nudge": "You know the command that prints the ERROR lines and the command that counts lines. How do you connect them?"
+  }
+}

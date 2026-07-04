@@ -1,0 +1,106 @@
+{
+  "id": "sq-14-boss",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "THE BOSS: sweep the tree",
+  "xp": 60,
+  "prerequisites": [
+    "sq-13-glob"
+  ],
+  "review_interval_days": null,
+  "prompt": "Everything you've learned, one move. Scattered across the lab's folders are .log files; some lines start with KEY=. Collect EVERY such line from EVERY .log file — and only .log files — sort them, and save them to keys.txt in the lab root. One of the collected lines holds the flag. New trick: grep -rh 'TEXT' . searches every file under here (-h hides filenames), and --include='*.log' limits the search to .log files.",
+  "setup": {
+    "dirs": [
+      "east/tower",
+      "west/dungeon",
+      "north",
+      "south/crypt"
+    ],
+    "files": [
+      {
+        "path": "east/tower/a.log",
+        "contents": "KEY=delta {{FLAG}}\n"
+      },
+      {
+        "path": "west/dungeon/b.log",
+        "contents": "noise line\nKEY=alpha\nmore noise\n"
+      },
+      {
+        "path": "north/quiet.log",
+        "contents": "nothing here\n"
+      },
+      {
+        "path": "south/crypt/c.log",
+        "contents": "KEY=charlie\nKEY=bravo\n"
+      },
+      {
+        "path": "south/decoy.txt",
+        "contents": "KEY=ignore-me-not-a-log\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "file-contains",
+        "path": "keys.txt",
+        "pattern": "^KEY=alpha$"
+      },
+      {
+        "kind": "file-contains",
+        "path": "keys.txt",
+        "pattern": "^KEY=bravo$"
+      },
+      {
+        "kind": "file-contains",
+        "path": "keys.txt",
+        "pattern": "^KEY=charlie$"
+      },
+      {
+        "kind": "file-contains",
+        "path": "keys.txt",
+        "pattern": "^KEY=delta"
+      },
+      {
+        "kind": "command-output",
+        "command": "grep -c ignore-me keys.txt; true",
+        "expected_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+      },
+      {
+        "kind": "command-output",
+        "command": "wc -l < keys.txt",
+        "expected_sha256": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a"
+      },
+      {
+        "kind": "command-output",
+        "command": "sort -C keys.txt && echo sorted || echo unsorted",
+        "expected_sha256": "db8cf3338c29849e56bf0b0c9aa8eeaa1a87d168f31979fd533e2ad9cd45a103"
+      },
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "keys.txt must hold exactly the four KEY= lines that live in .log files (the one in the .txt decoy does NOT count), in sorted order. The KEY=delta line carries the flag — submit it too.",
+    "io": [
+      {
+        "call": "grep -rh 'KEY=' . --include='*.log'",
+        "returns": "(the four KEY= lines, no filenames)",
+        "because": "-r sweeps the whole tree, -h drops the filename prefixes, --include filters to .log files"
+      },
+      {
+        "call": "... | sort > keys.txt",
+        "returns": "(sorted, saved)",
+        "because": "pipe into sort, redirect into the file — the full toolchain in one line"
+      }
+    ]
+  },
+  "help": {
+    "plain": "One pipeline: recursive grep limited to .log files, piped through sort, redirected into keys.txt.",
+    "analogy": "A trawler sweep of the whole bay — the net (grep -r) covers everything, the mesh size (--include) decides what gets kept, and the catch gets sorted on deck.",
+    "mnemonic": "search deep, keep only logs, sort, save: grep -rh … --include … | sort > file.",
+    "nudge": "You need three tools chained: the recursive search you just learned, the sorter, and the redirect. What order do they go in?"
+  }
+}

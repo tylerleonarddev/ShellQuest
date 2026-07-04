@@ -1,0 +1,67 @@
+{
+  "id": "sq-06-read",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Read the manifest",
+  "xp": 25,
+  "prerequisites": [
+    "sq-05-find"
+  ],
+  "review_interval_days": null,
+  "prompt": "manifest.txt is 41 lines long, and only its very LAST line matters: it names the colored door to enter. Read the end of the file (tail shows the last 10 lines), then look inside that door's folder for the key — it holds the flag. cat, head, and tail read files without opening an editor.",
+  "setup": {
+    "dirs": [
+      "red",
+      "green",
+      "blue"
+    ],
+    "files": [
+      {
+        "path": "manifest.txt",
+        "contents": "log entry 1 — nothing important here\nlog entry 2 — nothing important here\nlog entry 3 — nothing important here\nlog entry 4 — nothing important here\nlog entry 5 — nothing important here\nlog entry 6 — nothing important here\nlog entry 7 — nothing important here\nlog entry 8 — nothing important here\nlog entry 9 — nothing important here\nlog entry 10 — nothing important here\nlog entry 11 — nothing important here\nlog entry 12 — nothing important here\nlog entry 13 — nothing important here\nlog entry 14 — nothing important here\nlog entry 15 — nothing important here\nlog entry 16 — nothing important here\nlog entry 17 — nothing important here\nlog entry 18 — nothing important here\nlog entry 19 — nothing important here\nlog entry 20 — nothing important here\nlog entry 21 — nothing important here\nlog entry 22 — nothing important here\nlog entry 23 — nothing important here\nlog entry 24 — nothing important here\nlog entry 25 — nothing important here\nlog entry 26 — nothing important here\nlog entry 27 — nothing important here\nlog entry 28 — nothing important here\nlog entry 29 — nothing important here\nlog entry 30 — nothing important here\nlog entry 31 — nothing important here\nlog entry 32 — nothing important here\nlog entry 33 — nothing important here\nlog entry 34 — nothing important here\nlog entry 35 — nothing important here\nlog entry 36 — nothing important here\nlog entry 37 — nothing important here\nlog entry 38 — nothing important here\nlog entry 39 — nothing important here\nlog entry 40 — nothing important here\nENTER: blue\n"
+      },
+      {
+        "path": "red/key.txt",
+        "contents": "wrong door — the manifest knows the way\n"
+      },
+      {
+        "path": "green/key.txt",
+        "contents": "wrong door — read the LAST line again\n"
+      },
+      {
+        "path": "blue/key.txt",
+        "contents": "the blue door opens: {{FLAG}}\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Find out which door the last line of manifest.txt names, then read the key file inside that door's folder. The key holds the flag you submit.",
+    "io": [
+      {
+        "call": "tail manifest.txt",
+        "returns": "(the last 10 lines — the final one names the door)",
+        "because": "tail reads the end of a file, which is where this answer lives"
+      }
+    ],
+    "terms": [
+      {
+        "term": "cat / head / tail",
+        "meaning": "print a whole file / its first 10 lines / its last 10 lines"
+      }
+    ]
+  },
+  "help": {
+    "plain": "The last line of manifest.txt names a folder. The flag is in that folder's key.txt.",
+    "analogy": "A 41-page briefing where only the last sentence matters — flip to the back, don't read cover to cover.",
+    "mnemonic": "head reads the start, tail reads the end.",
+    "nudge": "Which command shows just the END of a long file?"
+  }
+}

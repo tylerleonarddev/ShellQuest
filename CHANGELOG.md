@@ -4,6 +4,25 @@ The 0.1 → 1.0 story. Every version below shipped, was verified against
 its build spec's acceptance criteria, and went live on this repo — most
 of it in a single remarkable week.
 
+## 1.4.0 — 2026-07-04 · The terminal campaign at full strength
+
+The 9 classic missions that had waited in `~/shellquest-classic` since
+v0.2 are finally ported: read (tail/cat), move/rename, surgical rm,
+grep, pipes (`grep | wc -l`), sort/redirect, permissions
+(`chmod +x` + `./`), wildcards, and **THE BOSS** — a recursive
+grep-filter-sort-save sweep of the whole tree. The terminal ladder goes
+5 → **14 missions**, the complete "can work a Linux box" arc. All
+dynamic flags, all `details` + `help` blocks, and every mission
+validated both ways in an isolated HOME: a fresh lab fails its checks,
+the reference solution passes them.
+
+Where next: `docs/TERMINAL-ROADMAP.md` maps the track beyond 14 — an
+analyst tier (~10 security-track missions, zero engine work needed), a
+fluency tier (~6 more behind four small data-only setup extensions:
+file modes, symlinks, mtimes, base64), and the honest list of what
+truly waits for the v2.0 system-state engine (processes, networking,
+services). The ladder can more than double before any engine surgery.
+
 ## 1.3.0 — 2026-07-04 · AI hints (local) + the security track
 
 ShellQuest now has a third, last-resort layer of help: an **AI hint**

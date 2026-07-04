@@ -1,0 +1,63 @@
+{
+  "id": "sq-07-move",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Rename and relocate",
+  "xp": 25,
+  "prerequisites": [
+    "sq-06-read"
+  ],
+  "review_interval_days": null,
+  "prompt": "mv does double duty: it MOVES files and RENAMES them — a rename is just a move to a new name. Your lab has draft.txt and a folder final/. End state: the file lives at final/report.txt, renamed AND moved, with nothing left behind in the lab root. One command can do both at once.",
+  "setup": {
+    "dirs": [
+      "final"
+    ],
+    "files": [
+      {
+        "path": "draft.txt",
+        "contents": "First draft of the report.\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "file-exists",
+        "path": "final/report.txt"
+      },
+      {
+        "kind": "file-contains",
+        "path": "final/report.txt",
+        "pattern": "First draft of the report"
+      },
+      {
+        "kind": "command-output",
+        "command": "ls draft.txt report.txt 2>/dev/null | wc -l",
+        "expected_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Move draft.txt into the final folder AND rename it to report.txt in the process. Afterwards the root has no draft.txt and no report.txt — the one file lives at final/report.txt with its contents intact.",
+    "io": [
+      {
+        "call": "mv OLD NEW",
+        "returns": "(renames OLD to NEW)",
+        "because": "a rename is a move to a new name in the same place"
+      },
+      {
+        "call": "mv FILE FOLDER/name",
+        "returns": "(moves AND renames in one step)",
+        "because": "the destination can be a new path and a new name at once"
+      }
+    ]
+  },
+  "help": {
+    "plain": "One mv command can change a file's folder and its name at the same time.",
+    "analogy": "Moving house and changing your nameplate in a single trip — the destination address includes the new name.",
+    "mnemonic": "mv source destination — and the destination can be folder/newname.",
+    "nudge": "What happens if the second thing you give mv is a path that ends in a different filename?"
+  }
+}
