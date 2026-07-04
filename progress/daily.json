@@ -12,8 +12,9 @@
   },
   "completed": [
     "py-say-hello",
-    "sq-03-tree"
+    "sq-03-tree",
+    "lesson-numbers"
   ],
-  "bonus_awarded": false,
+  "bonus_awarded": true,
   "bonus_xp": 15
 }
