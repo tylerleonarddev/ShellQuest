@@ -522,10 +522,50 @@ body {
 }
 .lesson-body em { color: var(--text); font-style: normal; font-weight: 700; }
 
-/* ── Tiered "Explain this" help ── */
-.help-region { margin: 4px 0 22px; }
+/* ── Assist row: "More info" (what is asked) + "Explain this" (how) ── */
+.assist-region { margin: 4px 0 22px; }
+.assist-buttons { display: flex; gap: 10px; }
 #btn-help { color: var(--accent); border-color: var(--accent-dim); }
 #btn-help:hover { border-color: var(--accent); }
+/* More info stays on the neutral tones — the ONE-accent rule holds; the
+   two buttons are told apart by icon + the accent living only on Help. */
+#btn-details { color: var(--text); border-color: var(--line); }
+#btn-details:hover { border-color: var(--muted); }
+.details-panel {
+  margin-top: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--muted);
+  border-radius: 8px;
+  padding: 16px 20px;
+  max-width: 64ch;
+}
+.details-restate { color: var(--text); line-height: 1.65; }
+.details-restate code { background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; color: var(--accent); font-size: 13px; }
+.details-io { margin-top: 12px; border-collapse: collapse; width: 100%; }
+.details-io th {
+  text-align: left;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 4px 14px 4px 0;
+  border-bottom: 1px solid var(--line);
+}
+.details-io td { padding: 7px 14px 2px 0; vertical-align: top; }
+.details-io td code {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 13px;
+  color: var(--text);
+}
+.details-io-because td { padding: 0 0 8px; color: var(--muted); font-size: 12px; font-style: italic; }
+.details-terms { margin-top: 12px; }
+.details-terms dt { color: var(--text); font-weight: 700; font-size: 13px; margin-top: 8px; }
+.details-terms dd { color: var(--muted); font-size: 13px; margin-left: 0; line-height: 1.6; }
+.details-terms dd code { background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; font-size: 12px; }
 .help-panel {
   margin-top: 12px;
   background: var(--surface);

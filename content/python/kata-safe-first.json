@@ -1,0 +1,57 @@
+{
+  "id": "py-safe-first",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "First item, safely",
+  "xp": 25,
+  "prerequisites": [
+    "py-safe-divide"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write safe_first(lst) that returns the first item of the list, or None if the list is empty (instead of crashing). Use try/except.",
+  "starter_code": "def safe_first(lst):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "safe_first([1,2])",
+        "expect": 1
+      },
+      {
+        "call": "safe_first([])",
+        "expect": null
+      },
+      {
+        "call": "safe_first(['x'])",
+        "expect": "x"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Return the first element of the list. But if the list is empty (so there is no first element), catch the error and return None.",
+    "io": [
+      {
+        "call": "safe_first([1, 2])",
+        "returns": "1",
+        "because": "the first item"
+      },
+      {
+        "call": "safe_first([])",
+        "returns": "None",
+        "because": "empty list has no first item, so return None instead of crashing"
+      }
+    ],
+    "terms": [
+      {
+        "term": "IndexError",
+        "meaning": "the error Python raises when you ask for an item that isn't there"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Grab the first item, but if the list is empty, return None instead of erroring.",
+    "analogy": "Reaching into a bag for the top item \u2014 if it's empty, you come back empty-handed instead of forcing it.",
+    "mnemonic": "TRY to grab [0], EXCEPT if there's nothing there.",
+    "nudge": "What happens if you index [0] on an empty list? Catch that specific error."
+  }
+}

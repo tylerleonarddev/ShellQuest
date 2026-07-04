@@ -1,0 +1,65 @@
+{
+  "id": "py-safe-divide",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Divide without crashing",
+  "xp": 25,
+  "prerequisites": [
+    "lesson-errors"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write safe_divide(a, b) that returns a / b, but returns None if b is zero (instead of crashing). Use try/except.",
+  "starter_code": "def safe_divide(a, b):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "safe_divide(10,2)",
+        "expect": 5.0
+      },
+      {
+        "call": "safe_divide(9,3)",
+        "expect": 3.0
+      },
+      {
+        "call": "safe_divide(7,2)",
+        "expect": 3.5
+      },
+      {
+        "call": "safe_divide(5,0)",
+        "expect": null
+      },
+      {
+        "call": "safe_divide(0,5)",
+        "expect": 0.0
+      }
+    ]
+  },
+  "details": {
+    "restate": "Divide a by b and return the result. But if b is zero (which normally crashes the program), catch that and return None instead.",
+    "io": [
+      {
+        "call": "safe_divide(10, 2)",
+        "returns": "5.0",
+        "because": "normal division"
+      },
+      {
+        "call": "safe_divide(5, 0)",
+        "returns": "None",
+        "because": "dividing by zero would crash, so you catch it and return None"
+      }
+    ],
+    "terms": [
+      {
+        "term": "None",
+        "meaning": "Python's way of saying 'no value / nothing here'"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Do the division, but wrap it so a divide-by-zero returns None instead of crashing.",
+    "analogy": "A circuit breaker — instead of letting a bad operation blow up the whole program, it trips safely.",
+    "mnemonic": "TRY the risky thing, EXCEPT when it fails.",
+    "nudge": "What error does Python raise on divide-by-zero? Wrap the division so you can catch that."
+  }
+}

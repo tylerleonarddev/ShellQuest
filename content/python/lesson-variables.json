@@ -1,0 +1,11 @@
+{
+  "id": "lesson-variables",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Variables: naming your stuff",
+  "xp": 5,
+  "prerequisites": [],
+  "review_interval_days": null,
+  "body": "A *variable* is a name you attach to a value so you can use it later. `age = 30` stores 30 under the name `age`; after that, writing `age` gives you 30. You can change it \u2014 `age = 31` \u2014 and the name now points to the new value. Names should say what they hold (`total`, `name`, `count`), not `x` or `thing`. Every challenge from here uses variables to hold values while you work.",
+  "completion": "acknowledge"
+}

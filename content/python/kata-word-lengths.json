@@ -1,0 +1,64 @@
+{
+  "id": "py-word-lengths",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Map words to their lengths",
+  "xp": 25,
+  "prerequisites": [
+    "py-char-count"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write word_lengths(words) that takes a list of words and returns a dictionary mapping each word to its length. word_lengths(['hi','bye']) is {'hi':2,'bye':3}.",
+  "starter_code": "def word_lengths(words):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "word_lengths(['hi','bye'])",
+        "expect": {
+          "hi": 2,
+          "bye": 3
+        }
+      },
+      {
+        "call": "word_lengths([])",
+        "expect": {}
+      },
+      {
+        "call": "word_lengths(['a','bb','ccc'])",
+        "expect": {
+          "a": 1,
+          "bb": 2,
+          "ccc": 3
+        }
+      }
+    ]
+  },
+  "details": {
+    "restate": "Given a list of words, build a dictionary where each key is a word and each value is that word's length.",
+    "io": [
+      {
+        "call": "word_lengths(['hi','bye'])",
+        "returns": "{'hi':2,'bye':3}",
+        "because": "'hi' has 2 letters, 'bye' has 3"
+      },
+      {
+        "call": "word_lengths([])",
+        "returns": "{}",
+        "because": "no words means an empty dictionary"
+      }
+    ],
+    "terms": [
+      {
+        "term": "length",
+        "meaning": "how many characters are in a word, from len()"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Make a dictionary where every word points to how long it is.",
+    "analogy": "Like a coat-check tag on each coat \u2014 the word is the tag, its length is what's written on it.",
+    "mnemonic": "word -> len(word), one entry per word.",
+    "nudge": "How do you get the length of a single word (not the whole list)?"
+  }
+}

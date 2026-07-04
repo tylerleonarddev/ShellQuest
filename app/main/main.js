@@ -168,6 +168,10 @@ ipcMain.handle('exercise:get', (_ev, id) => {
     // renderer payload only if we ever want to; today the whole block
     // ships since it's an ANALOGOUS problem, not this kata's answer.
     help: exercise.help || null,
+    // Optional "More info" task details — clarifies WHAT is being asked
+    // (restatement, io examples, term definitions), never HOW to solve it.
+    // Absent => no More info button.
+    details: exercise.details || null,
   };
   if (exercise.type === 'lesson') {
     return { ...common, body: exercise.body };
@@ -377,6 +381,17 @@ function createWindow() {
           if (process.env.SQ_SCREENSHOT_CLICK) {
             await win.webContents.executeJavaScript(
               `{ const el = document.querySelector(${JSON.stringify(process.env.SQ_SCREENSHOT_CLICK)});
+                 if (el) { el.click(); setTimeout(() => (document.querySelector(${JSON.stringify(
+                   process.env.SQ_SCREENSHOT_SCROLL || 'body'
+                 )}) || el).scrollIntoView({ block: 'center' }), 300); } }`
+            );
+            await new Promise((r) => setTimeout(r, 800));
+          }
+          // Optional second click (e.g. open an exercise, THEN a panel in
+          // it). Same contract as SQ_SCREENSHOT_CLICK, runs after it.
+          if (process.env.SQ_SCREENSHOT_CLICK2) {
+            await win.webContents.executeJavaScript(
+              `{ const el = document.querySelector(${JSON.stringify(process.env.SQ_SCREENSHOT_CLICK2)});
                  if (el) { el.click(); setTimeout(() => (document.querySelector(${JSON.stringify(
                    process.env.SQ_SCREENSHOT_SCROLL || 'body'
                  )}) || el).scrollIntoView({ block: 'center' }), 300); } }`

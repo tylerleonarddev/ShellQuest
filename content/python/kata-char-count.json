@@ -1,0 +1,64 @@
+{
+  "id": "py-char-count",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Count each character",
+  "xp": 25,
+  "prerequisites": [
+    "lesson-dictionaries"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write char_count(s) that returns a dictionary mapping each character in the string to how many times it appears. char_count('hello') is {'h':1,'e':1,'l':2,'o':1}.",
+  "starter_code": "def char_count(s):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "char_count('hello')",
+        "expect": {
+          "h": 1,
+          "e": 1,
+          "l": 2,
+          "o": 1
+        }
+      },
+      {
+        "call": "char_count('')",
+        "expect": {}
+      },
+      {
+        "call": "char_count('aaa')",
+        "expect": {
+          "a": 3
+        }
+      }
+    ]
+  },
+  "details": {
+    "restate": "Given a string, build a dictionary. Each key is a character that appears in the string; each value is how many times that character shows up.",
+    "io": [
+      {
+        "call": "char_count('hello')",
+        "returns": "{'h':1,'e':1,'l':2,'o':1}",
+        "because": "'l' appears twice, the others once"
+      },
+      {
+        "call": "char_count('')",
+        "returns": "{}",
+        "because": "no characters means an empty dictionary"
+      }
+    ],
+    "terms": [
+      {
+        "term": "dictionary",
+        "meaning": "a collection of key -> value pairs; here, character -> count"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Count how many times each character appears, and hand back the counts as a dictionary.",
+    "analogy": "Like sorting mixed candy into labeled cups \u2014 one cup per color, drop a tally in each time you see that color.",
+    "mnemonic": "For each char: 'seen it? add 1, else start at 1' \u2014 that's `d.get(c, 0) + 1`.",
+    "nudge": "How do you add to a count for a key that might not be in the dict yet?"
+  }
+}

@@ -354,6 +354,7 @@ async function showDashboard() {
     if (isNext) nextMarked.add(ex.group);
 
     const li = document.createElement('li');
+    li.dataset.id = ex.id; // stable hook for tests/screenshot driving
     li.className =
       'kata-item' +
       (ex.completed ? ' completed' : '') +
@@ -471,17 +472,86 @@ function buildHelpSteps(help) {
 let helpState = { steps: [], shown: 0 };
 
 function setupHelp(help) {
-  const region = $('help-region');
+  const btn = $('btn-help');
   const panel = $('help-panel');
   panel.hidden = true;
-  $('btn-help').textContent = '💡 Explain this';
+  btn.textContent = '💡 Explain this';
   if (!help) {
-    region.hidden = true;
+    btn.hidden = true;
     helpState = { steps: [], shown: 0 };
     return;
   }
-  region.hidden = false;
+  btn.hidden = false;
   helpState = { steps: buildHelpSteps(help), shown: 0 };
+}
+
+/* ── "More info" task details ── */
+
+// Fully open clarification of WHAT the kata asks: a plainer restatement,
+// concrete input→output examples, term definitions. Never the how — the io
+// examples only show expected outputs the tests already contain, so there
+// are no tiers and no gating (contrast with Help above).
+function setupDetails(details) {
+  const btn = $('btn-details');
+  const panel = $('details-panel');
+  panel.hidden = true;
+  btn.textContent = 'ⓘ More info';
+  if (!details) {
+    btn.hidden = true;
+    return;
+  }
+  btn.hidden = false;
+
+  const restate = $('details-restate');
+  restate.className = 'details-restate';
+  restate.hidden = !details.restate;
+  restate.innerHTML = details.restate ? lessonHtml(details.restate) : '';
+
+  const io = $('details-io');
+  io.innerHTML = '';
+  const examples = Array.isArray(details.io) ? details.io : [];
+  io.hidden = !examples.length;
+  if (examples.length) {
+    const head = document.createElement('tr');
+    for (const h of ['you call', 'you get back']) {
+      const th = document.createElement('th');
+      th.textContent = h;
+      head.appendChild(th);
+    }
+    io.appendChild(head);
+    for (const ex of examples) {
+      const row = document.createElement('tr');
+      for (const text of [ex.call, ex.returns]) {
+        const td = document.createElement('td');
+        const code = document.createElement('code');
+        code.textContent = text || '';
+        td.appendChild(code);
+        row.appendChild(td);
+      }
+      io.appendChild(row);
+      if (ex.because) {
+        const why = document.createElement('tr');
+        why.className = 'details-io-because';
+        const td = document.createElement('td');
+        td.colSpan = 2;
+        td.innerHTML = lessonHtml(`because ${ex.because}`);
+        why.appendChild(td);
+        io.appendChild(why);
+      }
+    }
+  }
+
+  const terms = $('details-terms');
+  terms.innerHTML = '';
+  const defs = Array.isArray(details.terms) ? details.terms : [];
+  terms.hidden = !defs.length;
+  for (const t of defs) {
+    const dt = document.createElement('dt');
+    dt.textContent = t.term || '';
+    const dd = document.createElement('dd');
+    dd.innerHTML = lessonHtml(t.meaning || '');
+    terms.append(dt, dd);
+  }
 }
 
 function revealNextHelpTier() {
@@ -551,6 +621,8 @@ async function openExercise(id) {
 
   $('help-tiers').innerHTML = '';
   setupHelp(ex.help);
+  setupDetails(ex.details);
+  $('assist-region').hidden = !ex.help && !ex.details;
 
   $('kata-panel').hidden = isChallenge || isLesson;
   $('challenge-panel').hidden = !isChallenge;
@@ -882,6 +954,12 @@ $('btn-help').addEventListener('click', () => {
   if (opening && helpState.shown === 0) revealNextHelpTier(); // first tier on open
 });
 $('btn-help-more').addEventListener('click', revealNextHelpTier);
+$('btn-details').addEventListener('click', () => {
+  const panel = $('details-panel');
+  const opening = panel.hidden;
+  panel.hidden = !opening;
+  $('btn-details').textContent = opening ? 'ⓘ hide info' : 'ⓘ More info';
+});
 $('flag-input').addEventListener('keydown', (ev) => {
   // Plain Enter only — Ctrl+Enter belongs to the global handler, and
   // matching both fired two runs from one keystroke.

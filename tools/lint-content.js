@@ -112,6 +112,60 @@ for (const file of files) {
     }
   }
 
+  // "More info" details block: shape + no-code. Details may only CLARIFY
+  // the task (restatement, io examples, term definitions) — never contain
+  // implementation. The no-code check targets code PATTERNS (def, lambda,
+  // fences, indented bodies), not the English word "return", which shows
+  // up legitimately in prose like "catch it and return None".
+  if (ex.details) {
+    const d = ex.details;
+    if (typeof d !== 'object' || Array.isArray(d)) {
+      errors.push(`${rel}: details must be an object {restate, io, terms}`);
+    } else {
+      const KNOWN_FIELDS = new Set(['restate', 'io', 'terms']);
+      for (const k of Object.keys(d)) {
+        if (!KNOWN_FIELDS.has(k)) errors.push(`${rel}: unknown details field "${k}"`);
+      }
+      if (d.restate !== undefined && typeof d.restate !== 'string') {
+        errors.push(`${rel}: details.restate must be a string`);
+      }
+      const proseFields = []; // [label, text] — scanned for code patterns
+      if (d.restate) proseFields.push(['details.restate', d.restate]);
+      if (d.io !== undefined) {
+        if (!Array.isArray(d.io)) errors.push(`${rel}: details.io must be an array`);
+        else d.io.forEach((row, i) => {
+          if (typeof row !== 'object' || Array.isArray(row) || !row.call || !row.returns) {
+            errors.push(`${rel}: details.io[${i}] must be {call, returns, because?}`);
+            return;
+          }
+          if (row.because) proseFields.push([`details.io[${i}].because`, row.because]);
+        });
+      }
+      if (d.terms !== undefined) {
+        if (!Array.isArray(d.terms)) errors.push(`${rel}: details.terms must be an array`);
+        else d.terms.forEach((t, i) => {
+          if (typeof t !== 'object' || Array.isArray(t) || !t.term || !t.meaning) {
+            errors.push(`${rel}: details.terms[${i}] must be {term, meaning}`);
+            return;
+          }
+          proseFields.push([`details.terms[${i}].meaning`, t.meaning]);
+        });
+      }
+      const CODE_PATTERNS = [
+        [/\bdef\s+\w+\s*\(/, 'a function definition'],
+        [/\blambda\b/, 'a lambda'],
+        [/```/, 'a code fence'],
+        [/\n\s{4,}\S/, 'an indented code body'],
+        [/\bfor\s+\w+\s+in\s+.+:\s/, 'a for-loop'],
+      ];
+      for (const [label, text] of proseFields) {
+        for (const [re, what] of CODE_PATTERNS) {
+          if (re.test(text)) errors.push(`${rel}: ${label} contains ${what} — details clarify the task, never the code`);
+        }
+      }
+    }
+  }
+
   const v = ex.verification || {};
   const checks = v.checks || [];
   const tests = v.tests || [];

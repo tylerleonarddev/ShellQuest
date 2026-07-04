@@ -97,9 +97,19 @@
     <h1 class="exercise-title" id="exercise-title"></h1>
     <p class="exercise-prompt" id="exercise-prompt"></p>
 
-    <!-- tiered "Explain this" help (only shown when the exercise has a help block) -->
-    <div class="help-region" id="help-region" hidden>
-      <button class="btn-ghost btn-small" id="btn-help">💡 Explain this</button>
+    <!-- "More info" task details + tiered "Explain this" help. Two kinds of
+         stuck, two buttons: details clarifies WHAT is asked (always fully
+         open), help guides HOW to approach it (one tier per click). -->
+    <div class="assist-region" id="assist-region" hidden>
+      <div class="assist-buttons">
+        <button class="btn-ghost btn-small" id="btn-details" hidden>ⓘ More info</button>
+        <button class="btn-ghost btn-small" id="btn-help" hidden>💡 Explain this</button>
+      </div>
+      <div class="details-panel" id="details-panel" hidden>
+        <div id="details-restate" hidden></div>
+        <table class="details-io" id="details-io" hidden></table>
+        <dl class="details-terms" id="details-terms" hidden></dl>
+      </div>
       <div class="help-panel" id="help-panel" hidden>
         <div class="help-tiers" id="help-tiers"></div>
         <div class="help-controls">
@@ -108,6 +118,7 @@
         </div>
       </div>
     </div>
+    <!-- /assist-region -->
 
     <!-- python-kata -->
     <div id="kata-panel" hidden>

@@ -1,0 +1,13 @@
+{
+  "id": "lesson-errors",
+  "type": "lesson",
+  "track": "progression",
+  "title": "When things go wrong: try / except",
+  "xp": 5,
+  "prerequisites": [
+    "py-two-sum"
+  ],
+  "review_interval_days": null,
+  "body": "Some operations can fail \u2014 dividing by zero, reading past the end of a list, opening a missing file. Instead of letting the program crash, you *catch* the failure: `try:` the risky thing, `except:` do something safe if it breaks. It's a circuit breaker \u2014 the bad operation trips the breaker instead of burning the house down. This is how real tools stay standing when the input is messy, which it always is. The next two challenges practice failing gracefully.",
+  "completion": "acknowledge"
+}

@@ -5,7 +5,7 @@
   "title": "Word frequency",
   "xp": 25,
   "prerequisites": [
-    "py-factorial-iter"
+    "lesson-dictionaries"
   ],
   "review_interval_days": null,
   "prompt": "Write word_count(sentence) returning a dict mapping each space-separated word to how many times it appears.",

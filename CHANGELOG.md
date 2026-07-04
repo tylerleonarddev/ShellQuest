@@ -4,6 +4,32 @@ The 0.1 → 1.0 story. Every version below shipped, was verified against
 its build spec's acceptance criteria, and went live on this repo — most
 of it in a single remarkable week.
 
+## 1.2.0 — 2026-07-04 · "More info" + Tier 2 (variables, dicts, errors)
+
+ShellQuest now separates the two kinds of stuck. **"More info"** answers
+*"what am I being asked to do?"* — an always-open panel with a plainer
+restatement of the task, concrete you-call → you-get-back examples with
+the *why*, and definitions of terms in the prompt. It never touches the
+*how*; that stays the Help system's job ("Explain this"), and the two
+live side by side as visually distinct buttons. Any exercise gains the
+button by shipping a `details` block; the linter rejects a `details`
+block containing code patterns (function defs, lambdas, fences, indented
+bodies) — clarification only, mechanically enforced.
+
+**Tier 2 content**: 3 lessons + 4 katas (115 XP) closing the next audit
+gaps — variables (`lesson-variables` is the ladder's new root),
+dictionaries (`char_count`, `word_lengths`, slotted before `word_count`,
+which silently assumed them), and try/except (`safe_divide`,
+`safe_first` off `py-two-sum`). All four katas ship with both `details`
+and `help` blocks, so More info demos with real content on day one.
+Adversarial validation caught a cheat in the drop as delivered:
+`safe_divide` passed with floor division (`a // b`) because every test
+divided evenly — fixed by adding `safe_divide(7, 2) → 3.5`.
+
+Also: `SQ_SCREENSHOT_CLICK2` (second click for screenshot driving —
+open an exercise, then a panel inside it) is now a real affordance
+instead of a throwaway patch, and ladder items carry `data-id` hooks.
+
 ## 1.1.0 — 2026-07-02 · Teaching help + the drop-off gaps
 
 Closed the three fundamentals a coverage audit flagged as the exact

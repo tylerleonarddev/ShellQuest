@@ -1,0 +1,13 @@
+{
+  "id": "lesson-dictionaries",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Dictionaries: labels and values",
+  "xp": 5,
+  "prerequisites": [
+    "py-factorial-iter"
+  ],
+  "review_interval_days": null,
+  "body": "A *dictionary* stores pairs: a **key** (a label) and its **value**. `ages = {'Ty': 30, 'Sam': 25}` — look one up with `ages['Ty']` (gives 30). Add or change with `ages['Kim'] = 60`. Safest way to read is `.get(key, default)`, which returns the default instead of crashing if the key is missing. The counting pattern `d[k] = d.get(k, 0) + 1` shows up constantly. Walk pairs with `for key, value in d.items():`. The next challenges build dictionaries.",
+  "completion": "acknowledge"
+}

@@ -4,8 +4,10 @@
   "track": "progression",
   "title": "What is a function?",
   "xp": 5,
-  "prerequisites": [],
+  "prerequisites": [
+    "lesson-variables"
+  ],
   "review_interval_days": null,
-  "body": "A *function* is a little machine: you give it something, it hands something back. Every challenge here asks you to finish one. To hand a value back out, you use the word `return`. One more word: text \u2014 like a word or a sentence \u2014 is called a *string*, and it always goes inside quotes, like `\"hello\"`. That's everything you need for the first challenge.",
+  "body": "A *function* is a little machine: you give it something, it hands something back. Every challenge here asks you to finish one. To hand a value back out, you use the word `return`. One more word: text — like a word or a sentence — is called a *string*, and it always goes inside quotes, like `\"hello\"`. That's everything you need for the first challenge.",
   "completion": "acknowledge"
 }
