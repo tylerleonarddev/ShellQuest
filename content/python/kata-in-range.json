@@ -35,9 +35,30 @@
       }
     ]
   },
+  "details": {
+    "restate": "Answer True when n sits between lo and hi, counting both ends — lo itself and hi itself are IN the range.",
+    "io": [
+      {
+        "call": "in_range(1, 1, 10)",
+        "returns": "True",
+        "because": "the low end itself counts"
+      },
+      {
+        "call": "in_range(11, 1, 10)",
+        "returns": "False",
+        "because": "one past the high end is out"
+      }
+    ],
+    "terms": [
+      {
+        "term": "inclusive",
+        "meaning": "the boundary values themselves belong to the range"
+      }
+    ]
+  },
   "help": {
     "plain": "Check that n sits between lo and hi, and count the ends as inside.",
-    "analogy": "Like a bouncer who checks you're on the list AND old enough \u2014 both conditions have to hold at once.",
+    "analogy": "Like a bouncer who checks you're on the list AND old enough — both conditions have to hold at once.",
     "mnemonic": "AND = All conditions Need to hold.",
     "nudge": "Python lets you chain it: can you write lo, n, and hi in one comparison?"
   }

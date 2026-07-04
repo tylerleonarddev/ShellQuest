@@ -8,7 +8,7 @@
     "py-bigger"
   ],
   "review_interval_days": null,
-  "prompt": "Return the absolute value of n \u2014 the number without its sign. If n is negative, flip it positive; otherwise leave it. Try: `return n if n >= 0 else -n`. absolute_value(-5) returns 5.",
+  "prompt": "Return the absolute value of n — the number without its sign. If n is negative, flip it positive; otherwise leave it. Try: `return n if n >= 0 else -n`. absolute_value(-5) returns 5.",
   "starter_code": "def absolute_value(n):\n    pass\n",
   "verification": {
     "runner": "python-test",
@@ -24,6 +24,27 @@
       {
         "call": "absolute_value(0)",
         "expect": 0
+      }
+    ]
+  },
+  "details": {
+    "restate": "Give back the number's distance from zero: negative numbers come back positive, everything else comes back unchanged.",
+    "io": [
+      {
+        "call": "absolute_value(-5)",
+        "returns": "5",
+        "because": "the minus sign is dropped"
+      },
+      {
+        "call": "absolute_value(0)",
+        "returns": "0",
+        "because": "zero is zero steps from zero"
+      }
+    ],
+    "terms": [
+      {
+        "term": "absolute value",
+        "meaning": "how far a number is from zero, ignoring direction"
       }
     ]
   }

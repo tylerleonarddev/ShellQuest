@@ -26,5 +26,30 @@
         "expect": true
       }
     ]
+  },
+  "details": {
+    "restate": "Answer True when the number is even and False when it's odd. The answer is a True/False value, not text.",
+    "io": [
+      {
+        "call": "is_even(4)",
+        "returns": "True",
+        "because": "4 splits into two equal halves"
+      },
+      {
+        "call": "is_even(0)",
+        "returns": "True",
+        "because": "zero counts as even"
+      }
+    ],
+    "terms": [
+      {
+        "term": "boolean",
+        "meaning": "the two truth values `True` and `False` — written without quotes, they are not strings"
+      },
+      {
+        "term": "even",
+        "meaning": "divisible by 2 with nothing left over"
+      }
+    ]
   }
 }

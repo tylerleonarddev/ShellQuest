@@ -36,9 +36,30 @@
       }
     ]
   },
+  "details": {
+    "restate": "Build a new list with exactly two items: the first element of the given list, then its last element.",
+    "io": [
+      {
+        "call": "first_and_last([1, 2, 3])",
+        "returns": "[1, 3]",
+        "because": "first is 1, last is 3 — the middle is skipped"
+      },
+      {
+        "call": "first_and_last([9])",
+        "returns": "[9, 9]",
+        "because": "with one item, the first and the last are the same item"
+      }
+    ],
+    "terms": [
+      {
+        "term": "element",
+        "meaning": "one item stored in a list"
+      }
+    ]
+  },
   "help": {
     "plain": "Return a new list with just the first element and the last element.",
-    "analogy": "Bookends \u2014 you grab the two ends of the shelf and ignore everything between.",
+    "analogy": "Bookends — you grab the two ends of the shelf and ignore everything between.",
     "mnemonic": "Index 0 = first; index -1 = last (negatives count from the back).",
     "nudge": "How do you get the LAST item without knowing how long the list is?"
   }

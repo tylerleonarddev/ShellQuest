@@ -26,5 +26,20 @@
         "expect": 100
       }
     ]
+  },
+  "details": {
+    "restate": "Multiply the number by itself and give that back.",
+    "io": [
+      {
+        "call": "square(5)",
+        "returns": "25",
+        "because": "5 times 5"
+      },
+      {
+        "call": "square(1)",
+        "returns": "1",
+        "because": "1 times itself is still 1"
+      }
+    ]
   }
 }

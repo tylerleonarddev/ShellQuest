@@ -8,7 +8,7 @@
     "lesson-decisions"
   ],
   "review_interval_days": null,
-  "prompt": "Return whichever of a or b is larger. This needs a decision. One clean way: `return a if a > b else b` \u2014 read it as 'give a when a is bigger, otherwise give b'. bigger(3, 8) returns 8.",
+  "prompt": "Return whichever of a or b is larger. This needs a decision. One clean way: `return a if a > b else b` — read it as 'give a when a is bigger, otherwise give b'. bigger(3, 8) returns 8.",
   "starter_code": "def bigger(a, b):\n    pass\n",
   "verification": {
     "runner": "python-test",
@@ -24,6 +24,21 @@
       {
         "call": "bigger(5,5)",
         "expect": 5
+      }
+    ]
+  },
+  "details": {
+    "restate": "Compare the two numbers and give back the larger one. If they're equal, the answer is that shared value.",
+    "io": [
+      {
+        "call": "bigger(3, 8)",
+        "returns": "8",
+        "because": "8 is larger than 3"
+      },
+      {
+        "call": "bigger(5, 5)",
+        "returns": "5",
+        "because": "equal numbers — the biggest available is 5 either way"
       }
     ]
   }

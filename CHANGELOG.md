@@ -16,6 +16,11 @@ button by shipping a `details` block; the linter rejects a `details`
 block containing code patterns (function defs, lambdas, fences, indented
 bodies) — clarification only, mechanically enforced.
 
+To make sure the button actually appears where beginners are, `details`
+was also retrofitted onto the 16 early katas (all of Tier 0 plus the
+loops/lists/comparisons gap set) — a learner meets "More info" on their
+very first kata, not twenty exercises in.
+
 **Tier 2 content**: 3 lessons + 4 katas (115 XP) closing the next audit
 gaps — variables (`lesson-variables` is the ladder's new root),
 dictionaries (`char_count`, `word_lengths`, slotted before `word_count`,

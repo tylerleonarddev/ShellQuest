@@ -31,10 +31,25 @@
       }
     ]
   },
+  "details": {
+    "restate": "Add up every whole number from 1 to n and give back the total. If n is 0 or negative, there's nothing to add — the answer is 0.",
+    "io": [
+      {
+        "call": "sum_to(5)",
+        "returns": "15",
+        "because": "1 + 2 + 3 + 4 + 5"
+      },
+      {
+        "call": "sum_to(0)",
+        "returns": "0",
+        "because": "the count-up never starts"
+      }
+    ]
+  },
   "help": {
     "plain": "Keep a running total, and add each number from 1 up to n into it.",
-    "analogy": "Stacking coins into a pile \u2014 you keep the pile going and drop one more on each turn.",
-    "mnemonic": "SLA \u2014 Start (at 0), Loop, Add.",
+    "analogy": "Stacking coins into a pile — you keep the pile going and drop one more on each turn.",
+    "mnemonic": "SLA — Start (at 0), Loop, Add.",
     "nudge": "What value should `total` start at BEFORE the loop begins?"
   }
 }

@@ -18,5 +18,25 @@
         "expect": "Hello, world!"
       }
     ]
+  },
+  "details": {
+    "restate": "Make the function hand back exactly the text Hello, world! — comma, space, capital H, exclamation mark, all exactly like that.",
+    "io": [
+      {
+        "call": "say_hello()",
+        "returns": "'Hello, world!'",
+        "because": "the one and only expected answer — punctuation included"
+      }
+    ],
+    "terms": [
+      {
+        "term": "return",
+        "meaning": "hand a value back out of the function so whoever called it receives it"
+      },
+      {
+        "term": "string",
+        "meaning": "text, always written inside quotes, like `\"hello\"`"
+      }
+    ]
   }
 }

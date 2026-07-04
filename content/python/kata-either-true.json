@@ -8,7 +8,7 @@
     "py-in-range"
   ],
   "review_interval_days": null,
-  "prompt": "Write either_true(a, b) \u2014 both are True/False \u2014 returning True if AT LEAST ONE of them is True.",
+  "prompt": "Write either_true(a, b) — both are True/False — returning True if AT LEAST ONE of them is True.",
   "starter_code": "def either_true(a, b):\n    pass\n",
   "verification": {
     "runner": "python-test",
@@ -31,9 +31,24 @@
       }
     ]
   },
+  "details": {
+    "restate": "You get two True/False values. Answer True when at least one of them is True — only two Falses give back False.",
+    "io": [
+      {
+        "call": "either_true(True, False)",
+        "returns": "True",
+        "because": "one True is enough"
+      },
+      {
+        "call": "either_true(False, False)",
+        "returns": "False",
+        "because": "neither one is True"
+      }
+    ]
+  },
   "help": {
     "plain": "Return True when one or both inputs are True; only False when both are False.",
-    "analogy": "Two doors into a room \u2014 you get in if EITHER one is unlocked.",
+    "analogy": "Two doors into a room — you get in if EITHER one is unlocked.",
     "mnemonic": "OR = One is enough.",
     "nudge": "Which keyword means 'at least one of these is true'?"
   }

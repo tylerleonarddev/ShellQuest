@@ -26,5 +26,26 @@
         "expect": 350
       }
     ]
+  },
+  "details": {
+    "restate": "Take the two numbers you're given and give back their total.",
+    "io": [
+      {
+        "call": "add(2, 3)",
+        "returns": "5",
+        "because": "2 plus 3"
+      },
+      {
+        "call": "add(-1, 1)",
+        "returns": "0",
+        "because": "a negative and a positive can cancel out"
+      }
+    ],
+    "terms": [
+      {
+        "term": "sum",
+        "meaning": "the result of adding numbers together"
+      }
+    ]
   }
 }

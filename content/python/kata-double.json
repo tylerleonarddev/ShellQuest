@@ -26,5 +26,20 @@
         "expect": -6
       }
     ]
+  },
+  "details": {
+    "restate": "Give back the number multiplied by two.",
+    "io": [
+      {
+        "call": "double(7)",
+        "returns": "14",
+        "because": "7 times 2"
+      },
+      {
+        "call": "double(-3)",
+        "returns": "-6",
+        "because": "doubling keeps the minus sign"
+      }
+    ]
   }
 }

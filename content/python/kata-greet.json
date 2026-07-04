@@ -8,7 +8,7 @@
     "lesson-parameters"
   ],
   "review_interval_days": null,
-  "prompt": "Functions can take input, called a parameter. Here `name` is handed to you. Return the text: Hello, <name>! \u2014 for example greet('Tyler') returns 'Hello, Tyler!'. Join pieces of text with the + sign.",
+  "prompt": "Functions can take input, called a parameter. Here `name` is handed to you. Return the text: Hello, <name>! — for example greet('Tyler') returns 'Hello, Tyler!'. Join pieces of text with the + sign.",
   "starter_code": "def greet(name):\n    # return \"Hello, \" + name + \"!\"\n    pass\n",
   "verification": {
     "runner": "python-test",
@@ -20,6 +20,27 @@
       {
         "call": "greet('world')",
         "expect": "Hello, world!"
+      }
+    ]
+  },
+  "details": {
+    "restate": "You're given a name. Hand back one single string: the word Hello, a comma and space, then the name, then an exclamation mark.",
+    "io": [
+      {
+        "call": "greet('Tyler')",
+        "returns": "'Hello, Tyler!'",
+        "because": "the name is dropped into the middle of the greeting"
+      },
+      {
+        "call": "greet('world')",
+        "returns": "'Hello, world!'",
+        "because": "whatever name comes in goes into the same pattern"
+      }
+    ],
+    "terms": [
+      {
+        "term": "parameter",
+        "meaning": "an input the function receives; here `name` holds whatever text the caller passed in"
       }
     ]
   }

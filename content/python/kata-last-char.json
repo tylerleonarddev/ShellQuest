@@ -26,5 +26,26 @@
         "expect": "n"
       }
     ]
+  },
+  "details": {
+    "restate": "Give back just the final character of the text — one single character, still as a string.",
+    "io": [
+      {
+        "call": "last_char('cyber')",
+        "returns": "'r'",
+        "because": "'r' is the last letter"
+      },
+      {
+        "call": "last_char('a')",
+        "returns": "'a'",
+        "because": "in a one-letter string, the last character is its only one"
+      }
+    ],
+    "terms": [
+      {
+        "term": "character",
+        "meaning": "a single letter, digit, or symbol inside a string"
+      }
+    ]
   }
 }

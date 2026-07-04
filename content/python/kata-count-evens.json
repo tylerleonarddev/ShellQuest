@@ -31,10 +31,25 @@
       }
     ]
   },
+  "details": {
+    "restate": "Look through the list and count how many of its numbers are even. Give back that count — a single number.",
+    "io": [
+      {
+        "call": "count_evens([1, 2, 3, 4])",
+        "returns": "2",
+        "because": "2 and 4 are the even ones"
+      },
+      {
+        "call": "count_evens([])",
+        "returns": "0",
+        "because": "an empty list has nothing to count"
+      }
+    ]
+  },
   "help": {
     "plain": "Walk the list and tally up only the even numbers.",
-    "analogy": "Counting only the red cars that drive past \u2014 glance at each one, tick the reds, ignore the rest.",
-    "mnemonic": "LET \u2014 Loop, Examine, Tally.",
+    "analogy": "Counting only the red cars that drive past — glance at each one, tick the reds, ignore the rest.",
+    "mnemonic": "LET — Loop, Examine, Tally.",
     "nudge": "How do you test whether ONE number is even? (Think `% 2`.)"
   }
 }

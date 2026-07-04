@@ -26,5 +26,26 @@
         "expect": ""
       }
     ]
+  },
+  "details": {
+    "restate": "Give back the same text with every letter turned uppercase.",
+    "io": [
+      {
+        "call": "shout('hello')",
+        "returns": "'HELLO'",
+        "because": "all five letters raised"
+      },
+      {
+        "call": "shout('')",
+        "returns": "''",
+        "because": "no letters to raise — empty in, empty out"
+      }
+    ],
+    "terms": [
+      {
+        "term": "method",
+        "meaning": "a built-in ability attached to a value, called with a dot, like `s.upper()`"
+      }
+    ]
   }
 }
