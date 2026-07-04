@@ -4,16 +4,58 @@
   "track": "progression",
   "title": "FizzBuzz list",
   "xp": 30,
-  "prerequisites": ["py-sum-even"],
+  "prerequisites": [
+    "py-sum-even"
+  ],
   "review_interval_days": null,
   "prompt": "Write fizzbuzz(n) that returns a list for 1..n where multiples of 3 are 'Fizz', of 5 are 'Buzz', of both are 'FizzBuzz', otherwise the number itself.",
   "starter_code": "def fizzbuzz(n):\n    pass\n",
   "verification": {
     "runner": "python-test",
     "tests": [
-      { "call": "fizzbuzz(5)", "expect": [1, 2, "Fizz", 4, "Buzz"] },
-      { "call": "fizzbuzz(3)", "expect": [1, 2, "Fizz"] },
-      { "call": "fizzbuzz(15)[-1]", "expect": "FizzBuzz" }
+      {
+        "call": "fizzbuzz(5)",
+        "expect": [
+          1,
+          2,
+          "Fizz",
+          4,
+          "Buzz"
+        ]
+      },
+      {
+        "call": "fizzbuzz(3)",
+        "expect": [
+          1,
+          2,
+          "Fizz"
+        ]
+      },
+      {
+        "call": "fizzbuzz(15)[-1]",
+        "expect": "FizzBuzz"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Build a list for the numbers 1 up to n. Each spot holds the word 'Fizz' if that number divides by 3, 'Buzz' if it divides by 5, 'FizzBuzz' if both — otherwise the number itself. Numbers stay numbers; only the special spots become text.",
+    "io": [
+      {
+        "call": "fizzbuzz(5)",
+        "returns": "[1, 2, 'Fizz', 4, 'Buzz']",
+        "because": "3 divides by 3, 5 divides by 5, the rest stay as plain numbers"
+      },
+      {
+        "call": "fizzbuzz(15)[-1]",
+        "returns": "'FizzBuzz'",
+        "because": "15 divides by both 3 and 5"
+      }
+    ],
+    "terms": [
+      {
+        "term": "multiple",
+        "meaning": "a number that divides evenly — 9 is a multiple of 3 because nothing is left over"
+      }
     ]
   }
 }

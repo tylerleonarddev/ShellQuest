@@ -26,5 +26,26 @@
         "expect": true
       }
     ]
+  },
+  "details": {
+    "restate": "Answer True if the two texts use exactly the same letters the same number of times — just rearranged — ignoring capitals and spaces.",
+    "io": [
+      {
+        "call": "is_anagram('listen', 'silent')",
+        "returns": "True",
+        "because": "same six letters, shuffled"
+      },
+      {
+        "call": "is_anagram('Dormitory', 'Dirty Room')",
+        "returns": "True",
+        "because": "spaces and capitals are ignored"
+      }
+    ],
+    "terms": [
+      {
+        "term": "anagram",
+        "meaning": "a word or phrase formed by rearranging another's letters"
+      }
+    ]
   }
 }

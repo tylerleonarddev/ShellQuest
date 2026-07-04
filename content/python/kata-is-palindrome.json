@@ -30,5 +30,26 @@
         "expect": true
       }
     ]
+  },
+  "details": {
+    "restate": "Answer True if the text reads the same forwards and backwards once you ignore capital letters and spaces; otherwise False.",
+    "io": [
+      {
+        "call": "is_palindrome('Race Car')",
+        "returns": "True",
+        "because": "ignoring the space and the capitals, it's racecar both ways"
+      },
+      {
+        "call": "is_palindrome('hello')",
+        "returns": "False",
+        "because": "backwards it's olleh — different"
+      }
+    ],
+    "terms": [
+      {
+        "term": "palindrome",
+        "meaning": "text that reads the same in both directions, like level or racecar"
+      }
+    ]
   }
 }

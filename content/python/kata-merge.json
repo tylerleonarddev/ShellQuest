@@ -8,7 +8,7 @@
     "py-bubble-sort"
   ],
   "review_interval_days": null,
-  "prompt": "Write merge(a, b) that merges two already-sorted lists into one sorted list. This is the 'merge' step of merge sort \u2014 the O(n log n) sort you'll build later.",
+  "prompt": "Write merge(a, b) that merges two already-sorted lists into one sorted list. This is the 'merge' step of merge sort — the O(n log n) sort you'll build later.",
   "starter_code": "def merge(a, b):\n    pass\n",
   "verification": {
     "runner": "python-test",
@@ -47,6 +47,21 @@
           4,
           5
         ]
+      }
+    ]
+  },
+  "details": {
+    "restate": "You get two lists that are EACH already sorted. Combine them into one single sorted list containing everything from both.",
+    "io": [
+      {
+        "call": "merge([1, 3, 5], [2, 4, 6])",
+        "returns": "[1, 2, 3, 4, 5, 6]",
+        "because": "the two sorted lists interleave into one"
+      },
+      {
+        "call": "merge([], [1])",
+        "returns": "[1]",
+        "because": "merging with an empty list just gives the other list"
       }
     ]
   }

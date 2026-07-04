@@ -30,5 +30,26 @@
         "expect": 7
       }
     ]
+  },
+  "details": {
+    "restate": "Give back the greatest common divisor of the two numbers — the largest number that divides evenly into both.",
+    "io": [
+      {
+        "call": "gcd(48, 18)",
+        "returns": "6",
+        "because": "6 divides both 48 and 18, and nothing bigger does"
+      },
+      {
+        "call": "gcd(17, 5)",
+        "returns": "1",
+        "because": "they share no divisor except 1"
+      }
+    ],
+    "terms": [
+      {
+        "term": "divisor",
+        "meaning": "a number that divides into another with nothing left over"
+      }
+    ]
   }
 }

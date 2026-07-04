@@ -8,7 +8,7 @@
     "proj-parse-line"
   ],
   "review_interval_days": null,
-  "prompt": "Write count_by_level(entries) \u2014 a list of parsed dicts \u2014 returning a dict of how many times each level appears, e.g. {'INFO':2,'ERROR':1}.",
+  "prompt": "Write count_by_level(entries) — a list of parsed dicts — returning a dict of how many times each level appears, e.g. {'INFO':2,'ERROR':1}.",
   "starter_code": "def count_by_level(entries):\n    pass\n",
   "verification": {
     "runner": "python-test",
@@ -30,5 +30,20 @@
     "name": "logparser",
     "file": "projects/logparser/logparser.py",
     "function": "count_by_level"
+  },
+  "details": {
+    "restate": "Given a list of parsed log entries (dictionaries), count how many entries carry each level. Give back a dictionary of level to count.",
+    "io": [
+      {
+        "call": "count_by_level([{'level':'INFO'}, {'level':'ERROR'}, {'level':'INFO'}])",
+        "returns": "{'INFO':2,'ERROR':1}",
+        "because": "two INFO entries, one ERROR"
+      },
+      {
+        "call": "count_by_level([])",
+        "returns": "{}",
+        "because": "no entries, nothing to count"
+      }
+    ]
   }
 }

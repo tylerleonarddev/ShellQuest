@@ -4,6 +4,17 @@ The 0.1 → 1.0 story. Every version below shipped, was verified against
 its build spec's acceptance criteria, and went live on this repo — most
 of it in a single remarkable week.
 
+## 1.2.1 — 2026-07-04 · "More info" everywhere
+
+`details` blocks retrofitted onto the remaining 30 katas — the whole
+mid-ladder (fizzbuzz through the recursion set and the classics),
+the data-structures tier (sequence-style examples for Stack, Queue,
+LinkedList, BST), and the five log-parser build steps. Every kata in
+the game now has a "More info" button except the capstone, which is a
+run-the-program step rather than a call-and-return task. All io
+examples are lifted verbatim from each kata's real tests, so the
+panel can never disagree with the runner.
+
 ## 1.2.0 — 2026-07-04 · "More info" + Tier 2 (variables, dicts, errors)
 
 ShellQuest now separates the two kinds of stuck. **"More info"** answers

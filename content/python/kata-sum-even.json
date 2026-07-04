@@ -31,6 +31,21 @@
       }
     ]
   },
+  "details": {
+    "restate": "Add up only the even numbers in the list and give back that total. Odd numbers are skipped entirely.",
+    "io": [
+      {
+        "call": "sum_even([1, 2, 3, 4])",
+        "returns": "6",
+        "because": "2 + 4; the odd 1 and 3 are ignored"
+      },
+      {
+        "call": "sum_even([1, 3, 5])",
+        "returns": "0",
+        "because": "no evens to add"
+      }
+    ]
+  },
   "help": {
     "plain": "Walk through the list and total only the even numbers, ignoring the rest.",
     "analogy": "Like counting only the red M&Ms in a bag — you look at each one, skip the others, and tally the reds.",

@@ -35,5 +35,21 @@
     "name": "logparser",
     "file": "projects/logparser/logparser.py",
     "function": "parse_line"
+  },
+  "details": {
+    "restate": "One log line packs a date, a time, a level, and a message into a single string. Split it into a dictionary with three keys: 'timestamp' (the date AND time together as one string), 'level' (like ERROR or INFO), and 'message' (everything after the level, spaces intact).",
+    "io": [
+      {
+        "call": "parse_line('2026-07-02 14:23:01 ERROR disk usage at 95%')",
+        "returns": "{'timestamp':'2026-07-02 14:23:01','level':'ERROR','message':'disk usage at 95%'}",
+        "because": "date+time fuse into the timestamp; the whole tail becomes the message"
+      }
+    ],
+    "terms": [
+      {
+        "term": "log level",
+        "meaning": "a severity label on a log line, like INFO, WARN, or ERROR"
+      }
+    ]
   }
 }

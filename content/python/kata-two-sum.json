@@ -36,6 +36,27 @@
       }
     ]
   },
+  "details": {
+    "restate": "Find the two entries in the list that add up to the target, and give back their POSITIONS as a 2-item list [i, j] with i before j — the positions, not the values themselves. Exactly one pair works.",
+    "io": [
+      {
+        "call": "two_sum([2, 7, 11, 15], 9)",
+        "returns": "[0, 1]",
+        "because": "the values 2 and 7 add to 9, and they sit at positions 0 and 1"
+      },
+      {
+        "call": "two_sum([3, 3], 6)",
+        "returns": "[0, 1]",
+        "because": "the same value at two different positions is a valid pair"
+      }
+    ],
+    "terms": [
+      {
+        "term": "index",
+        "meaning": "an item's position in a list, counting from 0"
+      }
+    ]
+  },
   "help": {
     "plain": "For each number, you're asking: 'have I already seen the number that would complete the pair?'",
     "analogy": "Like a coat check — as you pass each number you jot down where you left it, so when its partner shows up you instantly know where the first one is. No re-searching the whole pile.",

@@ -4,7 +4,9 @@
   "track": "progression",
   "title": "Build a Queue",
   "xp": 45,
-  "prerequisites": ["py-balanced-parens"],
+  "prerequisites": [
+    "py-balanced-parens"
+  ],
   "review_interval_days": null,
   "prompt": "A queue is first-in, first-out — like a line at a counter. Implement a Queue class with enqueue(x) (join the back), dequeue() (removes and returns the front), peek() (returns the front without removing), is_empty(), and len() support (__len__).",
   "starter_code": "class Queue:\n    def __init__(self):\n        pass\n",
@@ -12,25 +14,85 @@
     "runner": "python-script",
     "tests": [
       {
-        "setup": ["q = Queue()", "q.enqueue(1)", "q.enqueue(2)", "q.enqueue(3)"],
+        "setup": [
+          "q = Queue()",
+          "q.enqueue(1)",
+          "q.enqueue(2)",
+          "q.enqueue(3)"
+        ],
         "checks": [
-          { "call": "q.dequeue()", "expect": 1 },
-          { "call": "q.peek()", "expect": 2 },
-          { "call": "len(q)", "expect": 2 }
+          {
+            "call": "q.dequeue()",
+            "expect": 1
+          },
+          {
+            "call": "q.peek()",
+            "expect": 2
+          },
+          {
+            "call": "len(q)",
+            "expect": 2
+          }
         ]
       },
       {
-        "setup": ["q = Queue()"],
-        "checks": [{ "call": "q.is_empty()", "expect": true }]
+        "setup": [
+          "q = Queue()"
+        ],
+        "checks": [
+          {
+            "call": "q.is_empty()",
+            "expect": true
+          }
+        ]
       },
       {
-        "setup": ["q = Queue()", "q.enqueue('a')", "x = q.dequeue()", "q.enqueue('b')", "q.enqueue('c')"],
+        "setup": [
+          "q = Queue()",
+          "q.enqueue('a')",
+          "x = q.dequeue()",
+          "q.enqueue('b')",
+          "q.enqueue('c')"
+        ],
         "checks": [
-          { "call": "x", "expect": "a" },
-          { "call": "q.dequeue()", "expect": "b" },
-          { "call": "q.dequeue()", "expect": "c" },
-          { "call": "q.is_empty()", "expect": true }
+          {
+            "call": "x",
+            "expect": "a"
+          },
+          {
+            "call": "q.dequeue()",
+            "expect": "b"
+          },
+          {
+            "call": "q.dequeue()",
+            "expect": "c"
+          },
+          {
+            "call": "q.is_empty()",
+            "expect": true
+          }
         ]
+      }
+    ]
+  },
+  "details": {
+    "restate": "Build a Queue class — first in, first out, like a line at a counter. It needs: enqueue(x) to join the back, dequeue() to remove AND give back the front item, peek() to look at the front without removing it, is_empty(), and len() support.",
+    "io": [
+      {
+        "call": "q.enqueue(1); q.enqueue(2); q.enqueue(3); q.dequeue()",
+        "returns": "1",
+        "because": "1 joined the line first, so it's served first"
+      },
+      {
+        "call": "q.peek() (right after that dequeue)",
+        "returns": "2",
+        "because": "2 is now at the front, and peek doesn't remove it"
+      }
+    ],
+    "terms": [
+      {
+        "term": "FIFO",
+        "meaning": "first in, first out — items leave in the order they arrived"
       }
     ]
   }

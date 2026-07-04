@@ -30,5 +30,20 @@
         "expect": "TNIGIS"
       }
     ]
+  },
+  "details": {
+    "restate": "Give back the same text with its characters in the opposite order.",
+    "io": [
+      {
+        "call": "reverse_string('hello')",
+        "returns": "'olleh'",
+        "because": "last letter first, first letter last"
+      },
+      {
+        "call": "reverse_string('')",
+        "returns": "''",
+        "because": "nothing to flip"
+      }
+    ]
   }
 }

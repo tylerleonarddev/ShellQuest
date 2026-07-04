@@ -30,5 +30,20 @@
     "name": "logparser",
     "file": "projects/logparser/logparser.py",
     "function": "error_messages"
+  },
+  "details": {
+    "restate": "From the list of parsed entries, pull out just the 'message' text of the ERROR entries, in the order they appear. The result is a list of strings, not of dictionaries.",
+    "io": [
+      {
+        "call": "error_messages([ERROR 'boom', INFO 'ok', ERROR 'bang'])",
+        "returns": "['boom', 'bang']",
+        "because": "only the ERROR messages, still in order"
+      },
+      {
+        "call": "error_messages([INFO 'fine'])",
+        "returns": "[]",
+        "because": "no ERROR entries at all"
+      }
+    ]
   }
 }

@@ -37,5 +37,26 @@
         ]
       }
     ]
+  },
+  "details": {
+    "restate": "You get a list whose items are themselves lists. Give back one single flat list with all the inner items, keeping their order.",
+    "io": [
+      {
+        "call": "flatten([[1, 2], [3], [], [4, 5, 6]])",
+        "returns": "[1, 2, 3, 4, 5, 6]",
+        "because": "the inner lists are unpacked left to right; the empty one adds nothing"
+      },
+      {
+        "call": "flatten([])",
+        "returns": "[]",
+        "because": "no inner lists at all"
+      }
+    ],
+    "terms": [
+      {
+        "term": "nested list",
+        "meaning": "a list stored inside another list"
+      }
+    ]
   }
 }

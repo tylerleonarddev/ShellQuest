@@ -28,6 +28,27 @@
       }
     ]
   },
+  "details": {
+    "restate": "Same result as the loop version — n! — but computed with recursion: the function calls itself. The stopping point is that the factorial of 0 is 1.",
+    "io": [
+      {
+        "call": "factorial_rec(5)",
+        "returns": "120",
+        "because": "1 × 2 × 3 × 4 × 5"
+      },
+      {
+        "call": "factorial_rec(0)",
+        "returns": "1",
+        "because": "the base case — the answer that needs no further calls"
+      }
+    ],
+    "terms": [
+      {
+        "term": "base case",
+        "meaning": "the input a recursive function answers directly, so the self-calls stop"
+      }
+    ]
+  },
   "help": {
     "plain": "A recursive function answers a big case by asking itself the same question about a smaller case, until the case is so small the answer is obvious.",
     "analogy": "Like a line of people each asking the person behind them their number, adding one, and passing it back — until the last person, who just knows their own. The answer bubbles back up the line.",

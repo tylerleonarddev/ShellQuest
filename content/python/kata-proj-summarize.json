@@ -40,5 +40,20 @@
     "name": "logparser",
     "file": "projects/logparser/logparser.py",
     "function": "summarize"
+  },
+  "details": {
+    "restate": "Boil the whole entry list down to one summary dictionary with four keys: 'total' (how many entries), 'by_level' (the level-to-count dictionary), 'first' and 'last' (the timestamp of the first and last entry — or None for both if the list is empty).",
+    "io": [
+      {
+        "call": "summarize([t1 INFO, t2 ERROR, t3 INFO])",
+        "returns": "{'total':3,'by_level':{'INFO':2,'ERROR':1},'first':'t1','last':'t3'}",
+        "because": "count, per-level tally, and the two bookend timestamps"
+      },
+      {
+        "call": "summarize([])",
+        "returns": "{'total':0,'by_level':{},'first':None,'last':None}",
+        "because": "an empty log still summarizes cleanly"
+      }
+    ]
   }
 }

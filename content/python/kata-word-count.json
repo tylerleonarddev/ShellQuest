@@ -32,5 +32,20 @@
         }
       }
     ]
+  },
+  "details": {
+    "restate": "Split the sentence on spaces and build a dictionary: each distinct word is a key, and its value is how many times that word appears.",
+    "io": [
+      {
+        "call": "word_count('the cat the dog')",
+        "returns": "{'the':2,'cat':1,'dog':1}",
+        "because": "'the' shows up twice"
+      },
+      {
+        "call": "word_count('')",
+        "returns": "{}",
+        "because": "no words, empty dictionary"
+      }
+    ]
   }
 }

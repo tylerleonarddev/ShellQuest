@@ -32,5 +32,20 @@
     "name": "logparser",
     "file": "projects/logparser/logparser.py",
     "function": "filter_by_level"
+  },
+  "details": {
+    "restate": "Given the list of parsed entries and one level name, give back a new list containing only the entries whose 'level' equals that name — order preserved, entries unchanged.",
+    "io": [
+      {
+        "call": "filter_by_level([...INFO entry..., ...ERROR entry...], 'ERROR')",
+        "returns": "[the ERROR entry only]",
+        "because": "only matching levels survive the filter"
+      },
+      {
+        "call": "filter_by_level([], 'INFO')",
+        "returns": "[]",
+        "because": "nothing in, nothing out"
+      }
+    ]
   }
 }

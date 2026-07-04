@@ -26,5 +26,20 @@
         "expect": 42
       }
     ]
+  },
+  "details": {
+    "restate": "Find the largest number in the list and give it back — without using Python's built-in max(). The list always has at least one number.",
+    "io": [
+      {
+        "call": "max_of_list([3, 1, 4, 1, 5, 9, 2, 6])",
+        "returns": "9",
+        "because": "9 beats everything else"
+      },
+      {
+        "call": "max_of_list([-5, -2, -9])",
+        "returns": "-2",
+        "because": "with all negatives, the largest is the one closest to zero"
+      }
+    ]
   }
 }

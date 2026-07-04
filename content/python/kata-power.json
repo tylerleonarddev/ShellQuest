@@ -30,5 +30,20 @@
         "expect": 7
       }
     ]
+  },
+  "details": {
+    "restate": "Compute base raised to the power exp (exp is 0 or more), using recursion. Anything to the power 0 is 1.",
+    "io": [
+      {
+        "call": "power(2, 10)",
+        "returns": "1024",
+        "because": "2 multiplied by itself 10 times"
+      },
+      {
+        "call": "power(5, 0)",
+        "returns": "1",
+        "because": "the power-0 case is defined as 1 — it's also the recursion's stopping point"
+      }
+    ]
   }
 }

@@ -30,5 +30,26 @@
         "expect": 5
       }
     ]
+  },
+  "details": {
+    "restate": "Count how many vowels — a, e, i, o, u — appear in the text, treating capitals the same as lowercase. Give back the count.",
+    "io": [
+      {
+        "call": "count_vowels('hello')",
+        "returns": "2",
+        "because": "e and o"
+      },
+      {
+        "call": "count_vowels('SIGINT')",
+        "returns": "2",
+        "because": "the two capital I's count — case doesn't matter"
+      }
+    ],
+    "terms": [
+      {
+        "term": "case-insensitive",
+        "meaning": "capital and lowercase letters are treated as the same letter"
+      }
+    ]
   }
 }

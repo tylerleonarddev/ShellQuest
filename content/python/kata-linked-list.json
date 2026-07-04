@@ -78,6 +78,31 @@
       }
     ]
   },
+  "details": {
+    "restate": "Build a LinkedList class — a chain of nodes where each node holds a value and points to the next. It needs: append(x) to add at the end, to_list() to give back a plain Python list of the values in order, and reverse() to flip the chain's direction in place.",
+    "io": [
+      {
+        "call": "ll.append(1); ll.append(2); ll.append(3); ll.to_list()",
+        "returns": "[1, 2, 3]",
+        "because": "values come back in the order they were appended"
+      },
+      {
+        "call": "ll.reverse(); ll.to_list() (after the three appends)",
+        "returns": "[3, 2, 1]",
+        "because": "reverse flips the whole chain"
+      }
+    ],
+    "terms": [
+      {
+        "term": "node",
+        "meaning": "one link in the chain: a value plus a reference to the next node"
+      },
+      {
+        "term": "reference",
+        "meaning": "a variable that points AT an object rather than holding a copy of it"
+      }
+    ]
+  },
   "help": {
     "plain": "A linked list is nodes chained by references: each node holds a value and a pointer to the next one. To visit them all, start at the head and follow .next until it runs out.",
     "analogy": "Like a train — each car is coupled to the next. To walk the whole train you start at the engine and step from car to car until there's no next car.",

@@ -75,6 +75,27 @@
       }
     ]
   },
+  "details": {
+    "restate": "Build a Stack class — last in, first out. It needs: push(x) to put an item on top, pop() to remove AND give back the top item, peek() to look at the top without removing it, is_empty(), and len() support.",
+    "io": [
+      {
+        "call": "s.push(1); s.push(2); s.push(3); s.pop()",
+        "returns": "3",
+        "because": "3 went on last, so it comes off first"
+      },
+      {
+        "call": "s.peek() (right after that pop)",
+        "returns": "2",
+        "because": "peek looks at the new top but leaves it in place"
+      }
+    ],
+    "terms": [
+      {
+        "term": "LIFO",
+        "meaning": "last in, first out — the newest item is the first one removed"
+      }
+    ]
+  },
   "help": {
     "plain": "A stack only ever adds to and removes from the SAME end — the top. The last thing you push is the first thing you pop. Store the items in a list and always work its end.",
     "analogy": "Like a stack of plates: you add to the top and take from the top. You never pull the bottom plate out.",

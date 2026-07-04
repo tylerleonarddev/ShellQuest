@@ -38,5 +38,26 @@
         "expect": false
       }
     ]
+  },
+  "details": {
+    "restate": "Answer True if the number is prime — divisible only by 1 and itself. 0 and 1 are NOT prime; 2 is the smallest prime.",
+    "io": [
+      {
+        "call": "is_prime(7)",
+        "returns": "True",
+        "because": "nothing between 2 and 6 divides it"
+      },
+      {
+        "call": "is_prime(9)",
+        "returns": "False",
+        "because": "3 × 3 — an odd number can still be non-prime"
+      }
+    ],
+    "terms": [
+      {
+        "term": "prime",
+        "meaning": "a whole number above 1 whose only divisors are 1 and itself"
+      }
+    ]
   }
 }

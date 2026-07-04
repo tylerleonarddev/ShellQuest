@@ -30,5 +30,26 @@
         "expect": 610
       }
     ]
+  },
+  "details": {
+    "restate": "Give back the nth Fibonacci number, counting from 0: the sequence starts 0, 1, and every later number is the sum of the two before it (0, 1, 1, 2, 3, 5, 8, ...).",
+    "io": [
+      {
+        "call": "fibonacci(0)",
+        "returns": "0",
+        "because": "the sequence's first entry, at position 0"
+      },
+      {
+        "call": "fibonacci(10)",
+        "returns": "55",
+        "because": "position 10 in 0,1,1,2,3,5,8,13,21,34,55"
+      }
+    ],
+    "terms": [
+      {
+        "term": "0-indexed",
+        "meaning": "positions count from 0, so fibonacci(0) is the very first entry"
+      }
+    ]
   }
 }

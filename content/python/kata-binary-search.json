@@ -31,6 +31,27 @@
       }
     ]
   },
+  "details": {
+    "restate": "The list is already sorted, smallest to largest. Give back the POSITION of the target value in the list, or -1 if it isn't there at all.",
+    "io": [
+      {
+        "call": "binary_search([1, 3, 5, 7, 9], 7)",
+        "returns": "3",
+        "because": "7 sits at position 3 (counting from 0)"
+      },
+      {
+        "call": "binary_search([1, 3, 5, 7, 9], 4)",
+        "returns": "-1",
+        "because": "4 isn't in the list — -1 is the not-found signal"
+      }
+    ],
+    "terms": [
+      {
+        "term": "sorted ascending",
+        "meaning": "arranged smallest to largest — the guarantee that makes halving the search possible"
+      }
+    ]
+  },
   "help": {
     "plain": "The list is sorted, so you never look one-by-one. You check the middle: too big? throw away the right half. Too small? throw away the left half. Repeat on what's left.",
     "analogy": "Like finding a word in a paper dictionary — you open to the middle, see if your word comes before or after, and instantly ignore half the book. A few halvings and you're there.",

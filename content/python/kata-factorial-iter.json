@@ -30,5 +30,26 @@
         "expect": 720
       }
     ]
+  },
+  "details": {
+    "restate": "Compute n! — the product of every whole number from 1 up to n — using a loop. By definition the factorial of 0 is 1.",
+    "io": [
+      {
+        "call": "factorial_iter(5)",
+        "returns": "120",
+        "because": "1 × 2 × 3 × 4 × 5"
+      },
+      {
+        "call": "factorial_iter(0)",
+        "returns": "1",
+        "because": "0! is defined as 1"
+      }
+    ],
+    "terms": [
+      {
+        "term": "factorial",
+        "meaning": "n! means multiplying together all whole numbers from 1 to n"
+      }
+    ]
   }
 }
