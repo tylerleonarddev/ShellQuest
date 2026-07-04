@@ -1,0 +1,115 @@
+{
+  "id": "sq-17-recent",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "What changed last?",
+  "xp": 35,
+  "prerequisites": [
+    "sq-16-trail"
+  ],
+  "review_interval_days": null,
+  "prompt": "First question on a compromised box: what was touched most recently? Every file in notes/ is weeks old — except one, modified today. ls -lt sorts by modification time, newest first; find . -mtime -1 finds files changed in the last day. The fresh file holds the flag.",
+  "setup": {
+    "files": [
+      {
+        "path": "notes/entry00.md",
+        "contents": "journal day 0\n",
+        "mtime_days_ago": 7
+      },
+      {
+        "path": "notes/entry01.md",
+        "contents": "journal day 1\n",
+        "mtime_days_ago": 9
+      },
+      {
+        "path": "notes/entry02.md",
+        "contents": "journal day 2\n",
+        "mtime_days_ago": 11
+      },
+      {
+        "path": "notes/entry03.md",
+        "contents": "journal day 3\n",
+        "mtime_days_ago": 13
+      },
+      {
+        "path": "notes/entry04.md",
+        "contents": "journal day 4\n",
+        "mtime_days_ago": 15
+      },
+      {
+        "path": "notes/entry05.md",
+        "contents": "journal day 5\n",
+        "mtime_days_ago": 17
+      },
+      {
+        "path": "notes/entry06.md",
+        "contents": "journal day 6\n",
+        "mtime_days_ago": 19
+      },
+      {
+        "path": "notes/entry07.md",
+        "contents": "journal day 7\n",
+        "mtime_days_ago": 21
+      },
+      {
+        "path": "notes/entry08.md",
+        "contents": "journal day 8\n",
+        "mtime_days_ago": 23
+      },
+      {
+        "path": "notes/entry09.md",
+        "contents": "journal day 9\n",
+        "mtime_days_ago": 25
+      },
+      {
+        "path": "notes/entry10.md",
+        "contents": "journal day 10\n",
+        "mtime_days_ago": 27
+      },
+      {
+        "path": "notes/entry11.md",
+        "contents": "journal day 11\n",
+        "mtime_days_ago": 29
+      },
+      {
+        "path": "notes/entry99.md",
+        "contents": "slipped in today: {{FLAG}}\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Twelve files in notes/ are 1–4 weeks old; one was written today. Identify it by TIMESTAMP (not by opening all thirteen) and read it.",
+    "io": [
+      {
+        "call": "ls -lt notes/ | head -3",
+        "returns": "(newest files first)",
+        "because": "-t sorts by modification time; the fresh one floats to the top"
+      },
+      {
+        "call": "find notes/ -mtime -1",
+        "returns": "(only files modified within 24 hours)",
+        "because": "-mtime -1 means 'less than one day old'"
+      }
+    ],
+    "terms": [
+      {
+        "term": "mtime",
+        "meaning": "a file's last-modified timestamp — the first forensic breadcrumb on any box"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Sort by time instead of name and the odd one out leaps to the top.",
+    "analogy": "Fresh footprints in old snow.",
+    "mnemonic": "ls -t: t for Time, newest first.",
+    "nudge": "ls has a flag that orders by WHEN, not by name. So does find."
+  }
+}

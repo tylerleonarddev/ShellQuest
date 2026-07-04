@@ -58,7 +58,33 @@ function materialize(exercise) {
     if (!inLab(f.path)) continue;
     const full = path.resolve(dir, f.path);
     fs.mkdirSync(path.dirname(full), { recursive: true });
-    fs.writeFileSync(full, f.contents.replaceAll('{{FLAG}}', setup._flag || ''));
+    // v1.5 setup extensions — still pure data, no scripts:
+    //   base64: true          -> contents is base64 (archives, binaries);
+    //                            no {{FLAG}} substitution inside
+    //   mode: "0755"          -> octal file mode (default umask otherwise)
+    //   mtime_days_ago: 30    -> age the file (find -newer / ls -t missions)
+    if (f.base64) {
+      fs.writeFileSync(full, Buffer.from(f.contents, 'base64'));
+    } else {
+      fs.writeFileSync(full, f.contents.replaceAll('{{FLAG}}', setup._flag || ''));
+    }
+    if (f.mode) fs.chmodSync(full, parseInt(f.mode, 8));
+    if (typeof f.mtime_days_ago === 'number') {
+      const t = new Date(Date.now() - f.mtime_days_ago * 86400 * 1000);
+      fs.utimesSync(full, t, t);
+    }
+  }
+  // Symlinks: { link, target } — target is stored as written (relative,
+  // so labs survive being moved) but must resolve inside the lab.
+  for (const s of setup.symlinks || []) {
+    if (!inLab(s.link)) continue;
+    const full = path.resolve(dir, s.link);
+    const resolvedTarget = path.resolve(path.dirname(full), s.target);
+    if (path.relative(dir, resolvedTarget).startsWith('..')) continue;
+    fs.mkdirSync(path.dirname(full), { recursive: true });
+    try {
+      fs.symlinkSync(s.target, full);
+    } catch { /* already present on re-materialize */ }
   }
   delete setup._flag;
   return dir;

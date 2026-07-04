@@ -1,0 +1,67 @@
+{
+  "id": "sec-01-hidden",
+  "type": "shell-challenge",
+  "track": "security",
+  "title": "Hidden in plain sight",
+  "xp": 35,
+  "prerequisites": [
+    "sq-14-boss"
+  ],
+  "review_interval_days": null,
+  "prompt": "Analysts live in other people's file systems, and the interesting things hide. Files and folders whose names start with a dot don't show up in a plain ls — you need ls -a (all). Somewhere in this lab a hidden directory holds a token file with the flag.",
+  "setup": {
+    "dirs": [
+      "projects",
+      "docs"
+    ],
+    "files": [
+      {
+        "path": "projects/readme.txt",
+        "contents": "nothing hidden here\n"
+      },
+      {
+        "path": "docs/notes.txt",
+        "contents": "or is there?\n"
+      },
+      {
+        "path": ".workdir/.token",
+        "contents": "stashed away: {{FLAG}}\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Find the hidden dot-directory in the lab root, then the hidden file inside it. Its contents are the flag.",
+    "io": [
+      {
+        "call": "ls",
+        "returns": "docs  projects",
+        "because": "plain ls skips dotfiles entirely"
+      },
+      {
+        "call": "ls -a",
+        "returns": ".  ..  .workdir  docs  projects",
+        "because": "-a reveals names that start with a dot"
+      }
+    ],
+    "terms": [
+      {
+        "term": "dotfile",
+        "meaning": "a file or folder whose name starts with . — hidden from plain ls by convention, not by security"
+      }
+    ]
+  },
+  "help": {
+    "plain": "The thing you're looking for starts with a dot, and so does the thing inside it.",
+    "analogy": "A room where some drawers are painted the same color as the wall — they're right there, you just need to know to look.",
+    "mnemonic": "ls -a: a for ALL, dots included.",
+    "nudge": "What does ls show with -a that it doesn't show without?"
+  }
+}

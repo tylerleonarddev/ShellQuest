@@ -1,0 +1,46 @@
+{
+  "id": "sec-09-distinct",
+  "type": "shell-challenge",
+  "track": "security",
+  "title": "How many attackers?",
+  "xp": 40,
+  "prerequisites": [
+    "sec-08-biggest"
+  ],
+  "review_interval_days": null,
+  "prompt": "Management asks one number: how many DISTINCT source IPs show up in ips.txt (one IP per line, repeats everywhere)? Count each address once no matter how many times it appears, and write the count into answer.txt. sort -u collapses to unique lines; wc -l counts them.",
+  "setup": {
+    "files": [
+      {
+        "path": "ips.txt",
+        "contents": "203.0.113.7\n203.0.113.7\n203.0.113.7\n203.0.113.7\n203.0.113.7\n203.0.113.7\n198.51.100.23\n198.51.100.23\n198.51.100.23\n198.51.100.23\n198.51.100.23\n198.51.100.23\n198.51.100.23\n198.51.100.23\n198.51.100.23\n192.0.2.146\n192.0.2.146\n192.0.2.146\n203.0.113.66\n203.0.113.66\n203.0.113.66\n203.0.113.66\n203.0.113.66\n198.51.100.99\n198.51.100.99\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "command-output",
+        "command": "cat answer.txt",
+        "expected_sha256": "ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d"
+      }
+    ]
+  },
+  "details": {
+    "restate": "answer.txt holds one number: how many different IP addresses appear in ips.txt. 25 lines, but far fewer distinct addresses.",
+    "io": [
+      {
+        "call": "sort -u ips.txt | wc -l",
+        "returns": "(the distinct count)",
+        "because": "sort -u keeps each address once; wc -l counts what's left"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Collapse the repeats first, count what remains.",
+    "analogy": "Counting how many different people signed a petition, not how many signatures.",
+    "mnemonic": "unique first, count second: sort -u | wc -l.",
+    "nudge": "You know a sort flag that removes duplicates and a command that counts lines. Chain them."
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "sec-04-fields",
+  "type": "shell-challenge",
+  "track": "security",
+  "title": "Field surgeon",
+  "xp": 40,
+  "prerequisites": [
+    "sec-03-toptalker"
+  ],
+  "review_interval_days": null,
+  "prompt": "access.log has one record per line: date, time, verdict, user, path. Extract the USER (field 4) of every DENIED line, then produce users.txt: those usernames sorted with duplicates removed. cut -d' ' -f4 slices field 4, or awk '{print $4}' — your choice.",
+  "setup": {
+    "files": [
+      {
+        "path": "access.log",
+        "contents": "2026-07-03 12:00:01 ALLOWED ty /home\n2026-07-03 12:00:04 DENIED mallory /admin\n2026-07-03 12:00:09 ALLOWED deploy /api/status\n2026-07-03 12:00:12 DENIED eve /admin\n2026-07-03 12:00:15 DENIED mallory /etc/passwd\n2026-07-03 12:00:19 ALLOWED ty /docs\n2026-07-03 12:00:22 DENIED carol /admin\n2026-07-03 12:00:30 DENIED eve /backups\n2026-07-03 12:00:41 ALLOWED deploy /api/deploy\n2026-07-03 12:00:47 DENIED mallory /admin\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "command-output",
+        "command": "cat users.txt",
+        "expected_sha256": "0c643eb52dc0c4decc41f445b8dfc8dccdd5972ae5fd13b8ab3bbbb42c78355d"
+      }
+    ]
+  },
+  "details": {
+    "restate": "users.txt ends up with the distinct usernames that were DENIED, alphabetical, one per line. Users who only ever got ALLOWED don't appear.",
+    "io": [
+      {
+        "call": "grep DENIED access.log | awk '{print $4}'",
+        "returns": "(just the usernames, one per line)",
+        "because": "grep keeps the DENIED records; awk slices out column 4"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Three steps chained: keep DENIED lines, keep column 4 of them, sort unique into the file.",
+    "analogy": "Reading only the RETURNED column of a delivery ledger, and only for the failed deliveries.",
+    "mnemonic": "grep | awk | sort -u — filter rows, then columns, then tidy.",
+    "nudge": "You've done sort -u before. What two commands get just the usernames of just the DENIED lines in front of it?"
+  }
+}

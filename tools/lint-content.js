@@ -214,6 +214,31 @@ for (const file of files) {
     }
     for (const f of ex.setup.files || []) {
       if (!labSafe(f.path)) errors.push(`${rel}: setup file "${f.path}" escapes the lab directory`);
+      // v1.5 data-only setup extensions
+      if (f.mode !== undefined && !/^0[0-7]{3}$/.test(f.mode)) {
+        errors.push(`${rel}: setup file "${f.path}" mode "${f.mode}" — expected an octal string like "0755"`);
+      }
+      if (f.mtime_days_ago !== undefined && !(typeof f.mtime_days_ago === 'number' && f.mtime_days_ago >= 0)) {
+        errors.push(`${rel}: setup file "${f.path}" mtime_days_ago must be a non-negative number`);
+      }
+      if (f.base64) {
+        if (f.contents.includes('{{FLAG}}')) {
+          errors.push(`${rel}: setup file "${f.path}" is base64 — {{FLAG}} cannot be substituted inside it`);
+        } else if (!/^[A-Za-z0-9+/=\s]+$/.test(f.contents) || Buffer.from(f.contents, 'base64').length === 0) {
+          errors.push(`${rel}: setup file "${f.path}" base64 contents do not decode`);
+        }
+      }
+    }
+    for (const s of ex.setup.symlinks || []) {
+      if (!s.link || !s.target) {
+        errors.push(`${rel}: setup symlink must be { link, target }`);
+        continue;
+      }
+      if (!labSafe(s.link)) errors.push(`${rel}: symlink link "${s.link}" escapes the lab directory`);
+      const resolved = path.resolve('/lab', path.dirname(s.link), s.target);
+      if (path.relative('/lab', resolved).startsWith('..')) {
+        errors.push(`${rel}: symlink target "${s.target}" escapes the lab directory`);
+      }
     }
   }
 

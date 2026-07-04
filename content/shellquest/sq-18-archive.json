@@ -1,0 +1,64 @@
+{
+  "id": "sq-18-archive",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "The cold backup",
+  "xp": 40,
+  "prerequisites": [
+    "sq-17-recent"
+  ],
+  "review_interval_days": null,
+  "prompt": "Real work arrives as archives. backup.tar.gz is a compressed tarball: tar -tzf lists what's inside without extracting; tar -xzf extracts it. Unpack it, read what you find — the key file tells you where the real vault is. (Spoiler: the vault is hidden, and you know how to see hidden things.)",
+  "setup": {
+    "files": [
+      {
+        "path": "backup.tar.gz",
+        "contents": "H4sIAAAAAAAC/+3Vu07DMBQGYM99ijPCkNRJ3ERiQyIDQiwVC6OTnFxELshxKkYegifkSXDDlgUG\nGqn0/5Zj2R4s2f9xpvOX6XW7T2/vHlPfvlnx96QTKzVXZ1mlVIkIdjIKIqXm+UAmUSxIihVMo9XG\nHUVcpj2PdjBcUGmGjvKhLeg4oSumUIaxJxNPBv5GwP+Ufef/IX0+Ufh/kf8gipb5V+EO+V/DU810\n0FNrqRmpH1zpydZurE1eNwf2N/fzkrY3RP68c1u2ujq+FiK6qpui4J4+3z/IcMddxobakTx9jZ5x\nRvl3fd9zt8/jKbrAj/9/GC/yHyQyRP7X4C69bvqKhtK1gXZiqtkwogsAAAAAAAAAAAAAAAAAcHa+\nAPk2BNAAKAAA\n",
+        "base64": true
+      },
+      {
+        "path": ".vault/flag.txt",
+        "contents": "cold storage opened: {{FLAG}}\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "file-exists",
+        "path": "backup/KEY.txt"
+      },
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Extract backup.tar.gz (a backup/ folder comes out of it), read backup/KEY.txt, and follow what it says to the hidden vault file. Submit the vault's flag. Both steps are checked: the archive must actually be extracted.",
+    "io": [
+      {
+        "call": "tar -tzf backup.tar.gz",
+        "returns": "backup/README.txt backup/KEY.txt backup/old-notes.txt",
+        "because": "-t lists the contents without touching your disk"
+      },
+      {
+        "call": "tar -xzf backup.tar.gz",
+        "returns": "(silence — backup/ now exists)",
+        "because": "-x extracts, -z handles the gzip, -f names the file"
+      }
+    ],
+    "terms": [
+      {
+        "term": "tarball",
+        "meaning": "many files packed into one (.tar), usually gzip-compressed (.tar.gz) — THE unit of moving data around Unix"
+      }
+    ]
+  },
+  "help": {
+    "plain": "List it, extract it, read the key, then use a trick from three missions ago.",
+    "analogy": "A shipping crate with a packing slip inside — and the slip says the valuables shipped separately.",
+    "mnemonic": "tar -tzf to peek, tar -xzf to open. eXtract, gZip, File.",
+    "nudge": "After extraction, KEY.txt names a path you can't see with plain ls. Why not — and which flag fixes that?"
+  }
+}

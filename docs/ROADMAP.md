@@ -12,6 +12,20 @@ its own major effort, done deliberately. (See ARCHITECTURE.md §6; the
 progress-vs-machine-state split in the schema has been ready for this
 since day one.)
 
+**First confirmed customer: the terminal track's ceiling** (scoped in
+`TERMINAL-ROADMAP.md` at v1.5, when the analyst + fluency tiers
+shipped). The missions that genuinely cannot be built on the
+artifact-check engine and wait here:
+
+- **Processes** — `ps`, `kill`, jobs, signals: needs a supervised
+  runner that starts/stops lab processes and asserts on them.
+- **Networking** — `curl`, ports, `ss`: needs a lab-local server with
+  teardown guarantees.
+- **Services & scheduling** — systemd units, cron: same, plus the
+  elevated-privilege questions above.
+- **Interactive tools** (`less`, `vim`, `top`): no artifact to check;
+  may never fit the outcome-verification philosophy.
+
 ## More project tracks
 
 A recon report generator; a systemd service. Same pattern as the log

@@ -1,0 +1,56 @@
+{
+  "id": "sec-03-toptalker",
+  "type": "shell-challenge",
+  "track": "security",
+  "title": "Top talker",
+  "xp": 40,
+  "prerequisites": [
+    "sec-02-authcount"
+  ],
+  "review_interval_days": null,
+  "prompt": "One IP is hammering this box harder than the rest. Find the source IP with the MOST failed-password lines in auth.log and write just that IP into answer.txt. The classic pipeline: grep the failures, pull out the IP field (awk '{print $13}' grabs field 13, where the IP sits in these lines), then sort | uniq -c | sort -n to tally and rank.",
+  "setup": {
+    "files": [
+      {
+        "path": "auth.log",
+        "contents": "Jul  3 09:00:44 bastion sshd[8200]: Failed password for invalid user admin from 203.0.113.7 port 4100 ssh2\nJul  3 09:01:44 bastion sshd[8201]: Failed password for invalid user admin from 203.0.113.7 port 4101 ssh2\nJul  3 09:02:44 bastion sshd[8202]: Failed password for invalid user admin from 203.0.113.7 port 4102 ssh2\nJul  3 09:03:11 bastion sshd[8103]: Accepted password for deploy from 192.168.1.5 port 5113 ssh2\nJul  3 09:04:44 bastion sshd[8204]: Failed password for invalid user admin from 203.0.113.7 port 4104 ssh2\nJul  3 09:05:44 bastion sshd[8205]: Failed password for invalid user admin from 203.0.113.7 port 4105 ssh2\nJul  3 09:06:44 bastion sshd[8206]: Failed password for invalid user admin from 203.0.113.7 port 4106 ssh2\nJul  3 09:07:11 bastion sshd[8107]: Accepted password for deploy from 192.168.1.5 port 5117 ssh2\nJul  3 09:08:44 bastion sshd[8208]: Failed password for invalid user admin from 203.0.113.7 port 4108 ssh2\nJul  3 09:09:44 bastion sshd[8209]: Failed password for invalid user admin from 203.0.113.7 port 4109 ssh2\nJul  3 09:10:44 bastion sshd[8210]: Failed password for invalid user admin from 203.0.113.7 port 4110 ssh2\nJul  3 09:11:11 bastion sshd[8111]: Accepted password for deploy from 192.168.1.5 port 5121 ssh2\nJul  3 09:12:44 bastion sshd[8212]: Failed password for invalid user admin from 198.51.100.23 port 4112 ssh2\nJul  3 09:13:44 bastion sshd[8213]: Failed password for invalid user admin from 198.51.100.23 port 4113 ssh2\nJul  3 09:14:44 bastion sshd[8214]: Failed password for invalid user admin from 198.51.100.23 port 4114 ssh2\nJul  3 09:15:11 bastion sshd[8115]: Accepted password for deploy from 192.168.1.5 port 5125 ssh2\nJul  3 09:16:44 bastion sshd[8216]: Failed password for invalid user admin from 198.51.100.23 port 4116 ssh2\nJul  3 09:17:44 bastion sshd[8217]: Failed password for invalid user admin from 198.51.100.23 port 4117 ssh2\nJul  3 09:18:44 bastion sshd[8218]: Failed password for invalid user admin from 198.51.100.23 port 4118 ssh2\nJul  3 09:19:11 bastion sshd[8119]: Accepted password for deploy from 192.168.1.5 port 5129 ssh2\nJul  3 09:20:44 bastion sshd[8220]: Failed password for invalid user admin from 198.51.100.23 port 4120 ssh2\nJul  3 09:21:44 bastion sshd[8221]: Failed password for invalid user admin from 198.51.100.23 port 4121 ssh2\nJul  3 09:22:44 bastion sshd[8222]: Failed password for invalid user admin from 198.51.100.23 port 4122 ssh2\nJul  3 09:23:11 bastion sshd[8123]: Accepted password for deploy from 192.168.1.5 port 5133 ssh2\nJul  3 09:24:44 bastion sshd[8224]: Failed password for invalid user admin from 198.51.100.23 port 4124 ssh2\nJul  3 09:25:44 bastion sshd[8225]: Failed password for invalid user admin from 198.51.100.23 port 4125 ssh2\nJul  3 09:26:44 bastion sshd[8226]: Failed password for invalid user admin from 198.51.100.23 port 4126 ssh2\nJul  3 09:27:11 bastion sshd[8127]: Accepted password for deploy from 192.168.1.5 port 5137 ssh2\nJul  3 09:28:44 bastion sshd[8228]: Failed password for invalid user admin from 198.51.100.23 port 4128 ssh2\nJul  3 09:29:44 bastion sshd[8229]: Failed password for invalid user admin from 198.51.100.23 port 4129 ssh2\nJul  3 09:30:44 bastion sshd[8230]: Failed password for invalid user admin from 198.51.100.23 port 4130 ssh2\nJul  3 09:31:11 bastion sshd[8131]: Accepted password for deploy from 192.168.1.5 port 5141 ssh2\nJul  3 09:32:44 bastion sshd[8232]: Failed password for invalid user admin from 192.0.2.146 port 4132 ssh2\nJul  3 09:33:44 bastion sshd[8233]: Failed password for invalid user admin from 192.0.2.146 port 4133 ssh2\nJul  3 09:34:44 bastion sshd[8234]: Failed password for invalid user admin from 192.0.2.146 port 4134 ssh2\nJul  3 09:35:11 bastion sshd[8135]: Accepted password for deploy from 192.168.1.5 port 5145 ssh2\nJul  3 09:36:44 bastion sshd[8236]: Failed password for invalid user admin from 192.0.2.146 port 4136 ssh2\nJul  3 09:37:11 bastion sshd[8137]: Accepted password for deploy from 192.168.1.5 port 5147 ssh2\nJul  3 09:38:11 bastion sshd[8138]: Accepted password for ty from 192.168.1.5 port 5148 ssh2\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "command-output",
+        "command": "cat answer.txt",
+        "expected_sha256": "bfeb4c6192985efa05e7fa0740ac45708a515e569e7edaec7fc060ff72b44a0c"
+      }
+    ]
+  },
+  "details": {
+    "restate": "answer.txt holds one thing: the IP address that appears in the most 'Failed password' lines. Not the count — the IP itself.",
+    "io": [
+      {
+        "call": "... | sort | uniq -c | sort -n",
+        "returns": "(each IP with its count, smallest last... or largest — check the order)",
+        "because": "uniq -c only counts ADJACENT duplicates, so you must sort first; the second sort ranks the tallies"
+      }
+    ],
+    "terms": [
+      {
+        "term": "uniq -c",
+        "meaning": "collapse repeated adjacent lines into one, prefixed with how many times it appeared"
+      },
+      {
+        "term": "field",
+        "meaning": "one whitespace-separated column of a log line; awk '{print $N}' extracts field N"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Filter to failures, extract just the IP column, tally the IPs, read the biggest tally.",
+    "analogy": "Sorting a jar of mixed screws into piles by size, then pointing at the tallest pile.",
+    "mnemonic": "filter → extract → sort → uniq -c → sort -n: the analyst's five-step.",
+    "nudge": "In a failed-password line, count the words: which field number is the IP? And why does uniq -c need sorted input?"
+  }
+}

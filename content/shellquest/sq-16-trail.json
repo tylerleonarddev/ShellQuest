@@ -1,0 +1,78 @@
+{
+  "id": "sq-16-trail",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Follow the trail",
+  "xp": 35,
+  "prerequisites": [
+    "sq-15-permhunt"
+  ],
+  "review_interval_days": null,
+  "prompt": "A symlink is a signpost: a name that points at another path. ls -l shows links as name -> target; readlink NAME prints just the target. 'shortcut' in the lab root is the start of a chain of symlinks — follow the signs hop by hop to the real file at the end. It holds the flag.",
+  "setup": {
+    "dirs": [
+      ".cache",
+      "lib/internal",
+      "data"
+    ],
+    "files": [
+      {
+        "path": "data/.final.dat",
+        "contents": "end of the line: {{FLAG}}\n"
+      },
+      {
+        "path": "data/decoy.dat",
+        "contents": "not this one\n"
+      }
+    ],
+    "symlinks": [
+      {
+        "link": "shortcut",
+        "target": ".cache/hop1"
+      },
+      {
+        "link": ".cache/hop1",
+        "target": "../lib/internal/hop2"
+      },
+      {
+        "link": "lib/internal/hop2",
+        "target": "../../data/.final.dat"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "shortcut points to a link, which points to another link, which points to the real (hidden) file. Follow the chain to the end and read what's there. cat shortcut also works — the shell follows links for you — but know WHERE you landed.",
+    "io": [
+      {
+        "call": "ls -l shortcut",
+        "returns": "shortcut -> .cache/hop1",
+        "because": "ls -l shows exactly where a link points"
+      },
+      {
+        "call": "readlink -f shortcut",
+        "returns": "(the FINAL real path, all hops resolved)",
+        "because": "-f follows the whole chain in one go"
+      }
+    ],
+    "terms": [
+      {
+        "term": "symlink",
+        "meaning": "a file that is just a pointer to another path — deleting the link never touches the target"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Each link names the next stop. Read the signs until one isn't a sign.",
+    "analogy": "A scavenger hunt where every clue is the address of the next clue.",
+    "mnemonic": "ls -l shows the arrow; readlink -f rides it to the end.",
+    "nudge": "What does ls -l print after a symlink's name? And which readlink flag resolves the WHOLE chain?"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "id": "sq-15-permhunt",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "The unlocked door",
+  "xp": 35,
+  "prerequisites": [
+    "sq-14-boss"
+  ],
+  "review_interval_days": null,
+  "prompt": "On a hardened box, no file should be world-writable — writable by ANYONE. One file in this tree is. find can hunt by permission: find . -perm -o+w -type f finds files where 'others' have write access. The offender holds the flag.",
+  "setup": {
+    "dirs": [
+      "bin",
+      "conf",
+      "tools",
+      "lib/hooks"
+    ],
+    "files": [
+      {
+        "path": "conf/service0.conf",
+        "contents": "unit 0\n"
+      },
+      {
+        "path": "conf/service1.conf",
+        "contents": "unit 1\n"
+      },
+      {
+        "path": "conf/service2.conf",
+        "contents": "unit 2\n"
+      },
+      {
+        "path": "conf/service3.conf",
+        "contents": "unit 3\n"
+      },
+      {
+        "path": "conf/service4.conf",
+        "contents": "unit 4\n"
+      },
+      {
+        "path": "conf/service5.conf",
+        "contents": "unit 5\n"
+      },
+      {
+        "path": "bin/healthcheck",
+        "contents": "#!/bin/sh\necho ok\n",
+        "mode": "0755"
+      },
+      {
+        "path": "tools/rotate.sh",
+        "contents": "#!/bin/sh\nmv log log.1\n",
+        "mode": "0750"
+      },
+      {
+        "path": "lib/hooks/deploy_hook.sh",
+        "contents": "#!/bin/sh\n# anyone can edit me — that's the problem\n# {{FLAG}}\n",
+        "mode": "0777"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Exactly one file in the tree is writable by everyone (the dreaded 777). Find it by PERMISSION — not by reading files one by one — and the flag is in its comments.",
+    "io": [
+      {
+        "call": "find . -perm -o+w -type f",
+        "returns": "(the one world-writable file)",
+        "because": "-perm -o+w matches files where 'o' (others, i.e. anyone) can write"
+      },
+      {
+        "call": "ls -l lib/hooks/",
+        "returns": "-rwxrwxrwx ... deploy_hook.sh",
+        "because": "three w's across the row is the visual signature of 777"
+      }
+    ],
+    "terms": [
+      {
+        "term": "world-writable",
+        "meaning": "any user on the system can modify the file — on real servers, an open door"
+      }
+    ]
+  },
+  "help": {
+    "plain": "find filters on permissions the same way it filters on names.",
+    "analogy": "Walking a hotel corridor at night pushing every door — you're looking for the one that swings open.",
+    "mnemonic": "-perm -o+w: o for Others, w for Write — the door anyone can open.",
+    "nudge": "You've used find with -name and -size. What's the flag for matching permissions?"
+  }
+}

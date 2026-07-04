@@ -1,0 +1,48 @@
+{
+  "id": "sec-07-diff",
+  "type": "shell-challenge",
+  "track": "security",
+  "title": "Spot the change",
+  "xp": 40,
+  "prerequisites": [
+    "sec-06-integrity"
+  ],
+  "review_interval_days": null,
+  "prompt": "You have the config as it was reviewed (sshd_config.orig) and the config running now (sshd_config.live). They should be identical. diff FILE1 FILE2 prints only the lines that differ. Find what was slipped into the live config — the flag rides on the injected line.",
+  "setup": {
+    "files": [
+      {
+        "path": "sshd_config.orig",
+        "contents": "Port 22\nPermitRootLogin no\nPasswordAuthentication yes\nMaxAuthTries 4\nAllowUsers ty deploy\n"
+      },
+      {
+        "path": "sshd_config.live",
+        "contents": "Port 22\nPermitRootLogin no\nPasswordAuthentication yes\nMaxAuthTries 4\nAllowUsers ty deploy backdoor_{{FLAG}}\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Compare the two config files and find the one line that differs. The extra user on that line carries the flag — submit just the flag part.",
+    "io": [
+      {
+        "call": "diff sshd_config.orig sshd_config.live",
+        "returns": "(only the changed line, shown twice: before < and after >)",
+        "because": "diff stays silent about everything identical — its whole job is the delta"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Two nearly-identical files, one command that prints only where they disagree.",
+    "analogy": "Spot-the-difference puzzles — except the computer circles it for you.",
+    "mnemonic": "diff old new: < is what old said, > is what new says.",
+    "nudge": "Reading both files line by line works at 5 lines. What command still works at 5,000?"
+  }
+}

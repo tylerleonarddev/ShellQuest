@@ -4,6 +4,31 @@ The 0.1 → 1.0 story. Every version below shipped, was verified against
 its build spec's acceptance criteria, and went live on this repo — most
 of it in a single remarkable week.
 
+## 1.5.0 — 2026-07-04 · Analyst tier + fluency tier (+16 missions)
+
+The terminal ladder's two next tiers from `TERMINAL-ROADMAP.md`, both
+at once. The **analyst tier** (`sec-01`…`sec-10`, SECURITY group,
+chained off THE BOSS) is the terminal half of the SOC arc: dotfile
+discovery, auth-log triage, the top-talker pipeline
+(`grep | awk | sort | uniq -c | sort -n`), field extraction,
+`grep -rl`, `sha256sum -c` integrity checking against a manifest with
+exactly one tampered file, `diff` on a backdoored sshd_config, oversize
+-file hunting, distinct-count reporting, and an incident-triage boss
+that combines the lot. The **fluency tier** (`sq-15`…`sq-20`, terminal
+group): find-by-permission (a world-writable file among hundreds),
+symlink trails, mtime forensics, tarball extraction with a hidden
+vault, `find -delete` sweeps, and `du` directory weighing.
+
+Under the hood, four **data-only setup extensions** (per the roadmap):
+`mode`, `mtime_days_ago`, `symlinks`, and `base64` file contents —
+implemented in `lab.js` with the same isolation rules (escaping
+symlink targets are refused), linted, and covered by a new CI test
+that materializes a lab in an isolated HOME and asserts all four.
+Every mission validated fresh-fails + solution-passes via the real
+artifact runner. The engine-blocked list (processes, networking,
+services) is now recorded in `ROADMAP.md` under 2.0 system-state
+verification — the terminal track is its first confirmed customer.
+
 ## 1.4.0 — 2026-07-04 · The terminal campaign at full strength
 
 The 9 classic missions that had waited in `~/shellquest-classic` since

@@ -1,0 +1,70 @@
+{
+  "id": "sec-05-whichfile",
+  "type": "shell-challenge",
+  "track": "security",
+  "title": "Which file is dirty?",
+  "xp": 40,
+  "prerequisites": [
+    "sec-04-fields"
+  ],
+  "review_interval_days": null,
+  "prompt": "A tip says one file in this config tree contains the string 'planted credential'. grep -r searches every file under a directory; adding -l makes it print just the FILENAMES that match instead of the matching lines. Find the dirty file and read it — the flag is inside.",
+  "setup": {
+    "dirs": [
+      "etc/app",
+      "etc/cron.d",
+      "srv/www",
+      "opt/agent"
+    ],
+    "files": [
+      {
+        "path": "etc/app/app.conf",
+        "contents": "log_level info\nbind 127.0.0.1\n"
+      },
+      {
+        "path": "etc/app/auth.conf",
+        "contents": "method pubkey\n"
+      },
+      {
+        "path": "etc/cron.d/rotate",
+        "contents": "0 2 * * * root logrotate\n"
+      },
+      {
+        "path": "srv/www/health.txt",
+        "contents": "ok\n"
+      },
+      {
+        "path": "opt/agent/agent.ini",
+        "contents": "interval=60\nendpoint=internal\n# planted credential — do not commit\ntoken: {{FLAG}}\n"
+      },
+      {
+        "path": "srv/www/robots.txt",
+        "contents": "User-agent: *\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "One file, somewhere under this tree, contains the phrase 'planted credential'. Locate it with a recursive search, open it, submit the flag written next to the credential marker.",
+    "io": [
+      {
+        "call": "grep -rl 'planted credential' .",
+        "returns": "(the path of the one dirty file)",
+        "because": "-r sweeps the tree, -l reports which files matched instead of the lines"
+      }
+    ]
+  },
+  "help": {
+    "plain": "The boss mission taught grep -r for lines. The -l flag answers a different question: WHICH file.",
+    "analogy": "A drug dog sweep — you don't need the dog to read you the contraband, just to sit next to the right suitcase.",
+    "mnemonic": "grep -l: l for List the files.",
+    "nudge": "You could read every line grep prints... or ask grep to just name the file. Which flag does that?"
+  }
+}

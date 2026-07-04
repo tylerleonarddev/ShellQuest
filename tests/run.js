@@ -92,6 +92,51 @@ async function main() {
   r = await runTests(fn, 'def f(x):\n    while True:\n        pass\n');
   (r.error && /Timed out/.test(r.error)) ? ok('infinite loop times out') : bad('timeout not enforced');
 
+  console.log('lab setup extensions (mode/mtime/symlink/base64)');
+  // lab.js resolves HOME at require time, so exercise it in a child
+  // process with an isolated HOME — same pattern as the cold-start walk.
+  {
+    const { execFileSync } = require('child_process');
+    const os = require('os');
+    const tmpHome = require('fs').mkdtempSync(path.join(os.tmpdir(), 'sq-labtest-'));
+    const child = `
+      const fs = require('fs');
+      const { resetLab, labDir } = require(${JSON.stringify(path.join(ROOT, 'app/lib/lab'))});
+      const ex = { id: 'labtest', setup: {
+        dirs: ['d'],
+        files: [
+          { path: 'plain.txt', contents: 'hello {{FLAG}}\\n' },
+          { path: 'exec.sh', contents: '#!/bin/bash\\n', mode: '0755' },
+          { path: 'old.txt', contents: 'aged\\n', mtime_days_ago: 30 },
+          { path: 'bin.dat', contents: 'aGVsbG8=', base64: true },
+        ],
+        symlinks: [
+          { link: 'd/ptr', target: '../plain.txt' },
+          { link: 'evil', target: '../../outside' },
+        ],
+      } };
+      resetLab(ex);
+      const dir = labDir('labtest');
+      const out = {
+        flagged: /SQ\\{[0-9a-f]+\\}/.test(fs.readFileSync(dir + '/plain.txt', 'utf8')),
+        mode: (fs.statSync(dir + '/exec.sh').mode & 0o777).toString(8),
+        aged: (Date.now() - fs.statSync(dir + '/old.txt').mtimeMs) > 29 * 86400e3,
+        b64: fs.readFileSync(dir + '/bin.dat', 'utf8') === 'hello',
+        link: fs.readlinkSync(dir + '/d/ptr') === '../plain.txt',
+        evilBlocked: !fs.existsSync(dir + '/evil'),
+      };
+      console.log(JSON.stringify(out));
+    `;
+    const got = JSON.parse(execFileSync('node', ['-e', child], { env: { ...process.env, HOME: tmpHome } }).toString());
+    got.flagged ? ok('dynamic flag substitutes') : bad('flag not substituted');
+    got.mode === '755' ? ok('mode applies') : bad(`mode wrong: ${got.mode}`);
+    got.aged ? ok('mtime_days_ago ages the file') : bad('mtime not applied');
+    got.b64 ? ok('base64 contents decode') : bad('base64 not decoded');
+    got.link ? ok('symlink materializes') : bad('symlink missing');
+    got.evilBlocked ? ok('escaping symlink refused') : bad('ESCAPING SYMLINK CREATED');
+    require('fs').rmSync(tmpHome, { recursive: true, force: true });
+  }
+
   console.log('AI hint safety filter (mechanical, no model needed)');
   const { checkHint } = require(path.join(ROOT, 'app/lib/ai-hint'));
   const mustReject = [

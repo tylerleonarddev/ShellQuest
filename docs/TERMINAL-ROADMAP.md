@@ -90,13 +90,16 @@ This is exactly the "system-state verification" line item already in
 
 ## The count
 
-| | missions | engine work |
-|---|---|---|
-| Today (classic) | 14 | shipped |
-| + Analyst tier | 24 | none |
-| + Fluency tier | ~30 | 4 small setup extensions |
-| + v2.0 engine | 35+ | supervised runner |
+| | missions | engine work | status |
+|---|---|---|---|
+| Classic campaign | 14 | — | shipped v1.4 |
+| + Analyst tier | 24 | none | **shipped v1.5** (`sec-01`…`sec-10`) |
+| + Fluency tier | 30 | mode/symlink/mtime/base64 | **shipped v1.5** (`sq-15`…`sq-20`, extensions in `lab.js` + linter + CI) |
+| + v2.0 engine | 35+ | supervised runner | scoped in `ROADMAP.md` 2.0 |
 
-The ladder can more than double before any serious engine work — and
-the next ten missions double as the terminal half of the SOC-analyst
-arc, same defensive scope as the python security track.
+Both tiers landed in one drop (v1.5.0): the analyst tier as the
+terminal half of the SOC arc (SECURITY ladder group, chained off the
+boss), the fluency tier as `sq-15`–`sq-20` on the terminal ladder. The
+four setup extensions stayed data-only as designed. What remains above
+is exactly the v2.0 list — now recorded in `ROADMAP.md` under
+system-state verification.

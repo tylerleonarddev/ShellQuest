@@ -1,0 +1,105 @@
+{
+  "id": "sq-19-sweep",
+  "type": "shell-challenge",
+  "track": "progression",
+  "title": "Sweep the backups",
+  "xp": 35,
+  "prerequisites": [
+    "sq-18-archive"
+  ],
+  "review_interval_days": null,
+  "prompt": "Six stale .bak files are scattered through this tree, mixed in with files that must survive. Deleting them one by one is tourist stuff: find . -name '*.bak' finds them all, and adding -delete removes what it found. (Run it WITHOUT -delete first. Always look before you leap.)",
+  "setup": {
+    "dirs": [
+      "src/core",
+      "src/util",
+      "docs",
+      "build"
+    ],
+    "files": [
+      {
+        "path": "src/core/main.py",
+        "contents": "print('main')\n"
+      },
+      {
+        "path": "src/core/main.py.bak",
+        "contents": "old\n"
+      },
+      {
+        "path": "src/util/helpers.py",
+        "contents": "# helpers\n"
+      },
+      {
+        "path": "src/util/helpers.py.bak",
+        "contents": "old\n"
+      },
+      {
+        "path": "src/util/legacy.bak",
+        "contents": "old\n"
+      },
+      {
+        "path": "docs/manual.md",
+        "contents": "# manual\n"
+      },
+      {
+        "path": "docs/manual.md.bak",
+        "contents": "old\n"
+      },
+      {
+        "path": "build/output.bin",
+        "contents": "bin\n"
+      },
+      {
+        "path": "build/output.bak",
+        "contents": "old\n"
+      },
+      {
+        "path": "notes.bak",
+        "contents": "old\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "command-output",
+        "command": "find . -name '*.bak' | wc -l",
+        "expected_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+      },
+      {
+        "kind": "file-exists",
+        "path": "src/core/main.py"
+      },
+      {
+        "kind": "file-exists",
+        "path": "docs/manual.md"
+      },
+      {
+        "kind": "file-exists",
+        "path": "build/output.bin"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Every file ending in .bak — all six, at every depth — gets deleted. Everything else survives. One find command does the whole sweep.",
+    "io": [
+      {
+        "call": "find . -name '*.bak'",
+        "returns": "(all six .bak paths)",
+        "because": "run the search FIRST and read the list — this is your preview of what -delete will do"
+      },
+      {
+        "call": "find . -name '*.bak' -delete",
+        "returns": "(silence — they're gone)",
+        "because": "-delete removes exactly what the search matched"
+      }
+    ]
+  },
+  "help": {
+    "plain": "find already knows how to reach every depth — let it do the deleting too.",
+    "analogy": "A metal detector with a claw attachment: sweep once to hear the beeps, sweep again to pick them up.",
+    "mnemonic": "find, look, THEN -delete. Preview before purge.",
+    "nudge": "rm *.bak only reaches the current folder. Which command reaches every subfolder — and what does adding -delete do to its matches?"
+  }
+}

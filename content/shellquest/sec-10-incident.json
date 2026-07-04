@@ -1,0 +1,62 @@
+{
+  "id": "sec-10-incident",
+  "type": "shell-challenge",
+  "track": "security",
+  "title": "BOSS: incident triage",
+  "xp": 70,
+  "prerequisites": [
+    "sec-09-distinct"
+  ],
+  "review_interval_days": null,
+  "prompt": "Live incident. Everything you've learned, one report. In auth.log: (1) find the attacking IP — the source with the most Failed password lines; (2) write that IP into report.txt; (3) the attacker dropped a calling card: a hidden directory holds a note file NAMED after their IP — read it and submit the flag. Pipeline, fields, tallies, dotfiles: the full analyst kit.",
+  "setup": {
+    "files": [
+      {
+        "path": "auth.log",
+        "contents": "Jul  3 09:00:44 bastion sshd[8200]: Failed password for invalid user admin from 203.0.113.66 port 4100 ssh2\nJul  3 09:01:44 bastion sshd[8201]: Failed password for invalid user admin from 203.0.113.66 port 4101 ssh2\nJul  3 09:02:44 bastion sshd[8202]: Failed password for invalid user admin from 203.0.113.66 port 4102 ssh2\nJul  3 09:03:11 bastion sshd[8103]: Accepted password for deploy from 192.168.1.5 port 5113 ssh2\nJul  3 09:04:44 bastion sshd[8204]: Failed password for invalid user admin from 203.0.113.66 port 4104 ssh2\nJul  3 09:05:44 bastion sshd[8205]: Failed password for invalid user admin from 203.0.113.66 port 4105 ssh2\nJul  3 09:06:44 bastion sshd[8206]: Failed password for invalid user admin from 203.0.113.66 port 4106 ssh2\nJul  3 09:07:11 bastion sshd[8107]: Accepted password for deploy from 192.168.1.5 port 5117 ssh2\nJul  3 09:08:44 bastion sshd[8208]: Failed password for invalid user admin from 203.0.113.66 port 4108 ssh2\nJul  3 09:09:44 bastion sshd[8209]: Failed password for invalid user admin from 203.0.113.66 port 4109 ssh2\nJul  3 09:10:44 bastion sshd[8210]: Failed password for invalid user admin from 203.0.113.66 port 4110 ssh2\nJul  3 09:11:11 bastion sshd[8111]: Accepted password for deploy from 192.168.1.5 port 5121 ssh2\nJul  3 09:12:44 bastion sshd[8212]: Failed password for invalid user admin from 203.0.113.66 port 4112 ssh2\nJul  3 09:13:44 bastion sshd[8213]: Failed password for invalid user admin from 203.0.113.66 port 4113 ssh2\nJul  3 09:14:44 bastion sshd[8214]: Failed password for invalid user admin from 203.0.113.66 port 4114 ssh2\nJul  3 09:15:11 bastion sshd[8115]: Accepted password for deploy from 192.168.1.5 port 5125 ssh2\nJul  3 09:16:44 bastion sshd[8216]: Failed password for invalid user admin from 203.0.113.66 port 4116 ssh2\nJul  3 09:17:44 bastion sshd[8217]: Failed password for invalid user admin from 203.0.113.66 port 4117 ssh2\nJul  3 09:18:44 bastion sshd[8218]: Failed password for invalid user admin from 203.0.113.66 port 4118 ssh2\nJul  3 09:19:11 bastion sshd[8119]: Accepted password for deploy from 192.168.1.5 port 5129 ssh2\nJul  3 09:20:44 bastion sshd[8220]: Failed password for invalid user admin from 203.0.113.66 port 4120 ssh2\nJul  3 09:21:44 bastion sshd[8221]: Failed password for invalid user admin from 203.0.113.66 port 4121 ssh2\nJul  3 09:22:44 bastion sshd[8222]: Failed password for invalid user admin from 203.0.113.66 port 4122 ssh2\nJul  3 09:23:11 bastion sshd[8123]: Accepted password for deploy from 192.168.1.5 port 5133 ssh2\nJul  3 09:24:44 bastion sshd[8224]: Failed password for invalid user admin from 203.0.113.7 port 4124 ssh2\nJul  3 09:25:44 bastion sshd[8225]: Failed password for invalid user admin from 203.0.113.7 port 4125 ssh2\nJul  3 09:26:44 bastion sshd[8226]: Failed password for invalid user admin from 203.0.113.7 port 4126 ssh2\nJul  3 09:27:11 bastion sshd[8127]: Accepted password for deploy from 192.168.1.5 port 5137 ssh2\nJul  3 09:28:44 bastion sshd[8228]: Failed password for invalid user admin from 203.0.113.7 port 4128 ssh2\nJul  3 09:29:44 bastion sshd[8229]: Failed password for invalid user admin from 203.0.113.7 port 4129 ssh2\nJul  3 09:30:44 bastion sshd[8230]: Failed password for invalid user admin from 192.0.2.99 port 4130 ssh2\nJul  3 09:31:11 bastion sshd[8131]: Accepted password for deploy from 192.168.1.5 port 5141 ssh2\nJul  3 09:32:44 bastion sshd[8232]: Failed password for invalid user admin from 192.0.2.99 port 4132 ssh2\nJul  3 09:33:44 bastion sshd[8233]: Failed password for invalid user admin from 192.0.2.99 port 4133 ssh2\nJul  3 09:34:11 bastion sshd[8134]: Accepted password for ty from 192.168.1.5 port 5144 ssh2\nJul  3 09:35:11 bastion sshd[8135]: Accepted password for deploy from 192.168.1.5 port 5145 ssh2\n"
+      },
+      {
+        "path": ".quarantine/203.0.113.66.note",
+        "contents": "you'll never trace me — {{FLAG}}\n"
+      },
+      {
+        "path": ".quarantine/readme",
+        "contents": "suspicious artifacts land here\n"
+      }
+    ]
+  },
+  "verification": {
+    "runner": "artifact-check",
+    "checks": [
+      {
+        "kind": "file-contains",
+        "path": "report.txt",
+        "pattern": "203\\.0\\.113\\.66"
+      },
+      {
+        "kind": "flag"
+      }
+    ]
+  },
+  "details": {
+    "restate": "Three deliverables: identify the top attacking IP from auth.log, put that IP in report.txt, and find the hidden note named after the IP — it holds the flag.",
+    "io": [
+      {
+        "call": "grep 'Failed password' auth.log | awk '{print $13}' | sort | uniq -c | sort -n",
+        "returns": "(tallies per IP, top attacker at the bottom)",
+        "because": "the top-talker pipeline from three missions ago — now under fire"
+      },
+      {
+        "call": "ls -a",
+        "returns": "(don't forget the dot-directories)",
+        "because": "the calling card is hidden the same way .workdir was"
+      }
+    ]
+  },
+  "help": {
+    "plain": "It's sec-01 + sec-03 wearing a trench coat: top-talker pipeline, then a dotfile hunt named after the answer.",
+    "analogy": "The final exam where every question is one you've already answered — just all at once, with sirens on.",
+    "mnemonic": "tally → report → hidden note named after the IP.",
+    "nudge": "Which IP wins the failed-password tally? That exact string is both what goes in report.txt and the NAME of a hidden file."
+  }
+}
