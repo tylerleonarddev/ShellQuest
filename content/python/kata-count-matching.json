@@ -1,0 +1,36 @@
+{
+  "id": "py-count-matching",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Count matches",
+  "xp": 20,
+  "prerequisites": [
+    "py-word-count"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write count_matching(lst, target) that returns how many items in lst equal target.",
+  "starter_code": "def count_matching(lst, target):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "count_matching([1,2,1,3,1],1)",
+        "expect": 3
+      },
+      {
+        "call": "count_matching([],5)",
+        "expect": 0
+      },
+      {
+        "call": "count_matching(['a','b','a'],'a')",
+        "expect": 2
+      }
+    ]
+  },
+  "help": {
+    "plain": "Walk the list and count how many items equal the target.",
+    "analogy": "Tallying how many times one name appears on a sign-in sheet.",
+    "mnemonic": "Loop, compare, count.",
+    "nudge": "How do you check if one item equals the target?"
+  }
+}

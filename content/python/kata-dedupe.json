@@ -1,0 +1,67 @@
+{
+  "id": "py-dedupe",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Drop the duplicates",
+  "xp": 20,
+  "prerequisites": [
+    "lesson-sets"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write dedupe(lst) that returns a sorted list of the unique values in lst. dedupe([3,1,2,3,1]) is [1,2,3].",
+  "starter_code": "def dedupe(lst):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "dedupe([3,1,2,3,1])",
+        "expect": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "call": "dedupe([])",
+        "expect": []
+      },
+      {
+        "call": "dedupe([5,5,5])",
+        "expect": [
+          5
+        ]
+      },
+      {
+        "call": "dedupe([16,8,24,1])",
+        "expect": [
+          1,
+          8,
+          16,
+          24
+        ]
+      }
+    ]
+  },
+  "help": {
+    "plain": "Remove repeats, then return the values in sorted order.",
+    "analogy": "Like collapsing a guest list where people signed in twice — one entry each.",
+    "mnemonic": "set() drops duplicates; sorted() puts them in order.",
+    "nudge": "What built-in collection automatically throws away duplicates?"
+  },
+  "details": {
+    "restate": "Return the distinct values of a list, sorted ascending. Repeats collapse to a single entry.",
+    "io": [
+      {
+        "call": "dedupe([3,1,2,3,1])",
+        "returns": "[1,2,3]",
+        "because": "duplicates removed, then sorted"
+      }
+    ],
+    "terms": [
+      {
+        "term": "set",
+        "meaning": "a collection with no duplicates and no order"
+      }
+    ]
+  }
+}

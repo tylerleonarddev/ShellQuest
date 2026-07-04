@@ -1,0 +1,13 @@
+{
+  "id": "lesson-security-intro",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Aim it at security",
+  "xp": 5,
+  "prerequisites": [
+    "py-two-sum"
+  ],
+  "review_interval_days": null,
+  "body": "You've got the fundamentals \u2014 now point them at security work. These challenges use the same Python you've learned to do what an analyst actually does: read logs, spot bad logins, check IP addresses, handle indicators of compromise. Everything here is *defensive* and runs on data you own \u2014 no attacking anything. This is where writing code starts to look like the job.",
+  "completion": "acknowledge"
+}

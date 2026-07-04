@@ -1,0 +1,42 @@
+{
+  "id": "py-invert-dict",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Flip a dictionary",
+  "xp": 25,
+  "prerequisites": [
+    "py-word-count"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write invert_dict(d) that swaps keys and values: invert_dict({'a':'x','b':'y'}) is {'x':'a','y':'b'}. Assume values are unique.",
+  "starter_code": "def invert_dict(d):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "invert_dict({'a':'x','b':'y'})",
+        "expect": {
+          "x": "a",
+          "y": "b"
+        }
+      },
+      {
+        "call": "invert_dict({})",
+        "expect": {}
+      },
+      {
+        "call": "invert_dict({'one':'1','two':'2'})",
+        "expect": {
+          "1": "one",
+          "2": "two"
+        }
+      }
+    ]
+  },
+  "help": {
+    "plain": "Build a new dict where each old value becomes a key and each old key becomes its value.",
+    "analogy": "Turning a name->phone book into a phone->name reverse lookup.",
+    "mnemonic": "For k,v in d.items(): put v->k.",
+    "nudge": "How do you loop over both keys and values of a dict at once?"
+  }
+}

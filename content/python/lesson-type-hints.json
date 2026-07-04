@@ -1,0 +1,13 @@
+{
+  "id": "lesson-type-hints",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Type hints: labeling intent",
+  "xp": 5,
+  "prerequisites": [
+    "py-two-sum"
+  ],
+  "review_interval_days": null,
+  "body": "*Type hints* label what a function expects and gives back: `def add(a: int, b: int) -> int:`. Python doesn't enforce them while running, but they document your intent, help your editor catch mistakes, and are standard in professional code. Adding them from the start is a good habit \u2014 no kata here, just start using them.",
+  "completion": "acknowledge"
+}

@@ -1,0 +1,77 @@
+{
+  "id": "py-counter",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Build a Counter",
+  "xp": 30,
+  "prerequisites": [
+    "lesson-classes"
+  ],
+  "review_interval_days": null,
+  "prompt": "Build a Counter class with: increment() to add one, value() to return the current count (starting at 0), and reset() to set it back to 0.",
+  "starter_code": "class Counter:\n    def __init__(self):\n        pass\n",
+  "verification": {
+    "runner": "python-script",
+    "tests": [
+      {
+        "setup": [
+          "c=Counter()",
+          "c.increment()",
+          "c.increment()"
+        ],
+        "checks": [
+          {
+            "call": "c.value()",
+            "expect": 2
+          }
+        ]
+      },
+      {
+        "setup": [
+          "c=Counter()",
+          "c.increment()",
+          "c.reset()"
+        ],
+        "checks": [
+          {
+            "call": "c.value()",
+            "expect": 0
+          }
+        ]
+      },
+      {
+        "setup": [
+          "c=Counter()"
+        ],
+        "checks": [
+          {
+            "call": "c.value()",
+            "expect": 0
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "plain": "Make an object that holds a number, with methods to add one, read it, and reset it.",
+    "analogy": "A tally counter clicker \u2014 click to add, read the window, twist to reset.",
+    "mnemonic": "__init__ sets n=0; increment does n+=1; value returns n.",
+    "nudge": "Where should the count live so every method can see it? (On self.)"
+  },
+  "details": {
+    "restate": "Define a Counter class. A fresh Counter starts at 0. increment() raises it by 1, value() returns the current number, reset() puts it back to 0.",
+    "io": [
+      {
+        "call": "c=Counter(); c.increment(); c.increment(); c.value()",
+        "returns": "2",
+        "because": "two increments from 0"
+      }
+    ],
+    "terms": [
+      {
+        "term": "method",
+        "meaning": "a function that belongs to a class and acts on the object (self)"
+      }
+    ]
+  }
+}

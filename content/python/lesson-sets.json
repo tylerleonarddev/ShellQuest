@@ -1,0 +1,13 @@
+{
+  "id": "lesson-sets",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Sets: unique things",
+  "xp": 5,
+  "prerequisites": [
+    "py-word-count"
+  ],
+  "review_interval_days": null,
+  "body": "A *set* is a collection with no duplicates and no order: `{1, 2, 3}`. Turn a list into a set with `set(lst)` to drop duplicates instantly. Sets do fast membership checks (`x in s`) and set math: `a & b` (in both), `a | b` (in either), `a - b` (in a but not b). Reach for a set whenever the question is about 'unique' or 'overlap'.",
+  "completion": "acknowledge"
+}

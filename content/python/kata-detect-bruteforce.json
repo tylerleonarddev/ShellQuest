@@ -1,0 +1,59 @@
+{
+  "id": "py-detect-bruteforce",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Detect a brute-force source",
+  "xp": 35,
+  "prerequisites": [
+    "py-count-failed-logins"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write detect_bruteforce(lines, threshold). Each failed-login line looks like 'Failed password for <user> from <ip> port <n>'. Return a sorted list of the source IPs whose failure count is GREATER THAN threshold.",
+  "starter_code": "def detect_bruteforce(lines, threshold):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "detect_bruteforce(['Failed password for root from 1.2.3.4 port 22','Failed password for x from 1.2.3.4 port 22','Failed password for y from 1.2.3.4 port 22','Failed password for z from 5.6.7.8 port 22'], 2)",
+        "expect": [
+          "1.2.3.4"
+        ]
+      },
+      {
+        "call": "detect_bruteforce(['Failed password for root from 1.2.3.4 port 22','Failed password for x from 1.2.3.4 port 22','Failed password for y from 1.2.3.4 port 22'], 3)",
+        "expect": []
+      },
+      {
+        "call": "detect_bruteforce([], 1)",
+        "expect": []
+      }
+    ]
+  },
+  "help": {
+    "plain": "Count failed logins per source IP, and return the IPs that failed more than the threshold number of times.",
+    "analogy": "Like flagging the one door someone jiggled fifty times \u2014 repeated failures from one place is the tell.",
+    "mnemonic": "Count per IP, keep the ones OVER the line (strictly greater than threshold).",
+    "nudge": "Build a dict of ip -> count. The IP is the word right after 'from'. Then keep IPs where count is strictly greater than threshold (not equal)."
+  },
+  "details": {
+    "restate": "Find brute-force sources in auth-log lines: count failed attempts per source IP, and return (sorted) the IPs that exceeded the threshold. 'Exceeded' means strictly greater than, so exactly threshold does NOT count.",
+    "io": [
+      {
+        "call": "detect_bruteforce([...3 fails from 1.2.3.4...], 2)",
+        "returns": "['1.2.3.4']",
+        "because": "3 failures is greater than the threshold of 2"
+      },
+      {
+        "call": "detect_bruteforce([...3 fails...], 3)",
+        "returns": "[]",
+        "because": "3 is not greater than 3 \u2014 the threshold is a strict cutoff"
+      }
+    ],
+    "terms": [
+      {
+        "term": "brute force",
+        "meaning": "an attacker trying many passwords rapidly \u2014 shows up as many failed logins from one source"
+      }
+    ]
+  }
+}

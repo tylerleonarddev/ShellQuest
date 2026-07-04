@@ -1,0 +1,13 @@
+{
+  "id": "lesson-classes",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Classes: your own kind of object",
+  "xp": 5,
+  "prerequisites": [
+    "py-merge"
+  ],
+  "review_interval_days": null,
+  "body": "A *class* is a blueprint for making your own kind of object that bundles data together with the actions on it. `class Counter:` defines the blueprint; `Counter()` makes one. Inside, `__init__(self)` sets up its starting data, and methods like `self.increment()` act on it. `self` just means 'this particular object'. The data-structures tier builds several of these \u2014 this is the warm-up.",
+  "completion": "acknowledge"
+}

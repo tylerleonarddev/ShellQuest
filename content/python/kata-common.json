@@ -1,0 +1,65 @@
+{
+  "id": "py-common",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "What's in both",
+  "xp": 25,
+  "prerequisites": [
+    "py-dedupe"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write common(a, b) that returns a sorted list of the values that appear in BOTH lists. common([1,2,3],[2,3,4]) is [2,3].",
+  "starter_code": "def common(a, b):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "common([1,2,3],[2,3,4])",
+        "expect": [
+          2,
+          3
+        ]
+      },
+      {
+        "call": "common([1],[2])",
+        "expect": []
+      },
+      {
+        "call": "common([1,1,2],[2,2,1])",
+        "expect": [
+          1,
+          2
+        ]
+      },
+      {
+        "call": "common([16,8,1],[8,16,24])",
+        "expect": [
+          8,
+          16
+        ]
+      }
+    ]
+  },
+  "help": {
+    "plain": "Find the values that show up in both lists, sorted, with no repeats.",
+    "analogy": "Like overlapping two Venn circles and keeping only the middle.",
+    "mnemonic": "`a & b` = intersection = 'in both'.",
+    "nudge": "Sets have an operator for 'in both'. It's a single symbol."
+  },
+  "details": {
+    "restate": "Return the sorted set of values present in both lists (the intersection), no duplicates.",
+    "io": [
+      {
+        "call": "common([1,2,3],[2,3,4])",
+        "returns": "[2,3]",
+        "because": "2 and 3 are the only values in both lists"
+      }
+    ],
+    "terms": [
+      {
+        "term": "intersection",
+        "meaning": "the items two sets share"
+      }
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "id": "py-label",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Build a label",
+  "xp": 15,
+  "prerequisites": [
+    "lesson-fstrings"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write label(name, count) that returns a string like 'errors: 3' using an f-string. label('errors', 3) is 'errors: 3'.",
+  "starter_code": "def label(name, count):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "label('errors',3)",
+        "expect": "errors: 3"
+      },
+      {
+        "call": "label('ok',0)",
+        "expect": "ok: 0"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Build one string that puts the name, a colon and space, then the count.",
+    "analogy": "Like a shipping label: field name, colon, value.",
+    "mnemonic": "f\"{name}: {count}\" \u2014 mind the colon-space.",
+    "nudge": "An f-string lets you drop both values straight into the text with {}."
+  },
+  "details": {
+    "restate": "Return a formatted string of the form 'name: count' using an f-string. Note the colon and single space between them.",
+    "io": [
+      {
+        "call": "label('errors', 3)",
+        "returns": "'errors: 3'",
+        "because": "name, colon, space, count"
+      }
+    ],
+    "terms": [
+      {
+        "term": "f-string",
+        "meaning": "a string prefixed with f that lets you insert values inside {}"
+      }
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "id": "py-defang-url",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Defang a URL",
+  "xp": 20,
+  "prerequisites": [
+    "py-hash-type"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write defang_url(url) that makes a URL safe to paste in a report: replace 'http' with 'hxxp' and every '.' with '[.]'. defang_url('http://evil.com') is 'hxxp://evil[.]com'.",
+  "starter_code": "def defang_url(url):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "defang_url('http://evil.com')",
+        "expect": "hxxp://evil[.]com"
+      },
+      {
+        "call": "defang_url('https://a.b.co')",
+        "expect": "hxxps://a[.]b[.]co"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Rewrite a dangerous URL so nobody clicks it by accident: break the 'http' and the dots.",
+    "analogy": "Like putting a live wire in a labeled box before you hand it to someone \u2014 same wire, safe to carry.",
+    "mnemonic": "http -> hxxp, . -> [.]",
+    "nudge": "Strings have a method that swaps one piece of text for another. You'll use it twice."
+  },
+  "details": {
+    "restate": "Take a URL and 'defang' it so it can't be clicked: turn 'http' into 'hxxp' and each '.' into '[.]'. This is how analysts share malicious links safely.",
+    "io": [
+      {
+        "call": "defang_url('http://evil.com')",
+        "returns": "'hxxp://evil[.]com'",
+        "because": "'http'->'hxxp' and each dot is bracketed"
+      }
+    ],
+    "terms": [
+      {
+        "term": "defang",
+        "meaning": "making a malicious URL or address non-clickable for safe sharing"
+      }
+    ]
+  }
+}

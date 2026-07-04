@@ -62,7 +62,11 @@ regenerated from real progress data on every push.
 Electron + vanilla JS, content as pure JSON data, git as the only
 database, [`ts-fsrs`](https://github.com/open-spaced-repetition/ts-fsrs)
 for scheduling. Progress is flat files — migrating machines is
-`git clone`. The full design rationale lives in
+`git clone`. Stuck-help comes in three gated layers: task clarification
+("More info"), authored Socratic tiers ("Explain this"), and — last — an
+AI hint from a **local** model (Ollama) that reads your failing code but
+is mechanically forbidden from ever showing the answer.
+The full design rationale lives in
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), every build spec and
 decision in [`docs/`](docs/), and the 0.1→1.0 story in
 [`CHANGELOG.md`](CHANGELOG.md).

@@ -313,7 +313,7 @@ function bumpWeekly(weekly, kind, by = 1) {
 
 // After a pass. Returns the events the renderer's reward beat needs plus
 // bonus XP to award. `firstCompletion` comes from progress.recordPass.
-function applyPass(exercise, firstCompletion, exercises, completions, profile, today = localDateString(), awardedXp = 0) {
+function applyPass(exercise, firstCompletion, exercises, completions, profile, today = localDateString(), awardedXp = 0, aiAssisted = false) {
   // ensureDaily FIRST: it may backfill cards into reviews.json, and a
   // reviews snapshot taken before it would clobber that write.
   const daily = ensureDaily(exercises, completions, today);
@@ -322,11 +322,14 @@ function applyPass(exercise, firstCompletion, exercises, completions, profile, t
   const events = { review: false, dailyCleared: false, weeklyCompleted: false, bonusXp: 0 };
 
   if (isSchedulable(exercise)) {
+    // Anti-crutch: a pass that leaned on the AI helper grades Hard, not
+    // Good — the concept resurfaces sooner instead of striding ahead.
+    const rating = aiAssisted ? Rating.Hard : Rating.Good;
     const prev = reviews.cards[exercise.id];
     if (!prev) {
-      reviews.cards[exercise.id] = serializeCard(rateCard(null, Rating.Good));
+      reviews.cards[exercise.id] = serializeCard(rateCard(null, rating));
     } else if (cardDueDay(prev) <= today) {
-      reviews.cards[exercise.id] = serializeCard(rateCard(prev, Rating.Good));
+      reviews.cards[exercise.id] = serializeCard(rateCard(prev, rating));
       events.review = true;
     }
     writeJson(REVIEWS_FILE, reviews);

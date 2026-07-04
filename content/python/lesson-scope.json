@@ -1,0 +1,13 @@
+{
+  "id": "lesson-scope",
+  "type": "lesson",
+  "track": "progression",
+  "title": "Scope: where names live",
+  "xp": 5,
+  "prerequisites": [
+    "py-fibonacci"
+  ],
+  "review_interval_days": null,
+  "body": "*Scope* is where a name is visible. A variable created inside a function is *local* \u2014 it exists only there and disappears when the function returns. Names outside are *global*. Prefer passing values in as parameters and returning results out, rather than reaching for globals. It keeps functions predictable and easy to test \u2014 which matters more the bigger your code gets.",
+  "completion": "acknowledge"
+}

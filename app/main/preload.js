@@ -15,4 +15,5 @@ contextBridge.exposeInMainWorld('shellquest', {
   saveReflection: (file, text) => ipcRenderer.invoke('devlogs:save-reflection', { file, text }),
   gitPush: () => ipcRenderer.invoke('git:push'),
   draftDigest: () => ipcRenderer.invoke('devlogs:digest'),
+  getAiHint: (id, code, failure) => ipcRenderer.invoke('ai:hint', { id, code, failure }),
 });

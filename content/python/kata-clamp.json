@@ -1,0 +1,40 @@
+{
+  "id": "py-clamp",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Clamp a number",
+  "xp": 20,
+  "prerequisites": [
+    "py-two-sum"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write clamp(n, lo, hi) that returns n, but never below lo and never above hi. clamp(15, 0, 10) is 10.",
+  "starter_code": "def clamp(n, lo, hi):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "clamp(5,1,10)",
+        "expect": 5
+      },
+      {
+        "call": "clamp(-3,0,10)",
+        "expect": 0
+      },
+      {
+        "call": "clamp(15,0,10)",
+        "expect": 10
+      },
+      {
+        "call": "clamp(10,0,10)",
+        "expect": 10
+      }
+    ]
+  },
+  "help": {
+    "plain": "Keep n inside the range: if it's too low, return lo; too high, return hi; otherwise n itself.",
+    "analogy": "Like a thermostat's limits \u2014 it won't go past the min or max you set.",
+    "mnemonic": "max(lo, min(n, hi)) \u2014 squeeze from both ends.",
+    "nudge": "min(n, hi) caps the top. What wraps that to enforce the bottom?"
+  }
+}

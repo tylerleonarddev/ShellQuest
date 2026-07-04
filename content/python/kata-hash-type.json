@@ -1,0 +1,61 @@
+{
+  "id": "py-hash-type",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Identify a hash by length",
+  "xp": 20,
+  "prerequisites": [
+    "lesson-security-intro"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write hash_type(h) that identifies a hash by its length: 32 chars -> 'MD5', 40 -> 'SHA-1', 64 -> 'SHA-256', anything else -> 'unknown'.",
+  "starter_code": "def hash_type(h):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "hash_type('a'*32)",
+        "expect": "MD5"
+      },
+      {
+        "call": "hash_type('a'*40)",
+        "expect": "SHA-1"
+      },
+      {
+        "call": "hash_type('a'*64)",
+        "expect": "SHA-256"
+      },
+      {
+        "call": "hash_type('abc')",
+        "expect": "unknown"
+      }
+    ]
+  },
+  "help": {
+    "plain": "Look at how long the hash string is, and map that length to a hash type.",
+    "analogy": "Like guessing a package's contents from its box size \u2014 MD5, SHA-1, and SHA-256 each come in a fixed length.",
+    "mnemonic": "32 / 40 / 64 -> MD5 / SHA-1 / SHA-256.",
+    "nudge": "How do you get the number of characters in a string?"
+  },
+  "details": {
+    "restate": "Given a hex hash string, return which algorithm produced it, judged only by length. 32->MD5, 40->SHA-1, 64->SHA-256, else 'unknown'.",
+    "io": [
+      {
+        "call": "hash_type('a'*40)",
+        "returns": "'SHA-1'",
+        "because": "40 hex chars is a SHA-1 digest"
+      },
+      {
+        "call": "hash_type('abc')",
+        "returns": "'unknown'",
+        "because": "3 chars matches no known hash length"
+      }
+    ],
+    "terms": [
+      {
+        "term": "hash",
+        "meaning": "a fixed-length fingerprint of some data; different algorithms produce different lengths"
+      }
+    ]
+  }
+}

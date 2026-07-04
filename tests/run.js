@@ -92,6 +92,31 @@ async function main() {
   r = await runTests(fn, 'def f(x):\n    while True:\n        pass\n');
   (r.error && /Timed out/.test(r.error)) ? ok('infinite loop times out') : bad('timeout not enforced');
 
+  console.log('AI hint safety filter (mechanical, no model needed)');
+  const { checkHint } = require(path.join(ROOT, 'app/lib/ai-hint'));
+  const mustReject = [
+    ['def char_count(s):\n    counts = {}', 'a function definition'],
+    ['Just write: return {c: s.count(c) for c in s}', 'return plus code'],
+    ['Try counts[c] = counts.get(c, 0) + 1 inside your loop.', 'an assignment'],
+    ['```python\nprint(42)\n```', 'a code fence'],
+    ['Use x == 0 to test for zero.', 'a comparison operator'],
+    ['Here is the fix:\n    counts.update(s)', 'an indented body'],
+    ['>>> char_count("hi")', 'a REPL transcript'],
+    ['', 'an empty reply'],
+    ['w'.repeat(400), 'an over-long reply'],
+  ];
+  for (const [text, label] of mustReject) {
+    checkHint(text).ok ? bad(`filter passed ${label}`) : ok(`filter rejects ${label}`);
+  }
+  const mustAllow = [
+    'Your code counts every character once — what should happen the second time you meet the same one?',
+    'Look at what your loop does when the list is empty. Does it ever start?',
+    'You are comparing the whole list to the target instead of one item at a time.',
+  ];
+  for (const text of mustAllow) {
+    checkHint(text).ok ? ok('filter allows a clean Socratic hint') : bad(`filter wrongly rejected: "${text}"`);
+  }
+
   console.log('\n' + (failed ? `FAILED: ${failed} check(s)` : 'ALL TESTS PASSED'));
   process.exit(failed ? 1 : 0);
 }

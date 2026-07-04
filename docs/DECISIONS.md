@@ -184,3 +184,24 @@ vanishing.
 **Gating enforced in the main process,** not just hidden in the UI — a
 locked exercise cannot be opened or run via IPC regardless of renderer
 state.
+
+## v1.3
+
+**AI hints are local-first and mechanically filtered.** The Socratic hint
+generator (BUILD-SPEC-ai-help.md) runs against Ollama on 127.0.0.1
+(qwen2.5-coder:3b — free, private; `SQ_AI_MODEL`/`SQ_AI_URL` override),
+with the Anthropic API only as an explicit fallback when a key is set.
+Every generated hint passes `checkHint()` — a deliberately strict filter
+(no `=` at all, no code keywords, no fences, no indented bodies) with one
+regenerate and then an honest "re-read the nudge above" fallback. The
+model is never trusted; the filter is unit-tested in `tests/run.js`.
+
+**AI help is a diagnostic, not a free lunch.** Every hint request lands in
+`progress/ai-help.json` first (before generation, so a crash can't dodge
+the ledger), and a pass on a kata that used AI help today grades
+Rating.Hard instead of Good — the concept resurfaces sooner in FSRS. The
+UI says so next to the button: "using it brings this kata back sooner."
+
+**The AI floor never moves.** The hint button appears only after every
+authored help tier is revealed (or none exist) AND a run has failed —
+comprehension (details) and authored teaching (help) always come first.

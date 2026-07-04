@@ -1,0 +1,40 @@
+{
+  "id": "py-average",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Average of a list",
+  "xp": 20,
+  "prerequisites": [
+    "py-fibonacci"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write average(nums) that returns the mean of the numbers. average([2,4,6]) is 4.0. An empty list returns 0.",
+  "starter_code": "def average(nums):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "average([2,4,6])",
+        "expect": 4.0
+      },
+      {
+        "call": "average([])",
+        "expect": 0
+      },
+      {
+        "call": "average([10])",
+        "expect": 10.0
+      },
+      {
+        "call": "average([1,2])",
+        "expect": 1.5
+      }
+    ]
+  },
+  "help": {
+    "plain": "Add the numbers and divide by how many there are \u2014 but guard against dividing by zero on an empty list.",
+    "analogy": "Splitting a bill evenly \u2014 total over headcount.",
+    "mnemonic": "sum / len, but check for empty first.",
+    "nudge": "What happens if you divide by len([]) = 0? Handle the empty case."
+  }
+}

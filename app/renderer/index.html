@@ -120,6 +120,16 @@
     </div>
     <!-- /assist-region -->
 
+    <!-- AI hint: last resort, below the authored tiers. Appears only for a
+         python kata with a failing run once every authored help tier has
+         been revealed (or none exist). Reads the learner's code; never
+         shows the answer. -->
+    <div class="ai-region" id="ai-region" hidden>
+      <button class="btn-ghost btn-small" id="btn-ai-hint">🤖 AI hint</button>
+      <span class="ai-note">reads your code, never gives the answer · using it brings this kata back sooner</span>
+      <div class="ai-hint-box" id="ai-hint-box" hidden></div>
+    </div>
+
     <!-- python-kata -->
     <div id="kata-panel" hidden>
       <div class="editor-frame">

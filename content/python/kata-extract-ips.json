@@ -1,0 +1,57 @@
+{
+  "id": "py-extract-ips",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Pull IPs out of text",
+  "xp": 30,
+  "prerequisites": [
+    "py-is-private-ip"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write extract_ips(text) that returns a list of the valid IPv4 addresses found in the space-separated text, in order. A valid IP has 4 numeric parts, each 0-255.",
+  "starter_code": "def extract_ips(text):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "extract_ips('conn from 10.0.0.1 to 8.8.8.8')",
+        "expect": [
+          "10.0.0.1",
+          "8.8.8.8"
+        ]
+      },
+      {
+        "call": "extract_ips('no ips here')",
+        "expect": []
+      },
+      {
+        "call": "extract_ips('bad 999.1.1.1 good 1.1.1.1')",
+        "expect": [
+          "1.1.1.1"
+        ]
+      }
+    ]
+  },
+  "help": {
+    "plain": "Scan the words in the text and keep the ones that are real IP addresses.",
+    "analogy": "Like panning for gold \u2014 most words wash away, you keep the ones shaped like an IP with valid numbers.",
+    "mnemonic": "4 parts, all digits, each 0-255.",
+    "nudge": "For each word: split on '.', and check there are 4 parts that are all digits in range. `999` should fail the range check."
+  },
+  "details": {
+    "restate": "Find every valid IPv4 address in a space-separated string and return them in order. 'Valid' means 4 dot-separated numbers, each between 0 and 255.",
+    "io": [
+      {
+        "call": "extract_ips('bad 999.1.1.1 good 1.1.1.1')",
+        "returns": "['1.1.1.1']",
+        "because": "999 is out of range, so that token isn't a valid IP"
+      }
+    ],
+    "terms": [
+      {
+        "term": "IPv4",
+        "meaning": "an address like 10.0.0.1 \u2014 four numbers 0-255 separated by dots"
+      }
+    ]
+  }
+}

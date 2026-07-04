@@ -13,6 +13,8 @@ const { scaffoldDraft } = require('../lib/devlog');
 const { commitProgress } = require('../lib/git');
 const publishLib = require('../lib/publish');
 const digestLib = require('../lib/digest');
+const aiHint = require('../lib/ai-hint');
+const aiHelpLog = require('../lib/ai-help-log');
 
 // Dashboard grouping: the ladder reads as the story of the climb —
 // grouped by track, ordered by prerequisite depth (curriculum order,
@@ -152,6 +154,22 @@ function getUnlockedExercise(id) {
   return { exercise };
 }
 
+// One Socratic AI hint about the learner's actual code + failing test.
+// Usage is recorded FIRST (before generation, so a crash can't dodge the
+// ledger) — an AI-assisted pass grades Hard in FSRS, see applyPass.
+ipcMain.handle('ai:hint', async (_ev, { id, code, failure }) => {
+  const { exercise, error } = getUnlockedExercise(String(id || ''));
+  if (error) return { hint: null, reason: error };
+  if (exercise.type !== 'python-kata') return { hint: null, reason: 'not a kata' };
+  aiHelpLog.record(exercise.id, progress.localDateString());
+  return aiHint.generateHint({
+    prompt: exercise.prompt,
+    code: String(code || '').slice(0, 4000),
+    failure: failure || null,
+    aiContext: exercise.ai_context || null,
+  });
+});
+
 ipcMain.handle('exercise:get', (_ev, id) => {
   const { exercise, error } = getUnlockedExercise(id);
   if (error) return null;
@@ -215,7 +233,8 @@ async function onPass(exercise, run, userCode) {
       progress.getCompletions(),
       profile,
       progress.localDateString(),
-      record.awardedXp
+      record.awardedXp,
+      aiHelpLog.usedToday(exercise.id, progress.localDateString())
     );
     if (events.bonusXp) profile.xp += events.bonusXp;
     if (events.bonusXp || events.dailyCleared) progress.saveProfile(profile);

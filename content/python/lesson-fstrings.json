@@ -1,0 +1,13 @@
+{
+  "id": "lesson-fstrings",
+  "type": "lesson",
+  "track": "progression",
+  "title": "f-strings: building text",
+  "xp": 5,
+  "prerequisites": [
+    "py-two-sum"
+  ],
+  "review_interval_days": null,
+  "body": "An *f-string* builds text with values dropped straight in. Put `f` before the quote and wrap any value in `{}`: `f\"Hello {name}, you scored {score}\"`. It's cleaner than gluing strings with `+`, and you can format too \u2014 `f\"{ratio:.2f}\"` shows two decimals. You'll use these anywhere you build a message or a report line.",
+  "completion": "acknowledge"
+}

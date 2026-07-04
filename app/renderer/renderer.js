@@ -554,6 +554,78 @@ function setupDetails(details) {
   }
 }
 
+/* ── AI hint (last resort, below the authored tiers) ── */
+
+// The failing test from the most recent run — the context the AI hint is
+// aimed at. Cleared on pass and on opening another exercise.
+let lastFailure = null;
+
+// Gate: python kata + a failing run + authored tiers exhausted (a kata
+// with no help block counts as exhausted — there's nothing to try first).
+function updateAiRegion() {
+  const region = $('ai-region');
+  const eligible =
+    currentExercise &&
+    currentExercise.type === 'python-kata' &&
+    lastFailure &&
+    (!currentExercise.help || helpState.shown >= helpState.steps.length);
+  region.hidden = !eligible;
+}
+
+function resetAiRegion() {
+  lastFailure = null;
+  $('ai-hint-box').hidden = true;
+  $('ai-hint-box').textContent = '';
+  $('btn-ai-hint').disabled = false;
+  $('btn-ai-hint').textContent = '🤖 AI hint';
+  updateAiRegion();
+}
+
+function noteRunOutcome(res) {
+  if (res.passed) {
+    lastFailure = null;
+  } else if (res.fatal || res.error) {
+    lastFailure = { call: '(running your code)', error: res.fatal || res.error };
+  } else {
+    const f = (res.results || []).find((r) => !r.passed);
+    lastFailure = f
+      ? { call: f.call, expected: f.expected, actual: f.actual, error: f.error }
+      : null;
+  }
+  updateAiRegion();
+}
+
+async function requestAiHint() {
+  const btn = $('btn-ai-hint');
+  if (btn.disabled || !currentExercise || !lastFailure) return;
+  btn.disabled = true;
+  btn.textContent = '🤖 thinking…';
+  const box = $('ai-hint-box');
+  try {
+    const res = await window.shellquest.getAiHint(
+      currentExercise.id,
+      editor ? editor.getValue() : '',
+      lastFailure
+    );
+    box.hidden = false;
+    if (res.hint) {
+      box.textContent = res.hint;
+      box.className = 'ai-hint-box';
+    } else {
+      box.className = 'ai-hint-box ai-hint-miss';
+      box.textContent =
+        res.reason === 'offline'
+          ? 'The AI helper is offline — is the Ollama service running? The authored hints above still apply.'
+          : res.reason === 'unsafe'
+            ? 'The model couldn\'t produce a hint without giving too much away — re-read the nudge above instead.'
+            : 'The AI helper hit a snag — the authored hints above still apply.';
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🤖 another hint';
+  }
+}
+
 function revealNextHelpTier() {
   const { steps, shown } = helpState;
   if (shown >= steps.length) return;
@@ -602,6 +674,7 @@ function revealNextHelpTier() {
   const done = helpState.shown >= steps.length;
   $('btn-help-more').hidden = done;
   $('help-floor-note').hidden = !done;
+  updateAiRegion(); // the AI hint unlocks when the last tier is revealed
 }
 
 async function openExercise(id) {
@@ -623,6 +696,7 @@ async function openExercise(id) {
   setupHelp(ex.help);
   setupDetails(ex.details);
   $('assist-region').hidden = !ex.help && !ex.details;
+  resetAiRegion();
 
   $('kata-panel').hidden = isChallenge || isLesson;
   $('challenge-panel').hidden = !isChallenge;
@@ -675,6 +749,7 @@ async function runCurrent() {
       ? await window.shellquest.runChallenge(currentExercise.id, $('flag-input').value)
       : await window.shellquest.runKata(currentExercise.id, editor.getValue());
     renderResults(res);
+    noteRunOutcome(res);
     if (res.passed) rewardBeat(res);
   } finally {
     btn.disabled = false;
@@ -954,6 +1029,7 @@ $('btn-help').addEventListener('click', () => {
   if (opening && helpState.shown === 0) revealNextHelpTier(); // first tier on open
 });
 $('btn-help-more').addEventListener('click', revealNextHelpTier);
+$('btn-ai-hint').addEventListener('click', requestAiHint);
 $('btn-details').addEventListener('click', () => {
   const panel = $('details-panel');
   const opening = panel.hidden;

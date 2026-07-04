@@ -1,0 +1,74 @@
+{
+  "id": "py-is-private-ip",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Is it a private IP?",
+  "xp": 30,
+  "prerequisites": [
+    "py-password-strength"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write is_private_ip(ip) returning True if the IP is in a private range: 10.x.x.x, 172.16.x.x through 172.31.x.x, or 192.168.x.x. Otherwise False.",
+  "starter_code": "def is_private_ip(ip):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "is_private_ip('10.0.0.1')",
+        "expect": true
+      },
+      {
+        "call": "is_private_ip('192.168.1.1')",
+        "expect": true
+      },
+      {
+        "call": "is_private_ip('172.16.5.4')",
+        "expect": true
+      },
+      {
+        "call": "is_private_ip('172.32.0.1')",
+        "expect": false
+      },
+      {
+        "call": "is_private_ip('8.8.8.8')",
+        "expect": false
+      },
+      {
+        "call": "is_private_ip('172.15.0.1')",
+        "expect": false
+      }
+    ]
+  },
+  "help": {
+    "plain": "Check whether an IP address belongs to one of the three private (internal-network) ranges.",
+    "analogy": "Like telling apart an office extension from a public phone number \u2014 private IPs never appear on the open internet.",
+    "mnemonic": "10-anything, 172.16-31, 192.168 \u2014 the three private blocks.",
+    "nudge": "Split the IP on '.', turn the first two parts into numbers, and check the ranges. Watch the 172 range: only .16 through .31."
+  },
+  "details": {
+    "restate": "Decide if an IPv4 address is private (used inside home/office networks) rather than public. Private = 10.x.x.x, 172.16-31.x.x, or 192.168.x.x.",
+    "io": [
+      {
+        "call": "is_private_ip('172.16.5.4')",
+        "returns": "True",
+        "because": "172.16-31 is a private block"
+      },
+      {
+        "call": "is_private_ip('172.32.0.1')",
+        "returns": "False",
+        "because": "32 is outside the 16-31 private range"
+      },
+      {
+        "call": "is_private_ip('8.8.8.8')",
+        "returns": "False",
+        "because": "a public IP (Google DNS)"
+      }
+    ],
+    "terms": [
+      {
+        "term": "private IP",
+        "meaning": "an address reserved for internal networks, never routed on the public internet"
+      }
+    ]
+  }
+}

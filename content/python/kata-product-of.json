@@ -1,0 +1,40 @@
+{
+  "id": "py-product-of",
+  "type": "python-kata",
+  "track": "progression",
+  "title": "Multiply them all",
+  "xp": 20,
+  "prerequisites": [
+    "py-fibonacci"
+  ],
+  "review_interval_days": null,
+  "prompt": "Write product_of(nums) that returns all the numbers multiplied together. product_of([1,2,3,4]) is 24. An empty list returns 1.",
+  "starter_code": "def product_of(nums):\n    pass\n",
+  "verification": {
+    "runner": "python-test",
+    "tests": [
+      {
+        "call": "product_of([1,2,3,4])",
+        "expect": 24
+      },
+      {
+        "call": "product_of([])",
+        "expect": 1
+      },
+      {
+        "call": "product_of([5])",
+        "expect": 5
+      },
+      {
+        "call": "product_of([2,0,3])",
+        "expect": 0
+      }
+    ]
+  },
+  "help": {
+    "plain": "Multiply every number in the list together, starting from 1.",
+    "analogy": "Like compounding \u2014 each number scales the running result.",
+    "mnemonic": "Start the running total at 1 (not 0!), then multiply.",
+    "nudge": "Why must the starting value be 1 and not 0 for multiplication?"
+  }
+}

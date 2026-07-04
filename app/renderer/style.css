@@ -610,6 +610,25 @@ body {
 .help-controls { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
 .help-floor-note { color: var(--faint); font-size: 12px; }
 
+/* ── AI hint (last resort, below authored tiers) ── */
+.ai-region { margin: 0 0 22px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+#btn-ai-hint { color: var(--text); border-color: var(--line); }
+#btn-ai-hint:hover { border-color: var(--muted); }
+#btn-ai-hint:disabled { opacity: 0.6; }
+.ai-note { color: var(--faint); font-size: 12px; }
+.ai-hint-box {
+  flex-basis: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px dashed var(--muted);
+  border-radius: 8px;
+  padding: 14px 18px;
+  max-width: 64ch;
+  color: var(--text);
+  line-height: 1.65;
+}
+.ai-hint-miss { color: var(--muted); font-style: italic; }
+
 /* ── Friendly errors ── */
 .result-raw { width: 100%; margin-top: 6px; }
 .result-raw summary {
