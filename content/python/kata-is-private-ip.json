@@ -1,7 +1,7 @@
 {
   "id": "py-is-private-ip",
   "type": "python-kata",
-  "track": "progression",
+  "track": "security",
   "title": "Is it a private IP?",
   "xp": 30,
   "prerequisites": [
@@ -41,8 +41,8 @@
   },
   "help": {
     "plain": "Check whether an IP address belongs to one of the three private (internal-network) ranges.",
-    "analogy": "Like telling apart an office extension from a public phone number \u2014 private IPs never appear on the open internet.",
-    "mnemonic": "10-anything, 172.16-31, 192.168 \u2014 the three private blocks.",
+    "analogy": "Like telling apart an office extension from a public phone number — private IPs never appear on the open internet.",
+    "mnemonic": "10-anything, 172.16-31, 192.168 — the three private blocks.",
     "nudge": "Split the IP on '.', turn the first two parts into numbers, and check the ranges. Watch the 172 range: only .16 through .31."
   },
   "details": {

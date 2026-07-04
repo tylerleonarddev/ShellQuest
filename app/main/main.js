@@ -21,6 +21,7 @@ const aiHelpLog = require('../lib/ai-help-log');
 // same as the daily queue), never alphabetically.
 function ladderGroup(e) {
   if ((e.track || '').startsWith('project:')) return `project: ${e.track.slice(8)}`;
+  if (e.track === 'security') return 'security';
   if (e.type === 'shell-challenge') return 'terminal';
   return 'python';
 }
@@ -32,7 +33,7 @@ function buildState() {
   const titleById = new Map(exercises.map((e) => [e.id, e.title]));
 
   const depths = schedule.computeDepths(exercises); // one memoized pass
-  const groupOrder = ['python', 'terminal']; // project groups follow
+  const groupOrder = ['python', 'security', 'terminal']; // project groups follow
   const sorted = [...exercises].sort((a, b) => {
     const ga = ladderGroup(a);
     const gb = ladderGroup(b);

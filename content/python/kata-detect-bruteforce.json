@@ -1,7 +1,7 @@
 {
   "id": "py-detect-bruteforce",
   "type": "python-kata",
-  "track": "progression",
+  "track": "security",
   "title": "Detect a brute-force source",
   "xp": 35,
   "prerequisites": [
@@ -31,7 +31,7 @@
   },
   "help": {
     "plain": "Count failed logins per source IP, and return the IPs that failed more than the threshold number of times.",
-    "analogy": "Like flagging the one door someone jiggled fifty times \u2014 repeated failures from one place is the tell.",
+    "analogy": "Like flagging the one door someone jiggled fifty times — repeated failures from one place is the tell.",
     "mnemonic": "Count per IP, keep the ones OVER the line (strictly greater than threshold).",
     "nudge": "Build a dict of ip -> count. The IP is the word right after 'from'. Then keep IPs where count is strictly greater than threshold (not equal)."
   },
@@ -46,13 +46,13 @@
       {
         "call": "detect_bruteforce([...3 fails...], 3)",
         "returns": "[]",
-        "because": "3 is not greater than 3 \u2014 the threshold is a strict cutoff"
+        "because": "3 is not greater than 3 — the threshold is a strict cutoff"
       }
     ],
     "terms": [
       {
         "term": "brute force",
-        "meaning": "an attacker trying many passwords rapidly \u2014 shows up as many failed logins from one source"
+        "meaning": "an attacker trying many passwords rapidly — shows up as many failed logins from one source"
       }
     ]
   }

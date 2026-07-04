@@ -1,7 +1,7 @@
 {
   "id": "py-hash-type",
   "type": "python-kata",
-  "track": "progression",
+  "track": "security",
   "title": "Identify a hash by length",
   "xp": 20,
   "prerequisites": [
@@ -33,7 +33,7 @@
   },
   "help": {
     "plain": "Look at how long the hash string is, and map that length to a hash type.",
-    "analogy": "Like guessing a package's contents from its box size \u2014 MD5, SHA-1, and SHA-256 each come in a fixed length.",
+    "analogy": "Like guessing a package's contents from its box size — MD5, SHA-1, and SHA-256 each come in a fixed length.",
     "mnemonic": "32 / 40 / 64 -> MD5 / SHA-1 / SHA-256.",
     "nudge": "How do you get the number of characters in a string?"
   },

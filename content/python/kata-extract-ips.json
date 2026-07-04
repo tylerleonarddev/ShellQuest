@@ -1,7 +1,7 @@
 {
   "id": "py-extract-ips",
   "type": "python-kata",
-  "track": "progression",
+  "track": "security",
   "title": "Pull IPs out of text",
   "xp": 30,
   "prerequisites": [
@@ -34,7 +34,7 @@
   },
   "help": {
     "plain": "Scan the words in the text and keep the ones that are real IP addresses.",
-    "analogy": "Like panning for gold \u2014 most words wash away, you keep the ones shaped like an IP with valid numbers.",
+    "analogy": "Like panning for gold — most words wash away, you keep the ones shaped like an IP with valid numbers.",
     "mnemonic": "4 parts, all digits, each 0-255.",
     "nudge": "For each word: split on '.', and check there are 4 parts that are all digits in range. `999` should fail the range check."
   },
@@ -50,7 +50,7 @@
     "terms": [
       {
         "term": "IPv4",
-        "meaning": "an address like 10.0.0.1 \u2014 four numbers 0-255 separated by dots"
+        "meaning": "an address like 10.0.0.1 — four numbers 0-255 separated by dots"
       }
     ]
   }

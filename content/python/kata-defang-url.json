@@ -1,7 +1,7 @@
 {
   "id": "py-defang-url",
   "type": "python-kata",
-  "track": "progression",
+  "track": "security",
   "title": "Defang a URL",
   "xp": 20,
   "prerequisites": [
@@ -25,7 +25,7 @@
   },
   "help": {
     "plain": "Rewrite a dangerous URL so nobody clicks it by accident: break the 'http' and the dots.",
-    "analogy": "Like putting a live wire in a labeled box before you hand it to someone \u2014 same wire, safe to carry.",
+    "analogy": "Like putting a live wire in a labeled box before you hand it to someone — same wire, safe to carry.",
     "mnemonic": "http -> hxxp, . -> [.]",
     "nudge": "Strings have a method that swaps one piece of text for another. You'll use it twice."
   },

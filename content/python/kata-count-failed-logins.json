@@ -1,14 +1,14 @@
 {
   "id": "py-count-failed-logins",
   "type": "python-kata",
-  "track": "progression",
+  "track": "security",
   "title": "Count failed logins",
   "xp": 25,
   "prerequisites": [
     "py-extract-ips"
   ],
   "review_interval_days": null,
-  "prompt": "Write count_failed_logins(lines) \u2014 a list of log lines \u2014 returning how many contain the phrase 'Failed password'.",
+  "prompt": "Write count_failed_logins(lines) — a list of log lines — returning how many contain the phrase 'Failed password'.",
   "starter_code": "def count_failed_logins(lines):\n    pass\n",
   "verification": {
     "runner": "python-test",
@@ -30,11 +30,11 @@
   "help": {
     "plain": "Count how many log lines are failed-login attempts.",
     "analogy": "Like tallying rejected keycard swipes in a building's access log.",
-    "mnemonic": "Count the lines that say 'Failed password' \u2014 not just 'password' (that catches successes too).",
+    "mnemonic": "Count the lines that say 'Failed password' — not just 'password' (that catches successes too).",
     "nudge": "A successful login also contains the word 'password'. Match the full phrase 'Failed password' to avoid counting those."
   },
   "details": {
-    "restate": "Given lines from an auth log, count only the failed login attempts \u2014 the ones containing 'Failed password'. Note: successful logins say 'Accepted password', so don't match on 'password' alone.",
+    "restate": "Given lines from an auth log, count only the failed login attempts — the ones containing 'Failed password'. Note: successful logins say 'Accepted password', so don't match on 'password' alone.",
     "io": [
       {
         "call": "count_failed_logins(['Failed password for root','Accepted password for admin'])",
