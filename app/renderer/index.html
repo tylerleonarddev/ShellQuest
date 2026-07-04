@@ -7,175 +7,224 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">shellquest<span class="brand-cursor">▌</span></div>
-    <div class="topbar-right">
-      <div class="topbar-stats" id="topbar-stats" hidden>
-        <span class="stat-chip" id="chip-level"></span>
-        <span class="stat-chip" id="chip-xp"></span>
-        <span class="stat-chip" id="chip-streak"></span>
-      </div>
-      <button class="btn-ghost btn-small" id="btn-glossary" title="glossary">? glossary</button>
-    </div>
-  </header>
+  <div class="shell">
 
-  <!-- Dashboard -->
-  <main id="view-dashboard" class="view">
-    <section class="prompt-line" id="prompt-line" hidden>
-      <span class="prompt-chev">❯</span>
-      <span class="prompt-label" id="prompt-label"></span>
-      <span class="prompt-meta" id="prompt-meta"></span>
-      <span class="prompt-hint">enter ↵</span>
-    </section>
+    <!-- ── Sidebar: the app's spine. One glance = where am I, where can I go. ── -->
+    <nav class="sidebar" id="sidebar">
+      <div class="brand">shellquest<span class="brand-cursor">▌</span></div>
 
-    <section class="hud">
-      <div class="hud-tile">
-        <div class="hud-label">Level</div>
-        <div class="hud-value" id="hud-level">–</div>
-        <div class="xp-bar"><div class="xp-bar-fill" id="xp-bar-fill"></div></div>
-        <div class="hud-sub" id="hud-xp-detail">–</div>
+      <div class="nav-group">
+        <button class="nav-item active" data-nav="home">⌂ <span>home</span></button>
       </div>
-      <div class="hud-tile">
-        <div class="hud-label">Total XP</div>
-        <div class="hud-value" id="hud-xp">–</div>
-        <div class="hud-sub">earned all-time</div>
-      </div>
-      <div class="hud-tile">
-        <div class="hud-label">Streak</div>
-        <div class="hud-value"><span id="hud-streak">–</span><span class="hud-unit"> days</span></div>
-        <div class="hud-sub" id="hud-streak-sub">–</div>
-      </div>
-    </section>
 
-    <section class="record-section" id="record-section" hidden>
-      <div class="today-header">
-        <h2 class="section-title">// the record</h2>
-        <span class="record-caption" id="record-caption"></span>
+      <div class="nav-group">
+        <div class="nav-heading">ladders</div>
+        <button class="nav-item" data-nav="ladder:python">λ <span>python</span><em class="nav-count" id="count-python"></em></button>
+        <button class="nav-item" data-nav="ladder:security">⛨ <span>security</span><em class="nav-count" id="count-security"></em></button>
+        <button class="nav-item" data-nav="ladder:terminal">❯ <span>terminal</span><em class="nav-count" id="count-terminal"></em></button>
+        <button class="nav-item" data-nav="ladder:projects">⚒ <span>projects</span><em class="nav-count" id="count-projects"></em></button>
       </div>
-      <div class="record-grid" id="record-grid"></div>
-    </section>
 
-    <section class="today-section">
-      <div class="today-header">
-        <h2 class="section-title">// today</h2>
-        <span class="today-progress" id="today-progress"></span>
+      <div class="nav-group">
+        <button class="nav-item" data-nav="devlogs">✎ <span>devlogs</span></button>
+        <button class="nav-item" data-nav="chat">◍ <span>chat</span></button>
       </div>
-      <ul class="today-list" id="today-list"></ul>
-      <div class="today-status" id="today-status"></div>
-      <div class="weekly-goals" id="weekly-goals"></div>
-      <div class="forecast" id="forecast" hidden>
-        <div class="forecast-title">// scheduled</div>
-        <div id="forecast-rows"></div>
-      </div>
-    </section>
 
-    <section class="kata-section">
-      <h2 class="section-title">// the ladder</h2>
-      <ul class="kata-list" id="kata-list"></ul>
-      <div class="content-errors" id="content-errors" hidden></div>
-    </section>
-
-    <section class="devlog-section">
-      <div class="today-header">
-        <h2 class="section-title">// devlogs</h2>
-        <button class="btn-ghost btn-small" id="btn-digest">✎ draft weekly digest</button>
-      </div>
-      <ul class="devlog-list" id="devlog-drafts"></ul>
-      <div class="devlog-published" id="devlog-published"></div>
-    </section>
-  </main>
-
-  <!-- Exercise view -->
-  <main id="view-exercise" class="view" hidden>
-    <div class="exercise-header">
-      <button class="btn-ghost" id="btn-back">← dashboard</button>
-      <div class="exercise-meta">
-        <span class="exercise-xp" id="exercise-xp"></span>
-        <span class="exercise-done-badge" id="exercise-done-badge" hidden>✓ mastered</span>
-      </div>
-    </div>
-    <h1 class="exercise-title" id="exercise-title"></h1>
-    <p class="exercise-prompt" id="exercise-prompt"></p>
-
-    <!-- "More info" task details + tiered "Explain this" help. Two kinds of
-         stuck, two buttons: details clarifies WHAT is asked (always fully
-         open), help guides HOW to approach it (one tier per click). -->
-    <div class="assist-region" id="assist-region" hidden>
-      <div class="assist-buttons">
-        <button class="btn-ghost btn-small" id="btn-details" hidden>ⓘ More info</button>
-        <button class="btn-ghost btn-small" id="btn-help" hidden>💡 Explain this</button>
-      </div>
-      <div class="details-panel" id="details-panel" hidden>
-        <div id="details-restate" hidden></div>
-        <table class="details-io" id="details-io" hidden></table>
-        <dl class="details-terms" id="details-terms" hidden></dl>
-      </div>
-      <div class="help-panel" id="help-panel" hidden>
-        <div class="help-tiers" id="help-tiers"></div>
-        <div class="help-controls">
-          <button class="btn-ghost btn-small" id="btn-help-more">still stuck? ↓</button>
-          <span class="help-floor-note" id="help-floor-note" hidden>that's all the help — the last step is the code to write</span>
+      <div class="sidebar-foot">
+        <div class="foot-chips" id="topbar-stats" hidden>
+          <span class="stat-chip" id="chip-level"></span>
+          <span class="stat-chip" id="chip-xp"></span>
+          <span class="stat-chip" id="chip-streak"></span>
         </div>
+        <button class="btn-ghost btn-small" id="btn-glossary" title="glossary">? glossary</button>
       </div>
-    </div>
-    <!-- /assist-region -->
+    </nav>
 
-    <!-- AI hint: last resort, below the authored tiers. Appears only for a
-         python kata with a failing run once every authored help tier has
-         been revealed (or none exist). Reads the learner's code; never
-         shows the answer. -->
-    <div class="ai-region" id="ai-region" hidden>
-      <button class="btn-ghost btn-small" id="btn-ai-hint">🤖 AI hint</button>
-      <span class="ai-note">reads your code, never gives the answer · using it brings this kata back sooner</span>
-      <div class="ai-hint-box" id="ai-hint-box" hidden></div>
-    </div>
+    <!-- ── Content: exactly one view visible at a time ── -->
+    <div class="content" id="content">
 
-    <!-- python-kata -->
-    <div id="kata-panel" hidden>
-      <div class="editor-frame">
-        <div class="editor-frame-bar">
-          <span>solution.py</span>
-          <span id="test-count"></span>
+      <!-- HOME: "what do I do right now", nothing else -->
+      <main id="view-home" class="view">
+        <section class="prompt-line" id="prompt-line" hidden>
+          <span class="prompt-chev">❯</span>
+          <span class="prompt-label" id="prompt-label"></span>
+          <span class="prompt-meta" id="prompt-meta"></span>
+          <span class="prompt-hint">enter ↵</span>
+        </section>
+
+        <section class="hud">
+          <div class="hud-tile glass">
+            <div class="hud-label">Level</div>
+            <div class="hud-value" id="hud-level">–</div>
+            <div class="xp-bar"><div class="xp-bar-fill" id="xp-bar-fill"></div></div>
+            <div class="hud-sub" id="hud-xp-detail">–</div>
+          </div>
+          <div class="hud-tile glass">
+            <div class="hud-label">Total XP</div>
+            <div class="hud-value" id="hud-xp">–</div>
+            <div class="hud-sub">earned all-time</div>
+          </div>
+          <div class="hud-tile glass">
+            <div class="hud-label">Streak</div>
+            <div class="hud-value"><span id="hud-streak">–</span><span class="hud-unit"> days</span></div>
+            <div class="hud-sub" id="hud-streak-sub">–</div>
+          </div>
+        </section>
+
+        <section class="today-section glass">
+          <div class="today-header">
+            <h2 class="section-title">// today</h2>
+            <span class="today-progress" id="today-progress"></span>
+          </div>
+          <ul class="today-list" id="today-list"></ul>
+          <div class="today-status" id="today-status"></div>
+          <div class="weekly-goals" id="weekly-goals"></div>
+          <div class="forecast" id="forecast" hidden>
+            <div class="forecast-title">// scheduled</div>
+            <div id="forecast-rows"></div>
+          </div>
+        </section>
+
+        <section class="record-section glass" id="record-section" hidden>
+          <div class="today-header">
+            <h2 class="section-title">// the record</h2>
+            <span class="record-caption" id="record-caption"></span>
+          </div>
+          <div class="record-grid" id="record-grid"></div>
+        </section>
+      </main>
+
+      <!-- LADDER: one category at a time, chosen in the sidebar -->
+      <main id="view-ladder" class="view" hidden>
+        <div class="ladder-head">
+          <h1 class="ladder-title" id="ladder-title"></h1>
+          <span class="ladder-progress" id="ladder-progress"></span>
         </div>
-        <div id="editor-host"></div>
-      </div>
+        <ul class="kata-list" id="kata-list"></ul>
+        <div class="content-errors" id="content-errors" hidden></div>
+      </main>
 
-      <div class="run-row">
-        <button class="btn-accent" id="btn-run">▶ Run tests</button>
-        <span class="run-hint">Ctrl+Enter</span>
-      </div>
-    </div>
+      <!-- DEVLOGS -->
+      <main id="view-devlogs" class="view" hidden>
+        <div class="ladder-head">
+          <h1 class="ladder-title">devlogs</h1>
+          <button class="btn-ghost btn-small" id="btn-digest">✎ draft weekly digest</button>
+        </div>
+        <ul class="devlog-list" id="devlog-drafts"></ul>
+        <div class="devlog-published" id="devlog-published"></div>
+      </main>
 
-    <!-- lesson -->
-    <div id="lesson-panel" hidden>
-      <div class="lesson-body" id="lesson-body"></div>
-      <div class="run-row">
-        <button class="btn-accent" id="btn-gotit">✓ Got it</button>
-        <span class="run-hint">that's all — reading it is completing it</span>
-      </div>
-    </div>
+      <!-- CHAT: the study companion, grounded in real progress data -->
+      <main id="view-chat" class="view view-chat" hidden>
+        <div class="chat-scroll" id="chat-scroll">
+          <div class="chat-empty" id="chat-empty">
+            <div class="chat-empty-icon">◍</div>
+            <p>Your study companion — it can see your real progress.</p>
+            <p class="chat-empty-sub">recaps, plans, pep talks · runs entirely on this machine</p>
+          </div>
+          <div id="chat-messages"></div>
+        </div>
+        <div class="chat-chips" id="chat-chips">
+          <button class="chip" data-chat="Recap what I worked on today.">today</button>
+          <button class="chip" data-chat="What did I do yesterday?">yesterday</button>
+          <button class="chip" data-chat="Recap my week — what did I learn and where am I strongest?">this week</button>
+          <button class="chip" data-chat="What's coming up in my review schedule?">due soon</button>
+          <button class="chip" data-chat="Give me a short pep talk grounded in my actual progress.">pep talk</button>
+        </div>
+        <div class="chat-inputrow">
+          <textarea class="chat-input" id="chat-input" rows="1" placeholder="ask about your progress… (enter to send)" spellcheck="false"></textarea>
+          <button class="btn-accent" id="btn-chat-send">↑</button>
+        </div>
+      </main>
 
-    <!-- shell-challenge -->
-    <div id="challenge-panel" hidden>
-      <div class="lab-box">
-        <div class="lab-label">your lab — open a real terminal and work here</div>
-        <code class="lab-path" id="lab-path"></code>
-      </div>
+      <!-- EXERCISE: focused takeover inside the content pane -->
+      <main id="view-exercise" class="view" hidden>
+        <div class="exercise-header">
+          <button class="btn-ghost" id="btn-back">← back</button>
+          <div class="exercise-meta">
+            <span class="exercise-xp" id="exercise-xp"></span>
+            <span class="exercise-done-badge" id="exercise-done-badge" hidden>✓ mastered</span>
+          </div>
+        </div>
+        <h1 class="exercise-title" id="exercise-title"></h1>
+        <p class="exercise-prompt" id="exercise-prompt"></p>
 
-      <div class="flag-row" id="flag-row">
-        <input class="flag-input" id="flag-input" type="text" spellcheck="false"
-               placeholder="paste the flag here" />
-      </div>
+        <!-- "More info" task details + tiered "Explain this" help. Two kinds of
+             stuck, two buttons: details clarifies WHAT is asked (always fully
+             open), help guides HOW to approach it (one tier per click). -->
+        <div class="assist-region" id="assist-region" hidden>
+          <div class="assist-buttons">
+            <button class="btn-ghost btn-small" id="btn-details" hidden>ⓘ More info</button>
+            <button class="btn-ghost btn-small" id="btn-help" hidden>💡 Explain this</button>
+          </div>
+          <div class="details-panel glass" id="details-panel" hidden>
+            <div id="details-restate" hidden></div>
+            <table class="details-io" id="details-io" hidden></table>
+            <dl class="details-terms" id="details-terms" hidden></dl>
+          </div>
+          <div class="help-panel glass" id="help-panel" hidden>
+            <div class="help-tiers" id="help-tiers"></div>
+            <div class="help-controls">
+              <button class="btn-ghost btn-small" id="btn-help-more">still stuck? ↓</button>
+              <span class="help-floor-note" id="help-floor-note" hidden>that's all the help — the last step is the code to write</span>
+            </div>
+          </div>
+        </div>
+        <!-- /assist-region -->
 
-      <div class="run-row">
-        <button class="btn-accent" id="btn-verify">▶ Verify</button>
-        <button class="btn-ghost" id="btn-reset-lab">↺ reset lab</button>
-        <span class="run-hint" id="check-count"></span>
-      </div>
-    </div>
+        <!-- AI hint: last resort, below the authored tiers. -->
+        <div class="ai-region" id="ai-region" hidden>
+          <button class="btn-ghost btn-small" id="btn-ai-hint">🤖 AI hint</button>
+          <span class="ai-note">reads your code, never gives the answer · using it brings this kata back sooner</span>
+          <div class="ai-hint-box glass" id="ai-hint-box" hidden></div>
+        </div>
 
-    <div class="results" id="results" hidden></div>
-  </main>
+        <!-- python-kata -->
+        <div id="kata-panel" hidden>
+          <div class="editor-frame glass">
+            <div class="editor-frame-bar">
+              <span>solution.py</span>
+              <span id="test-count"></span>
+            </div>
+            <div id="editor-host"></div>
+          </div>
+          <div class="run-row">
+            <button class="btn-accent" id="btn-run">▶ Run tests</button>
+            <span class="run-hint">Ctrl+Enter</span>
+          </div>
+        </div>
+
+        <!-- lesson -->
+        <div id="lesson-panel" hidden>
+          <div class="lesson-body glass" id="lesson-body"></div>
+          <div class="run-row">
+            <button class="btn-accent" id="btn-gotit">✓ Got it</button>
+            <span class="run-hint">that's all — reading it is completing it</span>
+          </div>
+        </div>
+
+        <!-- shell-challenge -->
+        <div id="challenge-panel" hidden>
+          <div class="lab-box glass">
+            <div class="lab-label">your lab — open a real terminal and work here</div>
+            <code class="lab-path" id="lab-path"></code>
+          </div>
+          <div class="flag-row" id="flag-row">
+            <input class="flag-input" id="flag-input" type="text" spellcheck="false"
+                   placeholder="paste the flag here" />
+          </div>
+          <div class="run-row">
+            <button class="btn-accent" id="btn-verify">▶ Verify</button>
+            <button class="btn-ghost" id="btn-reset-lab">↺ reset lab</button>
+            <span class="run-hint" id="check-count"></span>
+          </div>
+        </div>
+
+        <div class="results glass" id="results" hidden></div>
+      </main>
+
+    </div><!-- /content -->
+  </div><!-- /shell -->
 
   <!-- Reward overlay: the one orchestrated beat on pass -->
   <div class="reward-overlay" id="reward-overlay" hidden>

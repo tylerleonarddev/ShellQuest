@@ -321,31 +321,112 @@ async function renderDevlogs() {
   pubBox.appendChild(retry);
 }
 
-async function showDashboard() {
+/* ── Views & navigation: sidebar picks the view, exercise takes over ── */
+
+const VIEW_IDS = ['view-home', 'view-ladder', 'view-devlogs', 'view-chat', 'view-exercise'];
+// The last non-exercise view — where "back" and the reward beat return to.
+let lastNav = 'home';
+
+function setActiveNav(nav) {
+  for (const btn of document.querySelectorAll('.nav-item')) {
+    btn.classList.toggle('active', btn.dataset.nav === nav);
+  }
+}
+
+async function showView(nav) {
+  const [view, arg] = nav.split(':');
+  lastNav = nav;
+  for (const id of VIEW_IDS) $(id).hidden = true;
+  setActiveNav(nav);
+  if (view === 'home') {
+    await refreshHome();
+    $('view-home').hidden = false;
+  } else if (view === 'ladder') {
+    await renderLadder(arg);
+    $('view-ladder').hidden = false;
+  } else if (view === 'devlogs') {
+    renderDevlogs();
+    $('view-devlogs').hidden = false;
+  } else if (view === 'chat') {
+    $('view-chat').hidden = false;
+    $('chat-input').focus();
+  }
+  $('content').scrollTop = 0;
+}
+
+// Compatibility shim: everything that used to "go back to the dashboard"
+// now returns to wherever the user actually was.
+function showDashboard() {
+  return showView(lastNav);
+}
+
+async function refreshHome() {
   const state = await window.shellquest.getState();
   renderStats(state);
   renderPromptLine(state);
   renderRecord(state);
   renderToday(state);
   renderForecast(state);
-  renderDevlogs();
+  updateNavCounts(state);
+
+  const errBox = $('content-errors');
+  if (state.contentErrors.length) {
+    errBox.hidden = false;
+    errBox.textContent =
+      'Some content files failed to load: ' +
+      state.contentErrors.map((e) => `${e.file} (${e.error})`).join('; ');
+  } else {
+    errBox.hidden = true;
+  }
+}
+
+// Which sidebar ladder a state group belongs to ("project: logparser"
+// and any future project groups all fold into "projects").
+function navGroupOf(group) {
+  return group.startsWith('project') ? 'projects' : group;
+}
+
+function updateNavCounts(state) {
+  const tally = {};
+  for (const ex of state.exercises) {
+    const g = navGroupOf(ex.group);
+    tally[g] = tally[g] || { done: 0, total: 0 };
+    tally[g].total += 1;
+    if (ex.completed) tally[g].done += 1;
+  }
+  for (const g of ['python', 'security', 'terminal', 'projects']) {
+    const el = $(`count-${g}`);
+    if (el) el.textContent = tally[g] ? `${tally[g].done}/${tally[g].total}` : '';
+  }
+}
+
+async function renderLadder(group) {
+  const state = await window.shellquest.getState();
+  updateNavCounts(state);
+  const items = state.exercises.filter((e) => navGroupOf(e.group) === group);
+  $('ladder-title').textContent = group;
+  const done = items.filter((e) => e.completed).length;
+  $('ladder-progress').textContent = `${done} / ${items.length}`;
 
   const list = $('kata-list');
   list.innerHTML = '';
+  // Sub-headers only when the sidebar entry spans several real groups
+  // (projects); a single-group ladder reads cleaner without one.
+  const distinct = new Set(items.map((e) => e.group));
   let currentGroup = null;
   const nextMarked = new Set(); // one "next up" highlight per group
-  for (const ex of state.exercises) {
-    if (ex.group !== currentGroup) {
+  for (const ex of items) {
+    if (distinct.size > 1 && ex.group !== currentGroup) {
       currentGroup = ex.group;
-      const done = state.exercises.filter((e) => e.group === ex.group && e.completed).length;
-      const total = state.exercises.filter((e) => e.group === ex.group).length;
+      const gdone = items.filter((e) => e.group === ex.group && e.completed).length;
+      const gtotal = items.filter((e) => e.group === ex.group).length;
       const header = document.createElement('li');
       header.className = 'ladder-group';
       const name = document.createElement('span');
       name.textContent = ex.group;
       const count = document.createElement('span');
       count.className = 'ladder-group-count';
-      count.textContent = `${done} / ${total}`;
+      count.textContent = `${gdone} / ${gtotal}`;
       header.append(name, count);
       list.appendChild(header);
     }
@@ -356,7 +437,7 @@ async function showDashboard() {
     const li = document.createElement('li');
     li.dataset.id = ex.id; // stable hook for tests/screenshot driving
     li.className =
-      'kata-item' +
+      'kata-item glass' +
       (ex.completed ? ' completed' : '') +
       (ex.locked ? ' locked' : '') +
       (isNext ? ' next-up' : '');
@@ -390,19 +471,6 @@ async function showDashboard() {
     if (!ex.locked) makeActionable(li, () => openExercise(ex.id));
     list.appendChild(li);
   }
-
-  const errBox = $('content-errors');
-  if (state.contentErrors.length) {
-    errBox.hidden = false;
-    errBox.textContent =
-      'Some content files failed to load: ' +
-      state.contentErrors.map((e) => `${e.file} (${e.error})`).join('; ');
-  } else {
-    errBox.hidden = true;
-  }
-
-  $('view-exercise').hidden = true;
-  $('view-dashboard').hidden = false;
 }
 
 function renderStats(state) {
@@ -718,8 +786,9 @@ async function openExercise(id) {
     editor = SQEditor.create($('editor-host'), ex.starter_code);
   }
 
-  $('view-dashboard').hidden = true;
+  for (const id of VIEW_IDS) $(id).hidden = true;
   $('view-exercise').hidden = false;
+  $('content').scrollTop = 0;
   if (isChallenge && ex.needsFlag) $('flag-input').focus();
   else if (!isChallenge && !isLesson) editor.focus();
 }
@@ -1010,6 +1079,96 @@ document.addEventListener('keydown', (ev) => {
   if (ev.key === 'Escape') $('glossary-overlay').hidden = true;
 });
 
+/* ── Chat: the study companion (local model, grounded in progress) ── */
+
+let chatHistory = []; // [{role, content}] — user/assistant only
+let chatBusy = false;
+let chatSeq = 0;
+let chatLive = null; // { id, el, text } for the streaming bubble
+
+window.shellquest.onChatChunk(({ id, piece }) => {
+  if (!chatLive || id !== chatLive.id) return;
+  chatLive.text += piece;
+  chatLive.el.textContent = chatLive.text;
+  $('chat-scroll').scrollTop = $('chat-scroll').scrollHeight;
+});
+
+function addChatBubble(role, text) {
+  const el = document.createElement('div');
+  el.className = `chat-bubble chat-${role}`;
+  el.textContent = text;
+  $('chat-messages').appendChild(el);
+  $('chat-empty').hidden = true;
+  $('chat-scroll').scrollTop = $('chat-scroll').scrollHeight;
+  return el;
+}
+
+async function sendChat(text) {
+  const msg = (text || '').trim();
+  if (!msg || chatBusy) return;
+  chatBusy = true;
+  $('btn-chat-send').disabled = true;
+  $('chat-input').value = '';
+
+  addChatBubble('user', msg);
+  chatHistory.push({ role: 'user', content: msg });
+
+  const el = addChatBubble('assistant', '');
+  el.classList.add('chat-thinking');
+  const id = ++chatSeq;
+  chatLive = { id, el, text: '' };
+
+  try {
+    const res = await window.shellquest.chatSend(id, chatHistory);
+    el.classList.remove('chat-thinking');
+    if (res.ok) {
+      // Re-render the finished reply through the same escaped
+      // formatter lessons use (backticks/italics, never raw HTML).
+      el.innerHTML = lessonHtml(res.full);
+      chatHistory.push({ role: 'assistant', content: res.full });
+    } else {
+      el.classList.add('chat-miss');
+      el.textContent =
+        res.reason === 'offline'
+          ? 'The local model is offline — is the Ollama service running? (systemctl --user status ollama)'
+          : `The companion hit a snag: ${res.reason}`;
+      chatHistory.pop(); // don't poison the next turn with an unanswered msg
+    }
+  } finally {
+    chatLive = null;
+    chatBusy = false;
+    $('btn-chat-send').disabled = false;
+    $('chat-scroll').scrollTop = $('chat-scroll').scrollHeight;
+  }
+}
+
+$('btn-chat-send').addEventListener('click', () => sendChat($('chat-input').value));
+$('chat-input').addEventListener('keydown', (ev) => {
+  if (ev.key === 'Enter' && !ev.shiftKey) {
+    ev.preventDefault();
+    sendChat($('chat-input').value);
+  }
+});
+for (const chip of document.querySelectorAll('#chat-chips .chip')) {
+  chip.addEventListener('click', () => sendChat(chip.dataset.chat));
+}
+
+/* ── Sidebar navigation ── */
+
+for (const btn of document.querySelectorAll('.nav-item')) {
+  btn.addEventListener('click', () => showView(btn.dataset.nav));
+}
+
+// Quick nav: 1–7 jump between views when not typing in a field.
+const NAV_KEYS = ['home', 'ladder:python', 'ladder:security', 'ladder:terminal', 'ladder:projects', 'devlogs', 'chat'];
+document.addEventListener('keydown', (ev) => {
+  if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  if (/^(INPUT|TEXTAREA)$/.test((ev.target && ev.target.tagName) || '')) return;
+  if (!$('view-exercise').hidden) return; // never yank focus mid-exercise
+  const idx = Number(ev.key) - 1;
+  if (idx >= 0 && idx < NAV_KEYS.length) showView(NAV_KEYS[idx]);
+});
+
 /* ── Wiring ── */
 
 $('btn-digest').addEventListener('click', async () => {
@@ -1046,10 +1205,10 @@ document.addEventListener('keydown', (ev) => {
     ev.preventDefault();
     runCurrent();
   }
-  // Dashboard: plain Enter follows the ❯ prompt line to the next item.
+  // Home: plain Enter follows the ❯ prompt line to the next item.
   if (
     ev.key === 'Enter' && !ev.ctrlKey &&
-    !$('view-dashboard').hidden &&
+    !$('view-home').hidden &&
     $('glossary-overlay').hidden &&
     promptTarget &&
     !/^(INPUT|TEXTAREA|BUTTON|A)$/.test((ev.target && ev.target.tagName) || '') &&
@@ -1069,5 +1228,5 @@ $('prompt-line').addEventListener('click', () => {
 (async function init() {
   const state = await window.shellquest.getState();
   if (!state.onboardingDone) openExercise('onboarding');
-  else showDashboard();
+  else showView('home');
 })();

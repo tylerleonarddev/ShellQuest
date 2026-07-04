@@ -15,6 +15,7 @@ const publishLib = require('../lib/publish');
 const digestLib = require('../lib/digest');
 const aiHint = require('../lib/ai-hint');
 const aiHelpLog = require('../lib/ai-help-log');
+const chat = require('../lib/chat');
 
 // Dashboard grouping: the ladder reads as the story of the climb —
 // grouped by track, ordered by prerequisite depth (curriculum order,
@@ -154,6 +155,32 @@ function getUnlockedExercise(id) {
   }
   return { exercise };
 }
+
+// Study-companion chat: streams a grounded local-LLM reply. Chunks flow
+// back as chat:chunk events (correlated by id); the handler resolves when
+// the stream ends. Snapshot is rebuilt fresh on every send.
+ipcMain.handle('chat:send', async (ev, { id, messages }) => {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 240_000);
+  try {
+    const { exercises } = content.loadExercises();
+    const clean = (Array.isArray(messages) ? messages : [])
+      .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+      .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }));
+    const full = await chat.streamChat(
+      exercises,
+      clean,
+      (piece) => { if (!ev.sender.isDestroyed()) ev.sender.send('chat:chunk', { id, piece }); },
+      ctl.signal
+    );
+    return { ok: true, full };
+  } catch (err) {
+    const offline = /fetch failed|ECONNREFUSED/i.test(String(err.message));
+    return { ok: false, reason: offline ? 'offline' : err.message };
+  } finally {
+    clearTimeout(timer);
+  }
+});
 
 // One Socratic AI hint about the learner's actual code + failing test.
 // Usage is recorded FIRST (before generation, so a crash can't dodge the

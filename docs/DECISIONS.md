@@ -205,3 +205,32 @@ UI says so next to the button: "using it brings this kata back sooner."
 **The AI floor never moves.** The hint button appears only after every
 authored help tier is revealed (or none exist) AND a run has failed —
 comprehension (details) and authored teaching (help) always come first.
+
+## v1.5.1
+
+**The one-accent rule is deliberately rewritten.** The original token
+constitution ("one palette, ONE accent") served the terminal identity
+through 1.5.0. The glass redesign introduces a second, SUPPORTING hue —
+violet — with a strict division of labor: green remains the only color
+for progress, success, and primary actions; violet carries depth,
+focus, and ambient identity (nav active state, focus rings, the chat
+companion). Surfaces became translucent glass over a fixed gradient
+field. Two hues, each with a job — still nothing else gets to invent a
+color.
+
+**Sidebar IA, built for a brain that needs one obvious next step.**
+Home shows only "what do I do right now" (prompt line, HUD, today,
+record); each ladder is its own sidebar entry with a done/total count
+(no more scrolling 70 items to find one); exercise view is a takeover
+that keeps the sidebar for orientation. Keys 1–7 jump views. The
+explicit design goal: draw the user in daily and prevent burnout —
+show today's three items, not the mountain.
+
+**The chat companion is grounded, and only grounded.** Every send
+rebuilds a STUDY SNAPSHOT from the progress files (profile, daily
+queue, 14 days of completions, upcoming FSRS reviews, weekly goals, AI
+hint usage) and the model is instructed to answer from it alone — say
+"I don't know" over guessing. It may explain concepts from COMPLETED
+exercises; it must never write solution code for unsolved ones (same
+no-spoiler floor as the hint system). Local Ollama, streaming, chat
+history stays in-session and in-memory — nothing is persisted.

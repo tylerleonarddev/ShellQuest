@@ -16,4 +16,6 @@ contextBridge.exposeInMainWorld('shellquest', {
   gitPush: () => ipcRenderer.invoke('git:push'),
   draftDigest: () => ipcRenderer.invoke('devlogs:digest'),
   getAiHint: (id, code, failure) => ipcRenderer.invoke('ai:hint', { id, code, failure }),
+  chatSend: (id, messages) => ipcRenderer.invoke('chat:send', { id, messages }),
+  onChatChunk: (cb) => ipcRenderer.on('chat:chunk', (_ev, data) => cb(data)),
 });

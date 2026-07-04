@@ -4,6 +4,30 @@ The 0.1 → 1.0 story. Every version below shipped, was verified against
 its build spec's acceptance criteria, and went live on this repo — most
 of it in a single remarkable week.
 
+## 1.5.1 — 2026-07-04 · The glass redesign + the study companion
+
+The whole app moved from one long scrolling page to a **sidebar
+shell**: home, the four ladders (each its own entry with a live
+done/total count), devlogs, and chat — keys 1–7 jump between them.
+Home now answers exactly one question, "what do I do right now": the
+❯ prompt line, the HUD, today's queue, and the record. The 70-item
+ladder scroll is gone; each ladder is a focused view. Exercise view is
+a takeover that keeps the sidebar for orientation. Built deliberately
+ADHD-friendly: show today's three items, not the mountain.
+
+The skin went **glass**: translucent cards over a gradient depth
+field, a violet supporting hue joining the green (the one-accent rule
+rewritten deliberately — see DECISIONS.md), springy reward beat,
+lifted hovers, glow on the next action, custom scrollbars, and full
+prefers-reduced-motion support.
+
+New tab: **chat** — a study companion running on the same local model
+as the AI hints. Every message rebuilds a fresh snapshot of your real
+progress (today's queue, two weeks of history, upcoming reviews,
+weekly goals), and the model answers from that snapshot only —
+recaps, plans, pep talks, streamed live. It explains what you've
+already learned; it never writes solutions for what you haven't.
+
 ## 1.5.0 — 2026-07-04 · Analyst tier + fluency tier (+16 missions)
 
 The terminal ladder's two next tiers from `TERMINAL-ROADMAP.md`, both
