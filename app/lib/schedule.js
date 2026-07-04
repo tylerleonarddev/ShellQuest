@@ -134,17 +134,74 @@ function generateDailyQueue(exercises, completions, cards, today) {
   return queue;
 }
 
-// Streak transition when today's daily is cleared.
-function streakAfterClear(lastClearedDate, prevStreak, today) {
-  return lastClearedDate === addDays(today, -1) ? prevStreak + 1 : 1;
+/* ── Streak armor (v1.6): the streak bends before it breaks ── */
+
+// Freeze tokens are EARNED (one per FREEZE_EVERY consecutive cleared
+// days, banked up to FREEZE_MAX) and spent automatically, one per fully
+// missed day. A covered gap CONTINUES the streak. Design goal: protect
+// the habit at its weakest moment — the return after a lapse.
+const FREEZE_EVERY = 7;
+const FREEZE_MAX = 2;
+
+function daysBetween(a, b) {
+  return Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
 }
 
-// What the streak is worth right now: yesterday (or today) cleared keeps
-// it alive; an uncleared gap means it's already dead — show 0.
+// Pure: the streak transition when `today` gets cleared.
+function computeStreakClear(prevStreak, lastCleared, freezes, today) {
+  if (lastCleared === today) return { streak: prevStreak, freezes, spent: 0 };
+  if (!lastCleared) return { streak: 1, freezes, spent: 0 };
+  const gap = daysBetween(lastCleared, today) - 1; // fully missed days
+  if (gap <= 0) return { streak: prevStreak + 1, freezes, spent: 0 };
+  if (gap <= freezes) return { streak: prevStreak + 1, freezes: freezes - gap, spent: gap };
+  return { streak: 1, freezes, spent: 0 };
+}
+
+// Pure: token earning at a clear. Every FREEZE_EVERY-th consecutive day
+// banks one, capped — missing the cap window isn't punished, the next
+// multiple earns again.
+function maybeEarnFreeze(streak, freezes) {
+  if (streak > 0 && streak % FREEZE_EVERY === 0 && freezes < FREEZE_MAX) {
+    return { freezes: freezes + 1, earned: true };
+  }
+  return { freezes, earned: false };
+}
+
+// The one mutator both clear paths share: streak (armor-aware), token
+// earn/spend, best-streak record. Caller still sets last_cleared_date.
+function applyStreakClear(profile, today) {
+  const newDay = profile.last_cleared_date !== today;
+  const r = computeStreakClear(
+    profile.streak_days, profile.last_cleared_date, profile.streak_freezes || 0, today
+  );
+  profile.streak_days = r.streak;
+  profile.streak_freezes = r.freezes;
+  let earned = false;
+  if (newDay) {
+    const e = maybeEarnFreeze(r.streak, r.freezes);
+    profile.streak_freezes = e.freezes;
+    earned = e.earned;
+  }
+  // A missing best_streak seeds from the current streak (migration).
+  const prevBest = profile.best_streak ?? profile.streak_days ?? 0;
+  profile.best_streak = Math.max(prevBest, profile.streak_days);
+  return {
+    freezeSpent: r.spent,
+    freezeEarned: earned,
+    newBest: profile.streak_days > prevBest && profile.streak_days > 1,
+  };
+}
+
+// What the streak is worth right now: cleared today/yesterday keeps it
+// alive; a gap small enough for the banked armor to cover shows the
+// streak still standing (the tokens get spent at the next clear); only
+// an uncoverable gap shows 0.
 function effectiveStreak(profile, today) {
   const last = profile.last_cleared_date;
   if (!last) return 0;
   if (last === today || last === addDays(today, -1)) return profile.streak_days;
+  const gap = daysBetween(last, today) - 1; // today isn't missed yet
+  if (gap <= (profile.streak_freezes || 0)) return profile.streak_days;
   return 0;
 }
 
@@ -200,7 +257,7 @@ function markCleared(daily, today, awardBonus) {
   const progress = require('./progress'); // lazy: keeps the import graph flat
   const profile = progress.getProfile();
   if (profile.last_cleared_date !== today) {
-    profile.streak_days = streakAfterClear(profile.last_cleared_date, profile.streak_days, today);
+    applyStreakClear(profile, today);
     profile.last_cleared_date = today;
     if (awardBonus) profile.xp += daily.bonus_xp || DAILY_BONUS_XP;
     progress.saveProfile(profile);
@@ -218,7 +275,19 @@ function ensureDaily(exercises, completions, today) {
 
   if (!daily || daily.date !== today) {
     const reviews = backfillSchedules(completions, today, byId);
-    const queue = generateDailyQueue(exercises, completions, reviews.cards, today);
+    let queue = generateDailyQueue(exercises, completions, reviews.cards, today);
+
+    // Comeback mode (v1.6): returning after an unarmored 2+ day gap gets
+    // ONE item, not a wall of overdue reviews. The rest of the backlog
+    // spreads over the following normal days. Shame-free re-entry is the
+    // whole point — the day still clears, the habit restarts small.
+    const profile = require('./progress').getProfile();
+    const lastSeen = profile.last_cleared_date || profile.last_active_date;
+    const gap = lastSeen ? daysBetween(lastSeen, today) - 1 : 0;
+    const comeback =
+      gap >= 2 && gap > (profile.streak_freezes || 0) && queue.length > 1;
+    if (comeback) queue = queue.slice(0, 1);
+
     // Why each item was queued, frozen at generation time — a "new" item
     // passed later today must not start reading as a "review".
     const completedIds = new Set(completions.completions.map((c) => c.exercise_id));
@@ -233,6 +302,7 @@ function ensureDaily(exercises, completions, today) {
       bonus_awarded: false,
       bonus_xp: DAILY_BONUS_XP,
     };
+    if (comeback) daily.comeback = true;
     // Fully caught up — nothing due, nothing new. That's an earned rest
     // day, not a broken streak: auto-clear it (no bonus XP).
     if (queue.length === 0) {
@@ -347,7 +417,10 @@ function applyPass(exercise, firstCompletion, exercises, completions, profile, t
     daily.bonus_awarded = true;
     events.dailyCleared = true;
     events.bonusXp += daily.bonus_xp;
-    profile.streak_days = streakAfterClear(profile.last_cleared_date, profile.streak_days, today);
+    const armor = applyStreakClear(profile, today);
+    events.freezeSpent = armor.freezeSpent;
+    events.freezeEarned = armor.freezeEarned;
+    events.newBest = armor.newBest;
     profile.last_cleared_date = today;
     // Persist the streak day NOW — a crash before the caller's later
     // profile save must not eat a cleared day. (The caller saves again
@@ -397,7 +470,9 @@ module.exports = {
   freshCardDue,
   Rating,
   generateDailyQueue,
-  streakAfterClear,
+  computeStreakClear,
+  maybeEarnFreeze,
+  applyStreakClear,
   effectiveStreak,
   ladderDepth,
   computeDepths,

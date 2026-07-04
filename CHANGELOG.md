@@ -4,6 +4,27 @@ The 0.1 → 1.0 story. Every version below shipped, was verified against
 its build spec's acceptance criteria, and went live on this repo — most
 of it in a single remarkable week.
 
+## 1.6.0 — 2026-07-04 · The resilience update
+
+The streak now **bends before it breaks**. Every 7th consecutive
+cleared day banks a **streak armor** token (🛡, max 2, earned never
+bought); a missed day silently spends one and the streak continues —
+the HUD shows an armored gap as still standing, never "lost, pending".
+**Best streak** is a permanent record beside the current one: a reset
+reads as "chasing my record", not "lost everything".
+
+**Comeback mode**: return after an unarmored 2+ day gap and the day
+is ONE item — "welcome back — just this one" — while the overdue
+backlog spreads across the following normal days. Clearing it counts
+fully: bonus, streak restart, the works. The re-entry shame spiral is
+the thing that actually kills habits; the app's answer is to make
+restarting trivially small. No guilt copy anywhere.
+
+Also: the reward beat announces armor earned/spent and new records,
+and daily-clear closes the session explicitly ("that's the day —
+done. tomorrow: …"). Streak math is pure and unit-tested (12 cases
+in `npm test`).
+
 ## 1.5.1 — 2026-07-04 · The glass redesign + the study companion
 
 The whole app moved from one long scrolling page to a **sidebar

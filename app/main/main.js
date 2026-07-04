@@ -90,6 +90,7 @@ function stateForRenderer() {
   state.daily = {
     date: daily.date,
     cleared: daily.bonus_awarded,
+    comeback: !!daily.comeback,
     bonusXp: daily.bonus_xp,
     items: daily.queue
       .filter((id) => byId.has(id))

@@ -92,6 +92,30 @@ async function main() {
   r = await runTests(fn, 'def f(x):\n    while True:\n        pass\n');
   (r.error && /Timed out/.test(r.error)) ? ok('infinite loop times out') : bad('timeout not enforced');
 
+  console.log('streak armor math (pure)');
+  {
+    const { computeStreakClear, maybeEarnFreeze, effectiveStreak } = schedule;
+    const eq = (got, want, label) =>
+      JSON.stringify(got) === JSON.stringify(want) ? ok(label) : bad(`${label}: got ${JSON.stringify(got)}`);
+    eq(computeStreakClear(5, '2026-07-03', 0, '2026-07-04'), { streak: 6, freezes: 0, spent: 0 }, 'consecutive day extends');
+    eq(computeStreakClear(5, '2026-07-04', 1, '2026-07-04'), { streak: 5, freezes: 1, spent: 0 }, 'same-day re-clear is a no-op');
+    eq(computeStreakClear(5, '2026-07-02', 0, '2026-07-04'), { streak: 1, freezes: 0, spent: 0 }, '1-day gap, no armor -> reset');
+    eq(computeStreakClear(5, '2026-07-02', 1, '2026-07-04'), { streak: 6, freezes: 0, spent: 1 }, '1-day gap, 1 token -> held and spent');
+    eq(computeStreakClear(5, '2026-07-01', 1, '2026-07-04'), { streak: 1, freezes: 1, spent: 0 }, '2-day gap, 1 token -> reset, token kept');
+    eq(computeStreakClear(5, '2026-07-01', 2, '2026-07-04'), { streak: 6, freezes: 0, spent: 2 }, '2-day gap, 2 tokens -> held');
+    eq(computeStreakClear(0, null, 2, '2026-07-04'), { streak: 1, freezes: 2, spent: 0 }, 'first clear ever starts at 1');
+    eq(maybeEarnFreeze(7, 0), { freezes: 1, earned: true }, 'day 7 earns a token');
+    eq(maybeEarnFreeze(8, 1), { freezes: 1, earned: false }, 'day 8 earns nothing');
+    eq(maybeEarnFreeze(14, 2), { freezes: 2, earned: false }, 'cap of 2 holds');
+    const armored = { last_cleared_date: '2026-07-02', streak_days: 9, streak_freezes: 1 };
+    effectiveStreak(armored, '2026-07-04') === 9
+      ? ok('armored gap still shows the streak standing')
+      : bad('armored streak displayed as dead');
+    effectiveStreak({ ...armored, streak_freezes: 0 }, '2026-07-04') === 0
+      ? ok('unarmored gap shows 0')
+      : bad('dead streak still displayed');
+  }
+
   console.log('lab setup extensions (mode/mtime/symlink/base64)');
   // lab.js resolves HOME at require time, so exercise it in a child
   // process with an isolated HOME — same pattern as the cold-start walk.

@@ -1,6 +1,6 @@
 {
   "name": "shellquest",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "private": true,
   "description": "A git-backed learning platform: katas, XP, streaks, and learning in public.",
   "main": "app/main/main.js",

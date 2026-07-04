@@ -50,9 +50,10 @@ function renderPromptLine(state) {
     return;
   }
   line.classList.remove('prompt-done');
-  $('prompt-label').textContent = `next: ${next.title}`;
+  const comeback = state.daily.comeback && !state.daily.cleared;
+  $('prompt-label').textContent = comeback ? `welcome back: ${next.title}` : `next: ${next.title}`;
   const kind = next.kind || (next.completed ? 'review' : 'new');
-  $('prompt-meta').textContent = `${kind} · +${next.xp} XP`;
+  $('prompt-meta').textContent = comeback ? `just this one · +${next.xp} XP` : `${kind} · +${next.xp} XP`;
 }
 
 /* ── The record: every pass, bucketed by day, 26 weeks ── */
@@ -158,9 +159,11 @@ function renderToday(state) {
     ? (daily.items.length
         ? `daily cleared ✓ streak safe at ${state.profile.streak_days}${handoff}`
         : `rest day — nothing due, streak safe at ${state.profile.streak_days}${handoff}`)
-    : daily.items.length
-      ? `clear all ${daily.items.length} to keep the streak (+${daily.bonusXp} XP)`
-      : 'nothing due — the ladder awaits';
+    : daily.comeback
+      ? `welcome back — just this one today. clear it and the climb restarts (+${daily.bonusXp} XP)`
+      : daily.items.length
+        ? `clear all ${daily.items.length} to keep the streak (+${daily.bonusXp} XP)`
+        : 'nothing due — the ladder awaits';
 
   const goals = $('weekly-goals');
   goals.innerHTML = '';
@@ -478,8 +481,10 @@ function renderStats(state) {
   $('hud-level').textContent = p.level;
   $('hud-xp').textContent = p.xp;
   $('hud-streak').textContent = p.streak_days;
+  const best = p.best_streak ?? p.streak_days ?? 0;
+  const armor = p.streak_freezes || 0;
   $('hud-streak-sub').textContent = p.last_cleared_date
-    ? `last cleared ${p.last_cleared_date}`
+    ? `best ${best} · armor ${armor ? '🛡'.repeat(armor) : 'none — 7 days earns one'}`
     : 'clear the daily to start one';
 
   const { currentLevelStart, nextLevelAt } = state.levelCurve;
@@ -987,13 +992,21 @@ function rewardBeat(res) {
     assembled ? `⚙ ${res.assembly.function}() → ${res.assembly.file}` : '',
   ].filter(Boolean).join(' · ');
 
-  streakLine.textContent = events.dailyCleared
-    ? `streak: ${streak} day${streak === 1 ? '' : 's'} 🔥`
-    : res.firstCompletion
-      ? `streak: ${streak} day${streak === 1 ? '' : 's'}`
-      : events.review
-        ? 'review passed — interval extended'
-        : 'already mastered — practice reps still count';
+  const streakBits = [
+    events.dailyCleared
+      ? `streak: ${streak} day${streak === 1 ? '' : 's'} 🔥`
+      : res.firstCompletion
+        ? `streak: ${streak} day${streak === 1 ? '' : 's'}`
+        : events.review
+          ? 'review passed — interval extended'
+          : 'already mastered — practice reps still count',
+  ];
+  if (events.freezeSpent) {
+    streakBits.push(`🛡 armor spent — the streak held through ${events.freezeSpent} missed day${events.freezeSpent === 1 ? '' : 's'}`);
+  }
+  if (events.freezeEarned) streakBits.push('🛡 streak armor earned — banked for a rough day');
+  if (events.newBest) streakBits.push(`★ new best streak — ${streak} days`);
+  streakLine.textContent = streakBits.join(' · ');
 
   // The handoff: plant tomorrow's hook at the moment of maximum attention.
   const tomorrowLine = $('reward-tomorrow');
@@ -1002,7 +1015,7 @@ function rewardBeat(res) {
     const reviews = tm.filter((t) => t.kind === 'review').length;
     const firstNew = tm.find((t) => t.kind === 'new');
     tomorrowLine.textContent =
-      'tomorrow: ' +
+      'that\'s the day — done. tomorrow: ' +
       [reviews ? `${reviews} review${reviews === 1 ? '' : 's'}` : '', firstNew ? `new: ${firstNew.title}` : '']
         .filter(Boolean)
         .join(' · ');

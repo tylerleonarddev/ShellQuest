@@ -234,3 +234,21 @@ hint usage) and the model is instructed to answer from it alone — say
 exercises; it must never write solution code for unsolved ones (same
 no-spoiler floor as the hint system). Local Ollama, streaming, chat
 history stays in-session and in-memory — nothing is persisted.
+
+## v1.6
+
+**The streak bends before it breaks.** Streak armor: every 7th
+consecutive cleared day banks a freeze token (max 2); a missed day
+silently spends one and the streak CONTINUES. effectiveStreak shows an
+armored gap as still standing — the user sees "protected", never
+"lost, pending". Tokens are earned, never bought or given; the cap
+means armor is a cushion, not an exemption. best_streak is a permanent
+record shown beside the current streak, so a reset reads as "chasing
+my record", not "lost everything".
+
+**Comeback mode is one item, on purpose.** Returning after an
+unarmored 2+ day gap generates a ONE-item daily ("welcome back — just
+this one") instead of a wall of overdue reviews; the FSRS backlog
+spreads across the following normal days. The pattern that kills ADHD
+habits is the shame spiral at re-entry — the app's job on that day is
+to make restarting trivially small. No guilt copy anywhere, ever.
