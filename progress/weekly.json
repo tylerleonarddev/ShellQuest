@@ -11,12 +11,12 @@
       "kind": "new_exercises",
       "target": 3,
       "bonus_xp": 40,
-      "progress": 6
+      "progress": 7
     }
   ],
   "bonus_awarded": false,
   "stats": {
     "reviews_cleared": 2,
-    "xp_gained": 120
+    "xp_gained": 150
   }
 }
